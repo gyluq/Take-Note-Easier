@@ -1,11 +1,8 @@
-import base64
 import sys
-from io import BytesIO
 
 import keyboard
-from PIL import ImageQt, Image
 from PySide6 import QtCore
-from PySide6.QtCore import Qt, qAbs, QRect, Signal, QSize
+from PySide6.QtCore import Qt, qAbs, QRect, Signal
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication
 from PySide6.QtWidgets import QApplication, QMainWindow
 

@@ -104,6 +104,7 @@ class yes(QWidget, Ui_Form):
         else:
             self.ui.textEdit1.clear()
             self.ui.label.setText("清空了")
+            self.ui.textEdit1.setFocus()
 
     '''
     复制到剪切板
