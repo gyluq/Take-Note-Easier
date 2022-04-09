@@ -103,7 +103,11 @@ class CaptureScreen(QMainWindow):
 
     def sendImage(self):
         # 发送截图尺寸到信号signal2中
-        self.signal2.emit(self.captureImage.size().width(), self.captureImage.size().height())
+        width = self.captureImage.size().width()
+        height = self.captureImage.size().height()
+        self.signal2.emit(width, height)
+        if width > 1300:
+            self.captureImage = self.captureImage.scaledToWidth(1300, Qt.SmoothTransformation)
         # 转为base64
         data = QtCore.QByteArray()
         buf = QtCore.QBuffer(data)
@@ -112,25 +116,6 @@ class CaptureScreen(QMainWindow):
         imageBase64 = str(str1, encoding="utf-8")
         # 发送截图数据到信号signal中
         self.signal.emit(imageBase64)
-
-    # '''
-    # QPixmap转Image方便调整图片大小,有像素损失
-    # '''
-    #
-    # def sendImage(self):
-    #     # 发送截图尺寸到信号signal2中
-    #     self.signal2.emit(self.captureImage.size().width(), self.captureImage.size().height())
-    #     # QPixmap转Image
-    #     self.captureImage = ImageQt.fromqpixmap(self.captureImage)
-    #     picSize = self.captureImage.size
-    #     if picSize[0] > 1300:
-    #         self.captureImage = self.captureImage.resize((1300, int(picSize[1]*1300/picSize[0])))
-    #
-    #     img_buffer = BytesIO()
-    #     self.captureImage.save(img_buffer, format="PNG")
-    #     byte_data = img_buffer.getvalue()
-    #     base64_str = base64.b64encode(byte_data)
-    #     self.signal.emit(str(base64_str, "utf-8"))
 
     @property
     def signal(self):
