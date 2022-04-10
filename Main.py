@@ -8,7 +8,6 @@ from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
 from VideoNote import Ui_Form
-from pyperclip import paste
 
 
 class yes(QWidget, Ui_Form):
@@ -23,11 +22,9 @@ class yes(QWidget, Ui_Form):
         self.ui.setupUi(self)
 
         # 绑定事件
-        self.ui.pushButton1.clicked.connect(self.clearTextEdit1)
         self.ui.pushButton2.clicked.connect(self.copyAll)
         self.ui.pushButton3.clicked.connect(self.exit)
         self.ui.pushButton4.clicked.connect(self.sendNote)
-        self.ui.pushButton5.clicked.connect(self.sendClipboard)
 
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
@@ -93,19 +90,6 @@ class yes(QWidget, Ui_Form):
         yes.cap.signal.connect(self.appendImage)
         yes.cap.signal2.connect(self.lastImageSize)
 
-    def clearTextEdit1(self):
-        yes.exit_time = 0
-        self.ui.label.setStyleSheet("color:red;font-weight:bold")
-        yes.clear_time += 1
-        if yes.clear_time == 1:
-            self.ui.label.setText("确认清空?")
-        elif yes.clear_time == 2:
-            self.ui.label.setText("再点一次")
-        else:
-            self.ui.textEdit1.clear()
-            self.ui.label.setText("清空了")
-            self.ui.textEdit1.setFocus()
-
     '''
     复制到剪切板
     '''
@@ -116,7 +100,7 @@ class yes(QWidget, Ui_Form):
         self.ui.label.setText("")
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
-        keyboard.press_and_release("ctrl+c")
+        keyboard.press_and_release("ctrl+x")
 
     '''
     退出程序
@@ -142,11 +126,6 @@ class yes(QWidget, Ui_Form):
         yes.clear_time = 0
         self.ui.label.setText("")
         self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
-        self.ui.textEdit2.clear()
-
-    def sendClipboard(self):
-        self.ui.label.setText("")
-        self.ui.textEdit1.append(paste())
         self.ui.textEdit2.clear()
 
     '''
