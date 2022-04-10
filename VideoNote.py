@@ -55,6 +55,12 @@ class Ui_Form(object):
 "	border-radius:10px;\n"
 "}\n"
 "\n"
+"#label_bg{\n"
+"	background-color:#FFEDED;\n"
+"	border:1px solid #ffffff;\n"
+"	border-radius:10px;\n"
+"}\n"
+"\n"
 "#label{\n"
 "	padding:3px 1px 3px 1px;\n"
 "}\n"
@@ -64,7 +70,7 @@ class Ui_Form(object):
 "}")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(23, 8, 793, 30))
+        self.horizontalLayoutWidget.setGeometry(QRect(31, 168, 793, 30))
         self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout1.setSpacing(0)
         self.horizontalLayout1.setObjectName(u"horizontalLayout1")
@@ -124,52 +130,50 @@ class Ui_Form(object):
 
         self.label_BG = QLabel(Form)
         self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(14, 4, 805, 67))
+        self.label_BG.setGeometry(QRect(22, 164, 805, 57))
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(8)
         self.label_BG.setFont(font3)
-        self.horizontalLayoutWidget_2 = QWidget(Form)
-        self.horizontalLayoutWidget_2.setObjectName(u"horizontalLayoutWidget_2")
-        self.horizontalLayoutWidget_2.setGeometry(QRect(350, 42, 97, 23))
-        self.horizontalLayout2 = QHBoxLayout(self.horizontalLayoutWidget_2)
-        self.horizontalLayout2.setObjectName(u"horizontalLayout2")
-        self.horizontalLayout2.setContentsMargins(0, 0, 0, 0)
-        self.checkBox1 = QCheckBox(self.horizontalLayoutWidget_2)
-        self.checkBox1.setObjectName(u"checkBox1")
-
-        self.horizontalLayout2.addWidget(self.checkBox1)
-
         self.horizontalLayoutWidget_3 = QWidget(Form)
         self.horizontalLayoutWidget_3.setObjectName(u"horizontalLayoutWidget_3")
-        self.horizontalLayoutWidget_3.setGeometry(QRect(22, 42, 321, 23))
-        self.horizontalLayout3 = QHBoxLayout(self.horizontalLayoutWidget_3)
-        self.horizontalLayout3.setObjectName(u"horizontalLayout3")
-        self.horizontalLayout3.setContentsMargins(0, 0, 0, 0)
-        self.label_2 = QLabel(self.horizontalLayoutWidget_3)
-        self.label_2.setObjectName(u"label_2")
+        self.horizontalLayoutWidget_3.setGeometry(QRect(216, 198, 303, 23))
+        self.horizontalLayout2 = QHBoxLayout(self.horizontalLayoutWidget_3)
+        self.horizontalLayout2.setObjectName(u"horizontalLayout2")
+        self.horizontalLayout2.setContentsMargins(0, 0, 0, 0)
+        self.radioButton1 = QRadioButton(self.horizontalLayoutWidget_3)
+        self.radioButton1.setObjectName(u"radioButton1")
 
-        self.horizontalLayout3.addWidget(self.label_2)
+        self.horizontalLayout2.addWidget(self.radioButton1)
 
         self.radioButton2 = QRadioButton(self.horizontalLayoutWidget_3)
         self.radioButton2.setObjectName(u"radioButton2")
 
-        self.horizontalLayout3.addWidget(self.radioButton2)
+        self.horizontalLayout2.addWidget(self.radioButton2)
 
-        self.radioButton1 = QRadioButton(self.horizontalLayoutWidget_3)
-        self.radioButton1.setObjectName(u"radioButton1")
+        self.radioButton3 = QRadioButton(self.horizontalLayoutWidget_3)
+        self.radioButton3.setObjectName(u"radioButton3")
 
-        self.horizontalLayout3.addWidget(self.radioButton1)
+        self.horizontalLayout2.addWidget(self.radioButton3)
 
-        self.radioButton = QRadioButton(self.horizontalLayoutWidget_3)
-        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton4 = QRadioButton(self.horizontalLayoutWidget_3)
+        self.radioButton4.setObjectName(u"radioButton4")
 
-        self.horizontalLayout3.addWidget(self.radioButton)
+        self.horizontalLayout2.addWidget(self.radioButton4)
 
+        self.label2 = QLabel(Form)
+        self.label2.setObjectName(u"label2")
+        self.label2.setGeometry(QRect(132, 198, 83, 21))
+        self.label2.setMinimumSize(QSize(55, 0))
+        self.label2.setMaximumSize(QSize(99999, 16777215))
+        self.checkBox1 = QCheckBox(Form)
+        self.checkBox1.setObjectName(u"checkBox1")
+        self.checkBox1.setGeometry(QRect(32, 198, 95, 20))
         self.label_BG.raise_()
         self.horizontalLayoutWidget.raise_()
-        self.horizontalLayoutWidget_2.raise_()
         self.horizontalLayoutWidget_3.raise_()
+        self.label2.raise_()
+        self.checkBox1.raise_()
 
         self.retranslateUi(Form)
 
@@ -183,10 +187,11 @@ class Ui_Form(object):
         self.pushButton3.setText(QCoreApplication.translate("Form", u"Exit", None))
         self.pushButton4.setText(QCoreApplication.translate("Form", u"Send", None))
         self.label_BG.setText("")
-        self.checkBox1.setText(QCoreApplication.translate("Form", u"\u6682\u505c\u529f\u80fd", None))
-        self.label_2.setText(QCoreApplication.translate("Form", u"\u5c3a\u5bf8\u9009\u62e9 :", None))
-        self.radioButton2.setText(QCoreApplication.translate("Form", u"1300px", None))
-        self.radioButton1.setText(QCoreApplication.translate("Form", u"1000px", None))
-        self.radioButton.setText(QCoreApplication.translate("Form", u"700px", None))
+        self.radioButton1.setText(QCoreApplication.translate("Form", u"1300px", None))
+        self.radioButton2.setText(QCoreApplication.translate("Form", u"1000px", None))
+        self.radioButton3.setText(QCoreApplication.translate("Form", u"700px", None))
+        self.radioButton4.setText(QCoreApplication.translate("Form", u"500px", None))
+        self.label2.setText(QCoreApplication.translate("Form", u"\u622a\u56fe\u6700\u5927\u5bbd\u5ea6 :", None))
+        self.checkBox1.setText(QCoreApplication.translate("Form", u"\u53d1\u9001\u7a7a\u683c", None))
     # retranslateUi
 

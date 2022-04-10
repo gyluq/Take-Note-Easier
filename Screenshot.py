@@ -18,11 +18,13 @@ class CaptureScreen(QMainWindow):
     isMousePressLeft = None
     painter = QPainter()
 
-    def __init__(self):
+    def __init__(self, maxWidth, stopOrNot):
         super().__init__()
         self.initWindow()  # 初始化窗口
         self.captureFullScreen()  # 获取全屏
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
+        self.maxWidth = maxWidth
+        self.stopOrNot = stopOrNot
 
     def initWindow(self):
         self.setMouseTracking(True)  # 鼠标追踪
@@ -48,7 +50,8 @@ class CaptureScreen(QMainWindow):
         if self.captureImage is not None:
             self.sendImage()
             self.close()
-            # keyboard.press_and_release("space")
+            if self.stopOrNot:
+                keyboard.press_and_release("space")
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -103,17 +106,21 @@ class CaptureScreen(QMainWindow):
         width = self.captureImage.size().width()
         height = self.captureImage.size().height()
         self.signal2.emit(width, height)
-        if width > 1300:
-            self.captureImage = self.captureImage.scaledToWidth(1300, Qt.SmoothTransformation)
-        elif height > 650:
-            self.captureImage = self.captureImage.scaled(QSize(int(width*650/height), 650), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # 控制截图尺寸
+        if width > self.maxWidth:
+            self.captureImage = self.captureImage.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
+        elif height > 700:
+            self.captureImage = self.captureImage.scaled(QSize(int(width*700/height), 700), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
         # 转为base64
         data = QtCore.QByteArray()
         buf = QtCore.QBuffer(data)
         self.captureImage.save(buf, "PNG")
         str1 = data.toBase64()
         imageBase64 = str(str1, encoding="utf-8")
-        # 发送截图数据到信号signal中
+
+        # 发送图片数据到信号signal中
         self.signal.emit(imageBase64)
 
     @property

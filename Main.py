@@ -13,7 +13,6 @@ from VideoNote import Ui_Form
 class yes(QWidget, Ui_Form):
     cap = None
     exit_time = 0
-    clear_time = 0
     signal3 = Signal()
 
     def __init__(self):
@@ -25,6 +24,14 @@ class yes(QWidget, Ui_Form):
         self.ui.pushButton2.clicked.connect(self.copyAll)
         self.ui.pushButton3.clicked.connect(self.exit)
         self.ui.pushButton4.clicked.connect(self.sendNote)
+
+        self.ui.radioButton1.setChecked(True)
+        self.ui.radioButton1.toggled.connect(lambda: self.ctrlPicSize("rbt1"))
+        self.ui.radioButton2.toggled.connect(lambda: self.ctrlPicSize("rbt2"))
+        self.ui.radioButton3.toggled.connect(lambda: self.ctrlPicSize("rbt3"))
+        self.ui.radioButton4.toggled.connect(lambda: self.ctrlPicSize("rbt4"))
+
+        self.ui.checkBox1.toggled.connect(self.stopVideoOrNot)
 
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
@@ -42,14 +49,21 @@ class yes(QWidget, Ui_Form):
         # 初始化一个热键
         self.hk_start = SystemHotkey()
         # 绑定快捷键和对应的信号发送函数
-        self.hk_start.register(('f4', ), callback=lambda x: self.send_key_event())
+        self.hk_start.register(('f4',), callback=lambda x: self.send_key_event())
+
+        # 截图的默认最大宽度
+        self.maxWidth = 1300
+
+        # 默认不暂停视频
+        self.stopOrNot = False
 
     '''
-    设置了快捷键Ctrl+1,调用截图
+    设置了快捷键f4,调用截图
     '''
 
     def send_key_event(self):
-        # keyboard.press_and_release("space")
+        if self.stopOrNot:
+            keyboard.press_and_release("space")
         self.signal3.emit()
 
     '''
@@ -85,7 +99,7 @@ class yes(QWidget, Ui_Form):
     '''
 
     def startScreen(self):
-        yes.cap = CaptureScreen()
+        yes.cap = CaptureScreen(self.maxWidth, self.stopOrNot)
         yes.cap.show()
         yes.cap.signal.connect(self.appendImage)
         yes.cap.signal2.connect(self.lastImageSize)
@@ -96,7 +110,6 @@ class yes(QWidget, Ui_Form):
 
     def copyAll(self):
         yes.exit_time = 0
-        yes.clear_time = 0
         self.ui.label.setText("")
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
@@ -107,7 +120,6 @@ class yes(QWidget, Ui_Form):
     '''
 
     def exit(self):
-        yes.clear_time = 0
         self.ui.label.setStyleSheet("color:purple;font-weight:bold")
         yes.exit_time += 1
         if yes.exit_time == 1:
@@ -123,10 +135,26 @@ class yes(QWidget, Ui_Form):
 
     def sendNote(self):
         yes.exit_time = 0
-        yes.clear_time = 0
         self.ui.label.setText("")
         self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
         self.ui.textEdit2.clear()
+
+    '''
+    控制截图的最大宽度
+    '''
+
+    def ctrlPicSize(self, rbt):
+        if rbt == "rbt1" and self.ui.radioButton1.isChecked():
+            self.maxWidth = 1300
+        elif rbt == "rbt2" and self.ui.radioButton2.isChecked():
+            self.maxWidth = 1000
+        elif rbt == "rbt3" and self.ui.radioButton3.isChecked():
+            self.maxWidth = 700
+        elif rbt == "rbt4" and self.ui.radioButton4.isChecked():
+            self.maxWidth = 500
+
+    def stopVideoOrNot(self):
+        self.stopOrNot = not self.stopOrNot
 
     '''
     槽函数,接受截图数据
