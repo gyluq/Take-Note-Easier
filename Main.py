@@ -52,7 +52,7 @@ class yes(QWidget, Ui_Form):
     '''
 
     def send_key_event(self):
-        keyboard.press_and_release("space")
+        # keyboard.press_and_release("space")
         self.signal3.emit()
 
     '''

@@ -48,7 +48,7 @@ class CaptureScreen(QMainWindow):
         if self.captureImage is not None:
             self.sendImage()
             self.close()
-            keyboard.press_and_release("space")
+            # keyboard.press_and_release("space")
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
