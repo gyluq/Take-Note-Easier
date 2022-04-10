@@ -105,8 +105,8 @@ class CaptureScreen(QMainWindow):
         self.signal2.emit(width, height)
         if width > 1300:
             self.captureImage = self.captureImage.scaledToWidth(1300, Qt.SmoothTransformation)
-        elif height > 700:
-            self.captureImage = self.captureImage.scaled(QSize(int(width*700/height), 700), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        elif height > 650:
+            self.captureImage = self.captureImage.scaled(QSize(int(width*650/height), 650), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         # 转为base64
         data = QtCore.QByteArray()
         buf = QtCore.QBuffer(data)

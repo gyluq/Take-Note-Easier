@@ -156,6 +156,7 @@ class yes(QWidget, Ui_Form):
     @Slot(str)
     def appendImage(self, imageBase64):
         self.ui.textEdit1.append(f"<img src=data:image/png;base64,{imageBase64}/>")
+        self.ui.textEdit1.append("")
 
     '''
     槽函数,检测图片大小,提醒用户是否截图成功
