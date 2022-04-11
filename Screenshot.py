@@ -72,7 +72,7 @@ class CaptureScreen(QMainWindow):
         self.painter.begin(self)  # 开始重绘
         self.paintBackgroundImage()
         penColor = QColor(30, 144, 245)  # 画笔颜色
-        self.painter.setPen(QPen(penColor, 1, Qt.SolidLine, Qt.RoundCap))  # 设置画笔,蓝色,1px大小,实线,圆形笔帽
+        self.painter.setPen(QPen(penColor, 2, Qt.SolidLine, Qt.RoundCap))  # 设置画笔,蓝色,1px大小,实线,圆形笔帽
         if self.isMousePressLeft is True:
             pickRect = self.getRectangle(self.beginPosition, self.endPosition)  # 获得要截图的矩形框
             self.captureImage = self.fullScreenImage.copy(pickRect)  # 捕获截图矩形框内的图片

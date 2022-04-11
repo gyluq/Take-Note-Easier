@@ -32,6 +32,8 @@ class yes(QWidget, Ui_Form):
         self.ui.radioButton2.toggled.connect(lambda: self.ctrlPicSize("rbt2"))
         self.ui.radioButton3.toggled.connect(lambda: self.ctrlPicSize("rbt3"))
         self.ui.radioButton4.toggled.connect(lambda: self.ctrlPicSize("rbt4"))
+        self.ui.radioButton5.toggled.connect(lambda: self.ctrlPicSize("rbt5"))
+        self.ui.radioButton6.toggled.connect(lambda: self.ctrlPicSize("rbt6"))
 
         # QCheckBox切换事件
         self.ui.checkBox1.toggled.connect(self.stopVideoOrNot)
@@ -155,10 +157,14 @@ class yes(QWidget, Ui_Form):
         if rbt == "rbt1" and self.ui.radioButton1.isChecked():
             self.maxWidth = 1300
         elif rbt == "rbt2" and self.ui.radioButton2.isChecked():
-            self.maxWidth = 1000
+            self.maxWidth = 1100
         elif rbt == "rbt3" and self.ui.radioButton3.isChecked():
-            self.maxWidth = 700
+            self.maxWidth = 1000
         elif rbt == "rbt4" and self.ui.radioButton4.isChecked():
+            self.maxWidth = 900
+        elif rbt == "rbt5" and self.ui.radioButton5.isChecked():
+            self.maxWidth = 700
+        elif rbt == "rbt6" and self.ui.radioButton6.isChecked():
             self.maxWidth = 500
 
     def stopVideoOrNot(self):
@@ -179,7 +185,7 @@ class yes(QWidget, Ui_Form):
 
     @Slot(int, int)
     def lastImageSize(self, width, height):
-        if width < 50 or height < 50:
+        if width < 50 and height < 50:
             self.ui.label.setStyleSheet("color:red;font-weight:bold")
             self.ui.label.setText("小于50px")
         else:
