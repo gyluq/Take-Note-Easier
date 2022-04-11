@@ -1,7 +1,7 @@
 import sys
 
 import keyboard
-from PySide6.QtCore import Slot, Qt, Signal
+from PySide6.QtCore import Slot, Qt, Signal, QSettings
 from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import QApplication, QWidget
 from system_hotkey import SystemHotkey
@@ -14,28 +14,36 @@ class yes(QWidget, Ui_Form):
     cap = None
     exit_time = 0
     signal3 = Signal()
+    setting = None
 
     def __init__(self):
         super(yes, self).__init__()
         self.ui = Ui_Form()
         self.ui.setupUi(self)
 
-        # 绑定事件
+        # QPushButton按钮事件
         self.ui.pushButton2.clicked.connect(self.copyAll)
         self.ui.pushButton3.clicked.connect(self.exit)
         self.ui.pushButton4.clicked.connect(self.sendNote)
 
+        # QRadioButton切换事件
         self.ui.radioButton1.setChecked(True)
         self.ui.radioButton1.toggled.connect(lambda: self.ctrlPicSize("rbt1"))
         self.ui.radioButton2.toggled.connect(lambda: self.ctrlPicSize("rbt2"))
         self.ui.radioButton3.toggled.connect(lambda: self.ctrlPicSize("rbt3"))
         self.ui.radioButton4.toggled.connect(lambda: self.ctrlPicSize("rbt4"))
 
+        # QCheckBox切换事件
         self.ui.checkBox1.toggled.connect(self.stopVideoOrNot)
 
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+
+        # 读取配置文件
+        self.setting = QSettings("config.ini", QSettings.IniFormat)
+        bg = self.setting.value("UI/background_color")
+        self.ui.label_BG.setStyleSheet(f"background-color:{bg}")
 
         # 窗口置顶
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
@@ -182,6 +190,6 @@ class yes(QWidget, Ui_Form):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = yes()
-    mainWin.move(400, 5)
+    mainWin.move(500, 27)
     mainWin.show()
     sys.exit(app.exec())

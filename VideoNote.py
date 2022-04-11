@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(872, 316)
+        Form.resize(815, 69)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
@@ -40,12 +40,26 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "QPushButton:hover{\n"
-"	background-color: #A34EC9;\n"
+"	background-color: #9926C9;\n"
 "}\n"
 "\n"
 "QPushButton:pressed{\n"
-"    background-color:#104CC4;\n"
-"	border: 1px solid #104CC4;\n"
+"    background-color:#8B23B8;\n"
+"	border: 1px solid #8B23B8;\n"
+"	color:white;\n"
+" }\n"
+"\n"
+"#pushButton3{\n"
+"	background-color: #C2002F;\n"
+"}\n"
+"\n"
+"#pushButton3:hover{\n"
+"	background-color: #EB345F;\n"
+"}\n"
+"\n"
+"#pushButton3:pressed{\n"
+"    background-color:#C4294E;\n"
+"	border: 1px solid #C4294E;\n"
 "	color:white;\n"
 " }\n"
 "\n"
@@ -55,22 +69,14 @@ class Ui_Form(object):
 "	border-radius:10px;\n"
 "}\n"
 "\n"
-"#label_bg{\n"
-"	background-color:#FFEDED;\n"
-"	border:1px solid #ffffff;\n"
-"	border-radius:10px;\n"
-"}\n"
-"\n"
 "#label{\n"
 "	padding:3px 1px 3px 1px;\n"
 "}\n"
 "\n"
-"#pushButton3{\n"
-"	background-color: #C2002F;\n"
-"}")
+"")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(31, 168, 793, 30))
+        self.horizontalLayoutWidget.setGeometry(QRect(15, 10, 793, 30))
         self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout1.setSpacing(0)
         self.horizontalLayout1.setObjectName(u"horizontalLayout1")
@@ -130,14 +136,14 @@ class Ui_Form(object):
 
         self.label_BG = QLabel(Form)
         self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(22, 164, 805, 57))
+        self.label_BG.setGeometry(QRect(6, 6, 805, 57))
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(8)
         self.label_BG.setFont(font3)
         self.horizontalLayoutWidget_3 = QWidget(Form)
         self.horizontalLayoutWidget_3.setObjectName(u"horizontalLayoutWidget_3")
-        self.horizontalLayoutWidget_3.setGeometry(QRect(216, 198, 303, 23))
+        self.horizontalLayoutWidget_3.setGeometry(QRect(200, 40, 303, 23))
         self.horizontalLayout2 = QHBoxLayout(self.horizontalLayoutWidget_3)
         self.horizontalLayout2.setObjectName(u"horizontalLayout2")
         self.horizontalLayout2.setContentsMargins(0, 0, 0, 0)
@@ -163,12 +169,12 @@ class Ui_Form(object):
 
         self.label2 = QLabel(Form)
         self.label2.setObjectName(u"label2")
-        self.label2.setGeometry(QRect(132, 198, 83, 21))
+        self.label2.setGeometry(QRect(116, 40, 83, 21))
         self.label2.setMinimumSize(QSize(55, 0))
         self.label2.setMaximumSize(QSize(99999, 16777215))
         self.checkBox1 = QCheckBox(Form)
         self.checkBox1.setObjectName(u"checkBox1")
-        self.checkBox1.setGeometry(QRect(32, 198, 95, 20))
+        self.checkBox1.setGeometry(QRect(16, 40, 95, 20))
         self.label_BG.raise_()
         self.horizontalLayoutWidget.raise_()
         self.horizontalLayoutWidget_3.raise_()
