@@ -14,7 +14,6 @@ class yes(QWidget, Ui_Form):
     cap = None
     exit_time = 0
     signal3 = Signal()
-    setting = None
 
     def __init__(self):
         super(yes, self).__init__()
@@ -42,11 +41,6 @@ class yes(QWidget, Ui_Form):
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        # 读取配置文件
-        self.setting = QSettings("config.ini", QSettings.IniFormat)
-        bg = self.setting.value("UI/background_color")
-        self.ui.label_BG.setStyleSheet(f"background-color:{bg}")
-
         # 窗口置顶
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
 
@@ -66,6 +60,33 @@ class yes(QWidget, Ui_Form):
 
         # 默认不暂停视频
         self.stopOrNot = False
+
+        # 加载配置文件
+        self.setting = QSettings("config.ini", QSettings.IniFormat)
+        self.loadConfigurationFile()
+
+    '''
+    加载配置文件
+    '''
+    def loadConfigurationFile(self):
+        # 界面背景
+        bg = self.setting.value("UI/background_color")
+        self.ui.label_BG.setStyleSheet(f"background-color:{bg}")
+
+        # 上次选择的尺寸
+        selectSize = self.setting.value("OPTION/lastSelectedSize")
+        if selectSize == "1300px":
+            self.ui.radioButton1.setChecked(True)
+        elif selectSize == "1100px":
+            self.ui.radioButton2.setChecked(True)
+        elif selectSize == "1000px":
+            self.ui.radioButton3.setChecked(True)
+        elif selectSize == "900px":
+            self.ui.radioButton4.setChecked(True)
+        elif selectSize == "700px":
+            self.ui.radioButton5.setChecked(True)
+        elif selectSize == "500px":
+            self.ui.radioButton6.setChecked(True)
 
     '''
     设置了快捷键f4,调用截图
@@ -109,6 +130,7 @@ class yes(QWidget, Ui_Form):
     '''
 
     def startScreen(self):
+        # cap必须是类属性,否则方法结束后会结束生命周期
         yes.cap = CaptureScreen(self.maxWidth, self.stopOrNot)
         yes.cap.show()
         yes.cap.signal.connect(self.appendImage)
@@ -156,16 +178,22 @@ class yes(QWidget, Ui_Form):
     def ctrlPicSize(self, rbt):
         if rbt == "rbt1" and self.ui.radioButton1.isChecked():
             self.maxWidth = 1300
+            self.setting.setValue("OPTION/lastSelectedSize", "1300px")
         elif rbt == "rbt2" and self.ui.radioButton2.isChecked():
             self.maxWidth = 1100
+            self.setting.setValue("OPTION/lastSelectedSize", "1100px")
         elif rbt == "rbt3" and self.ui.radioButton3.isChecked():
             self.maxWidth = 1000
+            self.setting.setValue("OPTION/lastSelectedSize", "1000px")
         elif rbt == "rbt4" and self.ui.radioButton4.isChecked():
             self.maxWidth = 900
+            self.setting.setValue("OPTION/lastSelectedSize", "900px")
         elif rbt == "rbt5" and self.ui.radioButton5.isChecked():
             self.maxWidth = 700
+            self.setting.setValue("OPTION/lastSelectedSize", "700px")
         elif rbt == "rbt6" and self.ui.radioButton6.isChecked():
             self.maxWidth = 500
+            self.setting.setValue("OPTION/lastSelectedSize", "500px")
 
     def stopVideoOrNot(self):
         self.stopOrNot = not self.stopOrNot
