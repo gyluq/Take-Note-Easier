@@ -18,13 +18,12 @@ class CaptureScreen(QMainWindow):
     isMousePressLeft = None
     painter = QPainter()
 
-    def __init__(self, maxWidth, stopOrNot):
+    def __init__(self, maxWidth):
         super().__init__()
         self.initWindow()  # 初始化窗口
         self.captureFullScreen()  # 获取全屏
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
         self.maxWidth = maxWidth
-        self.stopOrNot = stopOrNot
 
     def initWindow(self):
         self.setMouseTracking(True)  # 鼠标追踪
@@ -50,8 +49,6 @@ class CaptureScreen(QMainWindow):
         if self.captureImage is not None:
             self.sendImage()
             self.close()
-            if self.stopOrNot:
-                keyboard.press_and_release("space")
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
