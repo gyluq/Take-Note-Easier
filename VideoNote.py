@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(887, 54)
+        Form.resize(887, 52)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
@@ -98,17 +98,25 @@ class Ui_Form(object):
 "QComboBox::drop-down {\n"
 "    subcontrol-origin: padding;\n"
 "    subcontrol-position: top right;\n"
-"    width: 10px;\n"
-"    border-left-width: 1px;\n"
-"    border-left-color: darkgray;\n"
-"    border-left-style: solid;\n"
-"    border-top-right-radius: 3px;\n"
+"    width: 12px;\n"
+"	border:1px solid darkgray;\n"
+"	border-top-right-radius: 3px;\n"
 "    border-bottom-right-radius: 3px;\n"
-"	background-color:#F3F3F3;\n"
 "}\n"
 "\n"
+"QComboBox::down-arrow \n"
+"{\n"
+"    width: 9px;  \n"
+"    height: 9px;   \n"
+"    image: url(:/icons/icons/sort-left.png);\n"
+"}\n"
 "\n"
-"\n"
+"QComboBox::down-arrow:on\n"
+"{\n"
+"    width: 9px;  \n"
+"    height: 9px;   \n"
+"    image: url(:/icons/icons/sort-down.png);\n"
+"}\n"
 "")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")

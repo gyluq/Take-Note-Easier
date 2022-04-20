@@ -10,12 +10,10 @@ from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
 from VideoNote import Ui_Form
-from Notation import Notation
 
 
 class yes(QWidget, Ui_Form):
     cap = None
-    Notation = None
     signal3 = Signal()
 
     def __init__(self):
@@ -38,13 +36,12 @@ class yes(QWidget, Ui_Form):
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
-
         # 拖拽移动
         self.m_flag = False
         self.m_Position = 0
-
         # 连接信号与槽
         self.signal3.connect(self.startScreen)
+
         # 初始化一个热键
         self.hk_start = SystemHotkey()
         # 绑定快捷键和对应的信号发送函数
@@ -52,14 +49,11 @@ class yes(QWidget, Ui_Form):
 
         # 截图的默认最大宽度
         self.maxWidth = 1300
-
-        # 加载配置文件
+        # 配置文件
         self.setting = QSettings("config.ini", QSettings.IniFormat)
         self.loadConfigurationFile()
-
         # QComboBox切换事件
         self.ui.comboBox.currentTextChanged.connect(self.changeSize)
-
         # 窗口置顶
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
         self.topFlag = False
@@ -122,10 +116,8 @@ class yes(QWidget, Ui_Form):
         # cap必须是类属性,否则方法结束后会结束生命周期
         self.cap = CaptureScreen(self.maxWidth)
         self.cap.show()
-        # self.Notation = Notation()
-        # self.Notation.show()
-        self.cap.signal.connect(self.appendImage)
-        self.cap.signal2.connect(self.lastImageSize)
+        self.cap.signal_size.connect(self.lastImageSize)
+        self.cap.signal_picAndNote.connect(self.appendImageAndNote)
 
     def clearAll(self):
         msgBox = QMessageBox()
@@ -208,9 +200,10 @@ class yes(QWidget, Ui_Form):
     槽函数,接受截图数据
     '''
 
-    @Slot(str)
-    def appendImage(self, imageBase64):
+    @Slot(str, str)
+    def appendImageAndNote(self, imageBase64, note):
         self.ui.textEdit1.append(f"<img src=data:image/png;base64,{imageBase64}/>")
+        self.ui.textEdit1.append(note)
         self.ui.textEdit1.append("")
 
     '''

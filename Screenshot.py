@@ -10,8 +10,8 @@ import img_rc
 
 class CaptureScreen(QMainWindow):
     # 初始化变量
-    _speak = Signal(str)
-    _size = Signal(int, int)
+    signal_picAndNote = Signal(str, str)
+    signal_size = Signal(int, int)
     beginPosition = None
     endPosition = None
     fullScreenImage = None
@@ -60,7 +60,7 @@ class CaptureScreen(QMainWindow):
         self.fullScreenImage = QGuiApplication.primaryScreen().grabWindow(0)
 
     def saveNote(self):
-        self.sendImage()
+        self.sendImageAndNote()
         self.close()
 
     def mousePressEvent(self, event):
@@ -72,9 +72,11 @@ class CaptureScreen(QMainWindow):
 
     def mouseMoveEvent(self, event):
         if self.isMousePressLeft is True:
+            # 移动时隐藏文本框和按钮
             self.textedit.hide()
             self.okButton.hide()
             self.endPosition = event.position()
+            # 重置标志
             self.drawFlag = True
             self.update()
 
@@ -83,6 +85,8 @@ class CaptureScreen(QMainWindow):
         if event.button() == Qt.LeftButton:
             self.isMousePressLeft = False
             if self.captureImage is not None and self.drawFlag:
+                # 清空textedit
+                self.textedit.clear()
                 # 右下角的坐标
                 bottomRight_x = min(self.beginPosition.x(), self.endPosition.x())
                 bottomRight_y = max(self.beginPosition.y(), self.endPosition.y())
@@ -155,11 +159,11 @@ class CaptureScreen(QMainWindow):
     发送截图的base64数据
     '''
 
-    def sendImage(self):
+    def sendImageAndNote(self):
         # 发送截图尺寸到信号signal2中
         width = self.captureImage.size().width()
         height = self.captureImage.size().height()
-        self.signal2.emit(width, height)
+        self.signal_size.emit(width, height)
 
         # 控制截图尺寸
         if width > self.maxWidth:
@@ -176,15 +180,7 @@ class CaptureScreen(QMainWindow):
         imageBase64 = str(str1, encoding="utf-8")
 
         # 发送图片数据到信号signal中
-        self.signal.emit(imageBase64)
-
-    @property
-    def signal(self):
-        return self._speak
-
-    @property
-    def signal2(self):
-        return self._size
+        self.signal_picAndNote.emit(imageBase64, self.textedit.toPlainText())
 
 
 if __name__ == "__main__":
