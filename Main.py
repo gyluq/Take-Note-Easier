@@ -22,12 +22,14 @@ class yes(QWidget, Ui_Form):
         self.ui.setupUi(self)
 
         # QPushButton按钮事件
+        self.ui.pushButton.clicked.connect(self.copyAll)
         self.ui.pushButton1.clicked.connect(self.clearAll)
-        self.ui.pushButton2.clicked.connect(self.copyAll)
+        self.ui.pushButton2.clicked.connect(self.cutAll)
         self.ui.pushButton3.clicked.connect(self.exit)
         self.ui.pushButton4.clicked.connect(self.sendNote)
         self.ui.pushButton5.clicked.connect(self.stayTop)
-        self.ui.pushButton1.setToolTip("清空笔记")
+        self.ui.pushButton.setToolTip("复制")
+        self.ui.pushButton1.setToolTip("清空")
         self.ui.pushButton2.setToolTip("剪切")
         self.ui.pushButton3.setToolTip("退出")
         self.ui.pushButton4.setToolTip("添加笔记")
@@ -119,7 +121,15 @@ class yes(QWidget, Ui_Form):
         self.cap.signal_size.connect(self.lastImageSize)
         self.cap.signal_picAndNote.connect(self.appendImageAndNote)
 
+    def copyAll(self):
+        self.ui.label.setText("")
+        self.ui.textEdit1.setFocus()
+        self.ui.textEdit1.selectAll()
+        keyboard.press_and_release("ctrl+c")
+        keyboard.press_and_release("right")
+
     def clearAll(self):
+        self.ui.label.setText("")
         msgBox = QMessageBox()
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("There are already some notes.\nAre you sure you want to clear them?")
@@ -134,7 +144,7 @@ class yes(QWidget, Ui_Form):
     复制到剪切板
     '''
 
-    def copyAll(self):
+    def cutAll(self):
         self.ui.label.setText("")
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
@@ -171,10 +181,12 @@ class yes(QWidget, Ui_Form):
                                   win32con.SWP_NOMOVE | win32con.SWP_NOACTIVATE | win32con.SWP_NOOWNERZORDER
                                   | win32con.SWP_SHOWWINDOW | win32con.SWP_NOSIZE)
             self.ui.pushButton5.setStyleSheet("background-image:url(:/icons/icons/pin_active.png);")
+            self.ui.label.setText("已置顶")
         else:
             win32gui.SetWindowPos(window, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW
                                   | win32con.SWP_NOSIZE | win32con.SWP_NOMOVE)
             self.ui.pushButton5.setStyleSheet("background-image:url(:/icons/icons/pin_default.png);")
+            self.ui.label.setText("未置顶")
         self.topFlag = not self.topFlag
 
     '''

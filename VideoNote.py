@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(887, 52)
+        Form.resize(962, 72)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
@@ -50,12 +50,16 @@ class Ui_Form(object):
 "	background-color:#e1e1e1;\n"
 " }\n"
 "\n"
+"#pushButton{\n"
+"	background-image:url(:/icons/icons/copy.png);\n"
+"}\n"
+"\n"
 "#pushButton1{\n"
 "	background-image:url(:/icons/icons/trash.png);\n"
 "}\n"
 "\n"
 "#pushButton2{\n"
-"	background-image:url(:/icons/icons/copy.png);\n"
+"	background-image:url(:/icons/icons/cut.png);\n"
 "}\n"
 "\n"
 "#pushButton3{\n"
@@ -78,16 +82,16 @@ class Ui_Form(object):
 "	border-radius:10px;\n"
 "}\n"
 "\n"
-"/*\u63d0\u793a\u4fe1\u606f*/\n"
+"/*\u63d0"
+                        "\u793a\u4fe1\u606f*/\n"
 "#label{\n"
 "	padding:3px 1px 3px 1px;\n"
 "}\n"
-""
-                        "\n"
+"\n"
 "/*----------------------------------------------------------------------------------*/\n"
 "QComboBox {\n"
 "	height:23px;\n"
-"    border: 1px solid #D2D2D2;\n"
+"    border: 1px solid darkgray;\n"
 "    border-radius: 3px;\n"
 "	background-color:#FAFAFA;\n"
 "    padding: 1px 8px 1px 3px;\n"
@@ -99,7 +103,7 @@ class Ui_Form(object):
 "    subcontrol-origin: padding;\n"
 "    subcontrol-position: top right;\n"
 "    width: 12px;\n"
-"	border:1px solid darkgray;\n"
+"	border-left:1px solid darkgray;\n"
 "	border-top-right-radius: 3px;\n"
 "    border-bottom-right-radius: 3px;\n"
 "}\n"
@@ -120,7 +124,7 @@ class Ui_Form(object):
 "")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(16, 12, 853, 30))
+        self.horizontalLayoutWidget.setGeometry(QRect(16, 12, 881, 30))
         self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout1.setSpacing(2)
         self.horizontalLayout1.setObjectName(u"horizontalLayout1")
@@ -148,6 +152,11 @@ class Ui_Form(object):
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout1.addItem(self.horizontalSpacer)
+
+        self.pushButton = QPushButton(self.horizontalLayoutWidget)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.horizontalLayout1.addWidget(self.pushButton)
 
         self.pushButton2 = QPushButton(self.horizontalLayoutWidget)
         self.pushButton2.setObjectName(u"pushButton2")
@@ -203,7 +212,7 @@ class Ui_Form(object):
 
         self.label_BG = QLabel(Form)
         self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(6, 8, 871, 37))
+        self.label_BG.setGeometry(QRect(6, 8, 895, 37))
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(8)
@@ -218,6 +227,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Power", None))
+        self.pushButton.setText("")
         self.pushButton2.setText("")
         self.pushButton1.setText("")
         self.pushButton3.setText("")
