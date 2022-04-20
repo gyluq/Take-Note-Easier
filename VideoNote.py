@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(949, 54)
+        Form.resize(887, 54)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
@@ -84,63 +84,35 @@ class Ui_Form(object):
 "}\n"
 ""
                         "\n"
-"#comboBox{\n"
-"	height:23px;\n"
-"	background-color:#F5F5F5;\n"
-"	border:1px solid #dadada;\n"
-"}\n"
-"\n"
-"QComboBox {\n"
-"    border: 1px solid gray;\n"
-"    border-radius: 3px;\n"
-"    padding: 1px 18px 1px 3px;\n"
-"    min-width: 6em;\n"
-"}\n"
-"\n"
 "/*----------------------------------------------------------------------------------*/\n"
-"QComboBox:!editable, QComboBox::drop-down:editable {\n"
-"     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                 stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,\n"
-"                                 stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);\n"
+"QComboBox {\n"
+"	height:23px;\n"
+"    border: 1px solid #D2D2D2;\n"
+"    border-radius: 3px;\n"
+"	background-color:#FAFAFA;\n"
+"    padding: 1px 8px 1px 3px;\n"
+"    min-width: 4em;\n"
 "}\n"
 "\n"
-"/* QComboBox gets the \"on\" state when the popup is open */\n"
-"QComboBox:!editable:on, QComboBox::drop-down:editable:on {\n"
-"    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,\n"
-"                                stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);\n"
-"}\n"
-"\n"
-"QComboBox:on { /* shift the text when the pop"
-                        "up opens */\n"
-"    padding-top: 3px;\n"
-"    padding-left: 4px;\n"
-"}\n"
-"\n"
+"/*\u53f3\u4fa7\u7684\u5c55\u793a\u6309\u94ae*/\n"
 "QComboBox::drop-down {\n"
 "    subcontrol-origin: padding;\n"
 "    subcontrol-position: top right;\n"
-"    width: 15px;\n"
-"\n"
+"    width: 10px;\n"
 "    border-left-width: 1px;\n"
 "    border-left-color: darkgray;\n"
-"    border-left-style: solid; /* just a single line */\n"
-"    border-top-right-radius: 3px; /* same radius as the QComboBox */\n"
+"    border-left-style: solid;\n"
+"    border-top-right-radius: 3px;\n"
 "    border-bottom-right-radius: 3px;\n"
+"	background-color:#F3F3F3;\n"
 "}\n"
 "\n"
-"QComboBox::down-arrow {\n"
-"    image: url(/usr/share/icons/crystalsvg/16x16/actions/1downarrow.png);\n"
-"}\n"
 "\n"
-"QComboBox::down-arrow:on { /* shift the arrow when popup is open */\n"
-"    top: 1px;\n"
-"    left: 1px;\n"
-"}\n"
+"\n"
 "")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(36, 12, 889, 30))
+        self.horizontalLayoutWidget.setGeometry(QRect(16, 12, 853, 30))
         self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout1.setSpacing(2)
         self.horizontalLayout1.setObjectName(u"horizontalLayout1")
@@ -223,7 +195,7 @@ class Ui_Form(object):
 
         self.label_BG = QLabel(Form)
         self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(26, 8, 905, 37))
+        self.label_BG.setGeometry(QRect(6, 8, 871, 37))
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(8)

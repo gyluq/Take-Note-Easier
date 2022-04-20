@@ -10,11 +10,12 @@ from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
 from VideoNote import Ui_Form
-from setWindowTop import setWindowTopOrNot
+from Notation import Notation
 
 
 class yes(QWidget, Ui_Form):
     cap = None
+    Notation = None
     signal3 = Signal()
 
     def __init__(self):
@@ -59,7 +60,7 @@ class yes(QWidget, Ui_Form):
         # QComboBox切换事件
         self.ui.comboBox.currentTextChanged.connect(self.changeSize)
 
-        # 切换置顶
+        # 窗口置顶
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
         self.topFlag = False
 
@@ -121,6 +122,8 @@ class yes(QWidget, Ui_Form):
         # cap必须是类属性,否则方法结束后会结束生命周期
         self.cap = CaptureScreen(self.maxWidth)
         self.cap.show()
+        # self.Notation = Notation()
+        # self.Notation.show()
         self.cap.signal.connect(self.appendImage)
         self.cap.signal2.connect(self.lastImageSize)
 
