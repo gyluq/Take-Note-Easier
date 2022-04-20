@@ -120,7 +120,9 @@ class CaptureScreen(QMainWindow):
     '''
 
     def paintBackgroundImage(self):
+        shadowColor = QColor(0, 0, 0, 70)
         self.painter.drawPixmap(0, 0, self.fullScreenImage)
+        self.painter.fillRect(self.fullScreenImage.rect(), shadowColor)
 
     '''
     绘图事件
@@ -134,6 +136,7 @@ class CaptureScreen(QMainWindow):
         if self.isMousePressLeft is True:
             pickRect = self.getRectangle(self.beginPosition, self.endPosition)  # 获得要截图的矩形框
             self.captureImage = self.fullScreenImage.copy(pickRect)  # 捕获截图矩形框内的图片
+            self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)  # 填充截取的区域
             self.painter.drawRect(pickRect)  # 画矩形边框
         self.painter.end()  # 结束重绘
 
