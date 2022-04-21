@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'VideoNote.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.4
+## Created by: Qt User Interface Compiler version 6.3.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(962, 72)
+        Form.resize(905, 43)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
@@ -67,7 +67,7 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "#pushButton4{\n"
-"	background-image:url(:/icons/icons/send-01.png);\n"
+"	background-image:url(:/icons/icons/send3.png);\n"
 "}\n"
 "\n"
 "#pushButton5{\n"
@@ -87,6 +87,14 @@ class Ui_Form(object):
 "#label{\n"
 "	padding:3px 1px 3px 1px;\n"
 "}\n"
+"\n"
+"/*----------------------------------------------------------------------------------*/\n"
+"QTextEdit{\n"
+"	border:1px solid #808080;\n"
+"	border-radius:3px;\n"
+"	background-color:rgb(255,255,255);\n"
+"}\n"
+"\n"
 "\n"
 "/*----------------------------------------------------------------------------------*/\n"
 "QComboBox {\n"
@@ -115,7 +123,8 @@ class Ui_Form(object):
 "    image: url(:/icons/icons/sort-left.png);\n"
 "}\n"
 "\n"
-"QComboBox::down-arrow:on\n"
+"QCo"
+                        "mboBox::down-arrow:on\n"
 "{\n"
 "    width: 9px;  \n"
 "    height: 9px;   \n"
@@ -124,7 +133,7 @@ class Ui_Form(object):
 "")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(16, 12, 881, 30))
+        self.horizontalLayoutWidget.setGeometry(QRect(14, 6, 881, 30))
         self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout1.setSpacing(2)
         self.horizontalLayout1.setObjectName(u"horizontalLayout1")
@@ -146,6 +155,8 @@ class Ui_Form(object):
 
         self.comboBox = QComboBox(self.horizontalLayoutWidget)
         self.comboBox.setObjectName(u"comboBox")
+        self.comboBox.setMinimumSize(QSize(73, 25))
+        self.comboBox.setMaximumSize(QSize(16777215, 25))
 
         self.horizontalLayout1.addWidget(self.comboBox)
 
@@ -212,7 +223,7 @@ class Ui_Form(object):
 
         self.label_BG = QLabel(Form)
         self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(6, 8, 895, 37))
+        self.label_BG.setGeometry(QRect(4, 2, 895, 37))
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(8)

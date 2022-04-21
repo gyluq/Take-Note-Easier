@@ -1,10 +1,9 @@
 import sys
 
 import keyboard
-from PySide6 import QtCore
-from PySide6.QtCore import Qt, qAbs, QRect, Signal, QSize
+from PySide6.QtCore import Qt, qAbs, QRect, Signal, QSize, QByteArray, QBuffer
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon
-from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QPushButton, QGroupBox, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QPushButton
 import img_rc
 
 
@@ -31,7 +30,7 @@ class CaptureScreen(QMainWindow):
         self.textedit = QTextEdit(self)
         self.textedit.setPlaceholderText("记些什么...")
         self.textedit.setStyleSheet(
-            "background-color:rgba(255,255,255, 50);border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
+            "background-color:rgba(255,255,255, 60);border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
         self.textedit.hide()
         # 确认按钮
         self.okButton = QPushButton(QIcon(":/icons/icons/yes3.png"), "", self)
@@ -176,8 +175,8 @@ class CaptureScreen(QMainWindow):
                                                          Qt.SmoothTransformation)
 
         # 转为base64
-        data = QtCore.QByteArray()
-        buf = QtCore.QBuffer(data)
+        data = QByteArray()
+        buf = QBuffer(data)
         self.captureImage.save(buf, "PNG")
         str1 = data.toBase64()
         imageBase64 = str(str1, encoding="utf-8")

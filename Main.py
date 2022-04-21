@@ -15,6 +15,8 @@ from VideoNote import Ui_Form
 class yes(QWidget, Ui_Form):
     cap = None
     signal3 = Signal()
+    pic_num = 0
+    note_num = 0
 
     def __init__(self):
         super(yes, self).__init__()
@@ -139,6 +141,7 @@ class yes(QWidget, Ui_Form):
         ret = msgBox.exec()
         if ret == QMessageBox.Yes:
             self.ui.textEdit1.clear()
+            self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     '''
     复制到剪切板
@@ -149,6 +152,7 @@ class yes(QWidget, Ui_Form):
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+x")
+        self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     '''
     退出程序
@@ -171,8 +175,11 @@ class yes(QWidget, Ui_Form):
 
     def sendNote(self):
         self.ui.label.setText("")
-        self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
-        self.ui.textEdit2.clear()
+        if self.ui.textEdit2.toPlainText() != "":
+            self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
+            self.ui.textEdit2.clear()
+            self.note_num += 1
+            self.ui.textEdit1.setToolTip(f"{self.pic_num}张图,{self.note_num}条笔记")
 
     def stayTop(self):
         window = win32gui.FindWindow(None, "Power")
@@ -214,9 +221,14 @@ class yes(QWidget, Ui_Form):
 
     @Slot(str, str)
     def appendImageAndNote(self, imageBase64, note):
+        if self.note_num or self.pic_num:
+            self.ui.textEdit1.append("")
         self.ui.textEdit1.append(f"<img src=data:image/png;base64,{imageBase64}/>")
-        self.ui.textEdit1.append(note)
-        self.ui.textEdit1.append("")
+        self.pic_num += 1
+        if note != "":
+            self.ui.textEdit1.append(note)
+            self.note_num += 1
+        self.ui.textEdit1.setToolTip(f"{self.pic_num}张图,{self.note_num}条笔记")
 
     '''
     槽函数,检测图片大小,提醒用户是否截图成功
