@@ -1,29 +1,28 @@
 import sys
 
 import keyboard
-from PySide6.QtCore import Qt, qAbs, QRect, Signal, QSize, QByteArray, QBuffer
+from PySide6.QtCore import Qt, QRect, Signal, QSize, QByteArray, QBuffer
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QPushButton
 import img_rc
 
 
 class CaptureScreen(QMainWindow):
-    # 初始化变量
-    signal_picAndNote = Signal(str, str)
-    signal_size = Signal(int, int)
+    signal_picAndNote = Signal(str, str)  # 发送截图和笔记
+    signal_size = Signal(int, int)  # 发送截图尺寸
 
-    beginPosition = None
-    endPosition = None
+    clickPosition = None  # 点击位置
+    releasePosition = None  # 释放位置
     left = None
     right = None
     top = None
     bottom = None
 
-    fullScreenImage = None
-    captureImage = None
-    isMousePressLeft = None
-    painter = QPainter()
-    text = None
+    fullScreenImage = None  # 全屏截图
+    captureImage = None  # 捕捉的截图
+    isMousePressLeft = None  # 鼠标左键状态
+    painter = QPainter()  # 刷子
+    drawFlag = False  # 鼠标移动才更新edit和button的位置
 
     def __init__(self, maxWidth):
         super().__init__()
@@ -52,9 +51,6 @@ class CaptureScreen(QMainWindow):
         self.okButton.hide()
         self.okButton.clicked.connect(self.saveNote)
 
-        # 鼠标移动才更新edit和button的位置
-        self.drawFlag = False
-
     def initWindow(self):
         self.setMouseTracking(True)  # 鼠标追踪
         self.setCursor(Qt.CrossCursor)  # 设置光标
@@ -70,7 +66,7 @@ class CaptureScreen(QMainWindow):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.beginPosition = event.position()
+            self.clickPosition = event.position()
             self.isMousePressLeft = True
         elif event.button() == Qt.RightButton:
             self.close()
@@ -82,7 +78,7 @@ class CaptureScreen(QMainWindow):
             # 移动时隐藏文本框和按钮
             self.textedit.hide()
             self.okButton.hide()
-            self.endPosition = event.position()
+            self.releasePosition = event.position()
             # 防止单纯的点击事件重置截图
             self.drawFlag = True
             self.update()
@@ -116,29 +112,32 @@ class CaptureScreen(QMainWindow):
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.isMousePressLeft = False
-            self.endPosition = event.position()
+            self.releasePosition = event.position()
             if self.captureImage is not None and self.drawFlag:
                 # 清空textedit
                 self.textedit.clear()
-                # 右下角的坐标
-                bottomRight_x = min(self.beginPosition.x(), self.endPosition.x())
-                bottomRight_y = max(self.beginPosition.y(), self.endPosition.y())
+                # 左下角的坐标
+                bottomRight_x = min(self.clickPosition.x(), self.releasePosition.x())
+                bottomRight_y = max(self.clickPosition.y(), self.releasePosition.y())
 
                 # 设置文本框的尺寸
-                selectWidth = abs(self.beginPosition.x() - self.endPosition.x())
+                selectWidth = abs(self.clickPosition.x() - self.releasePosition.x())
                 if selectWidth < 300:  # 最小不得小于300px
                     self.textedit.setMinimumWidth(300)
                     self.textedit.setMaximumWidth(300)
                 else:
-                    self.textedit.setMinimumWidth(selectWidth - self.okButton.width() - 2)
-                    self.textedit.setMaximumWidth(selectWidth - self.okButton.width() - 2)
+                    self.textedit.setMinimumWidth(selectWidth - self.okButton.width() - 10)
+                    self.textedit.setMaximumWidth(selectWidth - self.okButton.width() - 10)
                 self.textedit.setMinimumHeight(30)
                 self.textedit.setMaximumHeight(30)
 
                 # 移动笔记框和按钮位置
-                self.textedit.move(bottomRight_x, bottomRight_y + 5)
-                self.okButton.move(bottomRight_x + self.textedit.width() + 2, bottomRight_y + 5)
-
+                if bottomRight_y < 1030:
+                    self.textedit.move(bottomRight_x + 3, bottomRight_y + 5)
+                    self.okButton.move(bottomRight_x + self.textedit.width() + 5, bottomRight_y + 5)
+                else:
+                    self.textedit.move(bottomRight_x + 3, bottomRight_y - 35)
+                    self.okButton.move(bottomRight_x + self.textedit.width() + 5, bottomRight_y - 35)
                 # 笔记框获得焦点
                 self.textedit.setFocus()
                 self.drawFlag = False
@@ -208,11 +207,11 @@ class CaptureScreen(QMainWindow):
 
     def refreshBorderLocation(self):
         # getRectangle也需要调用,因此不能替换为self.captureImage is not None
-        if self.beginPosition is not None and self.endPosition is not None:
-            self.left = min(self.beginPosition.x(), self.endPosition.x())
-            self.right = max(self.beginPosition.x(), self.endPosition.x())
-            self.top = min(self.beginPosition.y(), self.endPosition.y())
-            self.bottom = max(self.beginPosition.y(), self.endPosition.y())
+        if self.clickPosition is not None and self.releasePosition is not None:
+            self.left = min(self.clickPosition.x(), self.releasePosition.x())
+            self.right = max(self.clickPosition.x(), self.releasePosition.x())
+            self.top = min(self.clickPosition.y(), self.releasePosition.y())
+            self.bottom = max(self.clickPosition.y(), self.releasePosition.y())
 
     '''
     发送截图的base64数据
