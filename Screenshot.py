@@ -11,8 +11,14 @@ class CaptureScreen(QMainWindow):
     # 初始化变量
     signal_picAndNote = Signal(str, str)
     signal_size = Signal(int, int)
+
     beginPosition = None
     endPosition = None
+    left = None
+    right = None
+    top = None
+    bottom = None
+
     fullScreenImage = None
     captureImage = None
     isMousePressLeft = None
@@ -66,23 +72,51 @@ class CaptureScreen(QMainWindow):
         if event.button() == Qt.LeftButton:
             self.beginPosition = event.position()
             self.isMousePressLeft = True
-        if event.button() == Qt.RightButton:
+        elif event.button() == Qt.RightButton:
             self.close()
 
     def mouseMoveEvent(self, event):
+        self.refreshBorderLocation()
+        # 按下鼠标开始截图
         if self.isMousePressLeft is True:
             # 移动时隐藏文本框和按钮
             self.textedit.hide()
             self.okButton.hide()
             self.endPosition = event.position()
-            # 重置标志
+            # 防止单纯的点击事件重置截图
             self.drawFlag = True
             self.update()
+        # 设置各区域光标样式
+        elif self.captureImage is not None:
+            # 左右
+            if self.left - 9 < event.x() < self.left + 9 and self.top + 9 < event.y() < self.bottom - 9:
+                self.setCursor(Qt.SizeHorCursor)
+            elif self.right - 9 < event.x() < self.right + 9 and self.top + 9 < event.y() < self.bottom - 9:
+                self.setCursor(Qt.SizeHorCursor)
+            # 上下
+            elif self.top - 9 < event.y() < self.top + 9 and self.left + 9 < event.x() < self.right - 9:
+                self.setCursor(Qt.SizeVerCursor)
+            elif self.bottom - 9 < event.y() < self.bottom + 9 and self.left + 9 < event.x() < self.right - 9:
+                self.setCursor(Qt.SizeVerCursor)
+            # 顶点(1,4)
+            elif self.top - 9 < event.y() < self.top + 9 and self.left - 9 < event.x() < self.left + 9 or self.bottom - 9 < event.y() \
+                    < self.bottom + 9 and self.right - 9 < event.x() < self.right + 9:
+                self.setCursor(Qt.SizeFDiagCursor)
+            # 顶点(2,3)
+            elif self.top - 9 < event.y() < self.top + 9 and self.right - 9 < event.x() < self.right + 9 or self.bottom - 9 < event.y() \
+                    < self.bottom + 9 and self.left - 9 < event.x() < self.left + 9:
+                self.setCursor(Qt.SizeBDiagCursor)
+            # 中心
+            elif self.left + 9 < event.x() < self.right - 9 and self.top + 9 < event.y() < self.bottom - 9:
+                self.setCursor(Qt.SizeAllCursor)
+            # 其他位置
+            else:
+                self.setCursor(Qt.ArrowCursor)
 
     def mouseReleaseEvent(self, event):
-        self.endPosition = event.position()
         if event.button() == Qt.LeftButton:
             self.isMousePressLeft = False
+            self.endPosition = event.position()
             if self.captureImage is not None and self.drawFlag:
                 # 清空textedit
                 self.textedit.clear()
@@ -92,7 +126,7 @@ class CaptureScreen(QMainWindow):
 
                 # 设置文本框的尺寸
                 selectWidth = abs(self.beginPosition.x() - self.endPosition.x())
-                if selectWidth < 300:
+                if selectWidth < 300:  # 最小不得小于300px
                     self.textedit.setMinimumWidth(300)
                     self.textedit.setMaximumWidth(300)
                 else:
@@ -101,10 +135,11 @@ class CaptureScreen(QMainWindow):
                 self.textedit.setMinimumHeight(30)
                 self.textedit.setMaximumHeight(30)
 
-                # 移动位置
+                # 移动笔记框和按钮位置
                 self.textedit.move(bottomRight_x, bottomRight_y + 5)
                 self.okButton.move(bottomRight_x + self.textedit.width() + 2, bottomRight_y + 5)
 
+                # 笔记框获得焦点
                 self.textedit.setFocus()
                 self.drawFlag = False
                 self.textedit.show()
@@ -119,8 +154,10 @@ class CaptureScreen(QMainWindow):
     '''
 
     def paintBackgroundImage(self):
-        shadowColor = QColor(0, 0, 0, 70)
+        shadowColor = QColor(0, 0, 0, 90)
+        # 绘制全屏截图
         self.painter.drawPixmap(0, 0, self.fullScreenImage)
+        # 绘制遮罩层
         self.painter.fillRect(self.fullScreenImage.rect(), shadowColor)
 
     '''
@@ -130,32 +167,52 @@ class CaptureScreen(QMainWindow):
     def paintEvent(self, event):
         self.painter.begin(self)  # 开始重绘
         self.paintBackgroundImage()
-        penColor = QColor(30, 144, 245)  # 画笔颜色
-        self.painter.setPen(QPen(penColor, 2, Qt.SolidLine, Qt.RoundCap))  # 设置画笔,蓝色,1px大小,实线,圆形笔帽
         if self.isMousePressLeft is True:
-            pickRect = self.getRectangle(self.beginPosition, self.endPosition)  # 获得要截图的矩形框
-            self.captureImage = self.fullScreenImage.copy(pickRect)  # 捕获截图矩形框内的图片
-            self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)  # 填充截取的区域
-            self.painter.drawRect(pickRect)  # 画矩形边框
-        self.painter.end()  # 结束重绘
+            # 获得要截图的矩形框
+            pickRect = self.getRectangle()
+            # 捕获截图矩形框内的图片
+            self.captureImage = self.fullScreenImage.copy(pickRect)
+            # 填充截取的区域
+            self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)
+            # 绘制顶点
+            penColor = QColor(203, 96, 211)  # 画笔颜色
+            self.painter.fillRect(QRect(self.left - 3, self.top - 3, 6, 6), penColor)
+            self.painter.fillRect(QRect(self.left - 3, self.bottom - 3, 6, 6), penColor)
+            self.painter.fillRect(QRect(self.right - 3, self.top - 3, 6, 6), penColor)
+            self.painter.fillRect(QRect(self.right - 3, self.bottom - 3, 6, 6), penColor)
+            # 画矩形边框
+            self.painter.setPen(QPen(QColor(156, 2, 167), 2, Qt.SolidLine, Qt.RoundCap))
+            self.painter.drawRect(pickRect)
+        # 结束重绘
+        self.painter.end()
 
     '''
     获取框选区域的截图
     '''
 
-    def getRectangle(self, beginPoint, endPoint):
-        pickRectWidth = int(qAbs(beginPoint.x() - endPoint.x()))
-        pickRectHeight = int(qAbs(beginPoint.y() - endPoint.y()))
-        pickRectTop = beginPoint.x() if beginPoint.x() < endPoint.x() else endPoint.x()
-        pickRectLeft = beginPoint.y() if beginPoint.y() < endPoint.y() else endPoint.y()
-        pickRect = QRect(pickRectTop, pickRectLeft, pickRectWidth, pickRectHeight)
+    def getRectangle(self):
+        self.refreshBorderLocation()
+        pickRectWidth = self.right - self.left
+        pickRectHeight = self.bottom - self.top
+        pickRect = QRect(self.left, self.top, pickRectWidth, pickRectHeight)
         # 避免高度宽度为0时候报错
         if pickRectWidth == 0:
             pickRect.setWidth(2)
         if pickRectHeight == 0:
             pickRect.setHeight(2)
-
         return pickRect
+
+    '''
+    刷新边界位置
+    '''
+
+    def refreshBorderLocation(self):
+        # getRectangle也需要调用,因此不能替换为self.captureImage is not None
+        if self.beginPosition is not None and self.endPosition is not None:
+            self.left = min(self.beginPosition.x(), self.endPosition.x())
+            self.right = max(self.beginPosition.x(), self.endPosition.x())
+            self.top = min(self.beginPosition.y(), self.endPosition.y())
+            self.bottom = max(self.beginPosition.y(), self.endPosition.y())
 
     '''
     发送截图的base64数据
