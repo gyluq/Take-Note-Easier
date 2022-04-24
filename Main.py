@@ -54,7 +54,7 @@ class yes(QWidget, Ui_Form):
         # 截图的默认最大宽度
         self.maxWidth = 1300
         # 配置文件
-        self.setting = QSettings("config.ini", QSettings.IniFormat)
+        self.setting = QSettings("configuration.ini", QSettings.IniFormat)
         self.loadConfigurationFile()
         # QComboBox切换事件
         self.ui.comboBox.currentTextChanged.connect(self.changeSize)
@@ -76,6 +76,7 @@ class yes(QWidget, Ui_Form):
         self.ui.comboBox.addItems(sizeList)
         # 设置上一次使用的尺寸
         self.ui.comboBox.setCurrentIndex(int(self.setting.value("OPTION/lastSelectedSize")))
+        self.changeSize(self.ui.comboBox.currentText())
 
     '''
     设置了快捷键f4,调用截图
@@ -201,6 +202,10 @@ class yes(QWidget, Ui_Form):
     '''
 
     def changeSize(self, rbt):
+        if rbt == "无限制":
+            self.setting.setValue("OPTION/lastSelectedSize", "6")
+            self.maxWidth = 9999
+            return
         if rbt == "500px":
             self.setting.setValue("OPTION/lastSelectedSize", "0")
         elif rbt == "700px":

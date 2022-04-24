@@ -263,7 +263,7 @@ class CaptureScreen(QMainWindow):
         if width > self.maxWidth:
             self.captureImage = self.captureImage.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
         elif height > 900:
-            self.captureImage = self.captureImage.scaled(QSize(int(width * 700 / height), 700), Qt.KeepAspectRatio,
+            self.captureImage = self.captureImage.scaled(QSize(int(width * 900 / height), 900), Qt.KeepAspectRatio,
                                                          Qt.SmoothTransformation)
 
         # 转为base64
