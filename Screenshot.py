@@ -114,6 +114,18 @@ class CaptureScreen(QMainWindow):
                                           self.TLPosition_copy.y() + event.y() - self.clickPosition.y())
                 self.BRPosition = QPointF(self.BRPosition_copy.x() + event.x() - self.clickPosition.x(),
                                           self.BRPosition_copy.y() + event.y() - self.clickPosition.y())
+                if self.TLPosition.x() <= 0:
+                    self.TLPosition.setX(1)
+                    self.BRPosition.setX(abs(self.BRPosition_copy.x() - self.TLPosition_copy.x()))
+                if self.TLPosition.y() <= 0:
+                    self.TLPosition.setY(1)
+                    self.BRPosition.setY(abs(self.BRPosition_copy.y() - self.TLPosition_copy.y()))
+                if self.BRPosition.x() >= 1919:
+                    self.BRPosition.setX(1919)
+                    self.TLPosition.setX(1919 - abs(self.BRPosition_copy.x() - self.TLPosition_copy.x()))
+                if self.BRPosition.y() >= 1079:
+                    self.BRPosition.setY(1079)
+                    self.TLPosition.setY(1079 - abs(self.BRPosition_copy.y() - self.TLPosition_copy.y()))
                 self.update()
                 return
             self.BRPosition = event.position()
@@ -132,12 +144,12 @@ class CaptureScreen(QMainWindow):
             elif self.bottom - 9 < event.y() < self.bottom + 9 and self.left + 9 < event.x() < self.right - 9:
                 self.setCursor(Qt.SizeVerCursor)
             # 顶点(1,4)
-            elif self.top - 9 < event.y() < self.top + 9 and self.left - 9 < event.x() < self.left + 9 or self.bottom - 9 < event.y() \
-                    < self.bottom + 9 and self.right - 9 < event.x() < self.right + 9:
+            elif self.top - 9 < event.y() < self.top + 9 and self.left - 9 < event.x() < self.left + 9 or \
+                    self.bottom - 9 < event.y() < self.bottom + 9 and self.right - 9 < event.x() < self.right + 9:
                 self.setCursor(Qt.SizeFDiagCursor)
             # 顶点(2,3)
-            elif self.top - 9 < event.y() < self.top + 9 and self.right - 9 < event.x() < self.right + 9 or self.bottom - 9 < event.y() \
-                    < self.bottom + 9 and self.left - 9 < event.x() < self.left + 9:
+            elif self.top - 9 < event.y() < self.top + 9 and self.right - 9 < event.x() < self.right + 9 or \
+                    self.bottom - 9 < event.y() < self.bottom + 9 and self.left - 9 < event.x() < self.left + 9:
                 self.setCursor(Qt.SizeBDiagCursor)
             # 中心
             elif self.left + 9 < event.x() < self.right - 9 and self.top + 9 < event.y() < self.bottom - 9:
