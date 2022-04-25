@@ -28,6 +28,8 @@ class CaptureScreen(QMainWindow):
     leftMousePressFlag = None  # 鼠标左键状态
     drawFlag = False  # 鼠标移动才更新edit和button的位置
     totalMoveFlag = False  # 整体移动
+    borderMoveFlag = {"left": 0, "right": 0, "bottom": 0, "top": 0, "top-left": 0,
+                      "top-right": 0, "bottom-left": 0, "bottom-right": 0}  # 拖动边框移动
 
     def __init__(self, maxWidth):
         super().__init__()
@@ -84,16 +86,42 @@ class CaptureScreen(QMainWindow):
             # 判断进行的操作
             if self.captureImage is not None:
                 self.refreshBorderLocation()
+                self.TLPosition_copy = self.TLPosition
+                self.BRPosition_copy = self.BRPosition
                 # 整体移动
-                if self.left + 9 < event.x() < self.right - 9 and self.top + 9 < event.y() < self.bottom:
+                if self.left + 9 < event.x() < self.right - 9 and self.top + 9 < event.y() < self.bottom - 9:
                     self.totalMoveFlag = True
-                    self.TLPosition_copy = self.TLPosition
-                    self.BRPosition_copy = self.BRPosition
                     return
-                # 拉伸边框
-                # if False:
-                #     pass
-                #     return
+                # 拖动边框调整尺寸
+                else:
+                    # 左右
+                    if self.left - 9 < event.x() < self.left + 9 and self.top + 9 < event.y() < self.bottom - 9:
+                        self.borderMoveFlag["left"] = 1
+                        return
+                    if self.right - 9 < event.x() < self.right + 9 and self.top + 9 < event.y() < self.bottom - 9:
+                        self.borderMoveFlag["right"] = 1
+                        return
+                    # 上下
+                    if self.top - 9 < event.y() < self.top + 9 and self.left + 9 < event.x() < self.right - 9:
+                        self.borderMoveFlag["top"] = 1
+                        return
+                    if self.bottom - 9 < event.y() < self.bottom + 9 and self.left + 9 < event.x() < self.right - 9:
+                        self.borderMoveFlag["bottom"] = 1
+                        return
+                    # 顶点(1,4)
+                    if self.top - 9 < event.y() < self.top + 9 and self.left - 9 < event.x() < self.left + 9:
+                        self.borderMoveFlag["top-left"] = 1
+                        return
+                    if self.bottom - 9 < event.y() < self.bottom + 9 and self.right - 9 < event.x() < self.right + 9:
+                        self.borderMoveFlag["bottom-right"] = 1
+                        return
+                    # 顶点(2,3)
+                    if self.top - 9 < event.y() < self.top + 9 and self.right - 9 < event.x() < self.right + 9:
+                        self.borderMoveFlag["top-right"] = 1
+                        return
+                    if self.bottom - 9 < event.y() < self.bottom + 9 and self.left - 9 < event.x() < self.left + 9:
+                        self.borderMoveFlag["bottom-left"] = 1
+                        return
             # 截图操作
             self.TLPosition = event.position()
         elif event.button() == Qt.RightButton:
@@ -128,6 +156,71 @@ class CaptureScreen(QMainWindow):
                     self.TLPosition.setY(1079 - abs(self.BRPosition_copy.y() - self.TLPosition_copy.y()))
                 self.update()
                 return
+            else:
+                if self.borderMoveFlag["left"]:
+                    if self.BRPosition.x() < self.TLPosition.x():
+                        self.BRPosition.setX(event.x())
+                    else:
+                        self.TLPosition.setX(event.x())
+                    self.update()
+                    return
+                if self.borderMoveFlag["right"]:
+                    if self.BRPosition.x() > self.TLPosition.x():
+                        self.BRPosition.setX(event.x())
+                    else:
+                        self.TLPosition.setX(event.x())
+                    self.update()
+                    return
+                if self.borderMoveFlag["top"]:
+                    if self.BRPosition.y() < self.TLPosition.y():
+                        self.BRPosition.setY(event.y())
+                    else:
+                        self.TLPosition.setY(event.y())
+                    self.update()
+                    return
+                if self.borderMoveFlag["bottom"]:
+                    if self.BRPosition.y() > self.TLPosition.y():
+                        self.BRPosition.setY(event.y())
+                    else:
+                        self.TLPosition.setY(event.y())
+                    self.update()
+                    return
+                if self.borderMoveFlag["top-left"]:
+                    if self.BRPosition.x() < self.TLPosition.x():
+                        self.BRPosition.setX(event.x())
+                        self.BRPosition.setY(event.y())
+                    else:
+                        self.TLPosition.setY(event.y())
+                        self.TLPosition.setX(event.x())
+                    self.update()
+                    return
+                if self.borderMoveFlag["top-right"]:
+                    if self.BRPosition.x() < self.TLPosition.x():
+                        self.BRPosition.setY(event.y())
+                        self.TLPosition.setX(event.x())
+                    else:
+                        self.TLPosition.setY(event.y())
+                        self.BRPosition.setX(event.x())
+                    self.update()
+                    return
+                if self.borderMoveFlag["bottom-right"]:
+                    if self.BRPosition.x() > self.TLPosition.x():
+                        self.BRPosition.setY(event.y())
+                        self.BRPosition.setX(event.x())
+                    else:
+                        self.TLPosition.setY(event.y())
+                        self.TLPosition.setX(event.x())
+                    self.update()
+                    return
+                if self.borderMoveFlag["bottom-left"]:
+                    if self.BRPosition.x() < self.TLPosition.x():
+                        self.BRPosition.setX(event.x())
+                        self.TLPosition.setY(event.y())
+                    else:
+                        self.BRPosition.setY(event.y())
+                        self.TLPosition.setX(event.x())
+                    self.update()
+                    return
             self.BRPosition = event.position()
             self.update()
         # 设置各区域光标样式
@@ -163,6 +256,7 @@ class CaptureScreen(QMainWindow):
             self.leftMousePressFlag = False
             self.releasePosition = event.position()
             self.totalMoveFlag = False
+            self.refreshFlags()  # 重置边框移动flag
             if self.captureImage is not None and self.drawFlag:
                 # 清空textedit
                 self.textedit.clear()
@@ -262,6 +356,10 @@ class CaptureScreen(QMainWindow):
         self.right = max(self.TLPosition.x(), self.BRPosition.x())
         self.top = min(self.TLPosition.y(), self.BRPosition.y())
         self.bottom = max(self.TLPosition.y(), self.BRPosition.y())
+
+    def refreshFlags(self):
+        self.borderMoveFlag = {"left": 0, "right": 0, "bottom": 0, "top": 0, "top-left": 0,
+                               "top-right": 0, "bottom-left": 0, "bottom-right": 0}
 
     '''
     发送截图的base64数据
