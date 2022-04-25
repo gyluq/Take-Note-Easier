@@ -204,7 +204,9 @@ class CaptureScreen(QMainWindow):
     def paintEvent(self, event):
         self.painter.begin(self)  # 开始重绘
         self.paintBackgroundImage()
-        if self.leftMousePressFlag is True:
+        # 因未知原因,拖动释放鼠标时会产生update事件,调用paintEvent方法.此时leftMousePressFlag变为False,仅仅绘制了背景,没有绘制矩形框
+        # 因此需要添加另一个条件self.captureImage is not None
+        if self.leftMousePressFlag is True or self.captureImage is not None:
             # 获得要截图的矩形框
             pickRect = self.getRectangle()
             # 捕获截图矩形框内的图片
