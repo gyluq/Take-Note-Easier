@@ -24,17 +24,16 @@ class CaptureScreen(QMainWindow):
     captureImage = None  # 捕捉的截图
     painter = QPainter()  # 刷子
 
-    # Flags
-    leftMousePressFlag = None  # 鼠标左键状态
+    leftMousePressFlag = None
     drawFlag = False  # 鼠标移动才更新edit和button的位置
-    totalMoveFlag = False  # 整体移动
+    totalMoveFlag = False
     borderMoveFlag = {"left": 0, "right": 0, "bottom": 0, "top": 0, "top-left": 0,
-                      "top-right": 0, "bottom-left": 0, "bottom-right": 0}  # 拖动边框移动
+                      "top-right": 0, "bottom-left": 0, "bottom-right": 0}
 
     def __init__(self, maxWidth):
         super().__init__()
-        self.initWindow()  # 初始化窗口
-        self.captureFullScreen()  # 获取全屏
+        self.initWindow()
+        self.captureFullScreen()
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
         self.maxWidth = maxWidth
 
@@ -58,17 +57,17 @@ class CaptureScreen(QMainWindow):
         self.okButton.hide()
         self.okButton.clicked.connect(self.saveNote)
 
-        # 保存计算的位置
+        # 保存由点位置转换得到的边位置
         self.left = 0
         self.right = 0
         self.top = 0
         self.bottom = 0
 
     def initWindow(self):
-        self.setMouseTracking(True)  # 鼠标追踪
-        self.setCursor(Qt.CrossCursor)  # 设置光标
-        self.setWindowFlag(Qt.FramelessWindowHint)  # 窗口无边框
-        self.setWindowState(Qt.WindowFullScreen)  # 窗口全屏
+        self.setMouseTracking(True)
+        self.setCursor(Qt.CrossCursor)
+        self.setWindowFlag(Qt.FramelessWindowHint)
+        self.setWindowState(Qt.WindowFullScreen)
 
     def captureFullScreen(self):
         self.fullScreenImage = QGuiApplication.primaryScreen().grabWindow(0)
@@ -142,6 +141,7 @@ class CaptureScreen(QMainWindow):
                                           self.TLPosition_copy.y() + event.y() - self.clickPosition.y())
                 self.BRPosition = QPointF(self.BRPosition_copy.x() + event.x() - self.clickPosition.x(),
                                           self.BRPosition_copy.y() + event.y() - self.clickPosition.y())
+                # 边界范围
                 if self.TLPosition.x() <= 0:
                     self.TLPosition.setX(1)
                     self.BRPosition.setX(abs(self.BRPosition_copy.x() - self.TLPosition_copy.x()))
@@ -292,20 +292,15 @@ class CaptureScreen(QMainWindow):
         if event.key() == Qt.Key_Escape:
             self.close()
 
-    '''
-    绘制全屏截图作为背景
-    '''
-
     def paintBackgroundImage(self):
+        """
+        绘制全屏截图作为背景
+        """
         shadowColor = QColor(0, 0, 0, 90)
         # 绘制全屏截图
         self.painter.drawPixmap(0, 0, self.fullScreenImage)
         # 绘制遮罩层
         self.painter.fillRect(self.fullScreenImage.rect(), shadowColor)
-
-    '''
-    绘图事件
-    '''
 
     def paintEvent(self, event):
         self.painter.begin(self)  # 开始重绘
@@ -331,11 +326,10 @@ class CaptureScreen(QMainWindow):
         # 结束重绘
         self.painter.end()
 
-    '''
-    获取框选区域的截图
-    '''
-
     def getRectangle(self):
+        """
+        获取框选区域的截图
+        """
         self.refreshBorderLocation()
         pickRectWidth = self.right - self.left
         pickRectHeight = self.bottom - self.top
@@ -347,11 +341,10 @@ class CaptureScreen(QMainWindow):
             pickRect.setHeight(2)
         return pickRect
 
-    '''
-    刷新边界位置
-    '''
-
     def refreshBorderLocation(self):
+        """
+        刷新边界位置
+        """
         self.left = min(self.TLPosition.x(), self.BRPosition.x())
         self.right = max(self.TLPosition.x(), self.BRPosition.x())
         self.top = min(self.TLPosition.y(), self.BRPosition.y())
@@ -361,37 +354,22 @@ class CaptureScreen(QMainWindow):
         self.borderMoveFlag = {"left": 0, "right": 0, "bottom": 0, "top": 0, "top-left": 0,
                                "top-right": 0, "bottom-left": 0, "bottom-right": 0}
 
-    '''
-    发送截图的base64数据
-    '''
-
     def sendImageAndNote(self):
+        """
+        发送截图的base64数据
+        """
         # 发送截图尺寸到信号signal2中
         width = self.captureImage.size().width()
         height = self.captureImage.size().height()
         self.signal_size.emit(width, height)
-
         # 控制截图尺寸
         if width > self.maxWidth:
             self.captureImage = self.captureImage.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
-        elif height > 900:
-            self.captureImage = self.captureImage.scaled(QSize(int(width * 900 / height), 900), Qt.KeepAspectRatio,
-                                                         Qt.SmoothTransformation)
-
         # 转为base64
         data = QByteArray()
         buf = QBuffer(data)
         self.captureImage.save(buf, "PNG")
         str1 = data.toBase64()
         imageBase64 = str(str1, encoding="utf-8")
-
         # 发送图片数据到信号signal中
         self.signal_picAndNote.emit(imageBase64, self.textedit.toPlainText())
-
-
-if __name__ == "__main__":
-    keyboard.wait(hotkey='f4')  # 按F4开始截图
-    app = QApplication(sys.argv)
-    windows = CaptureScreen()
-    windows.show()
-    sys.exit(app.exec())

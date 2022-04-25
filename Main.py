@@ -14,14 +14,16 @@ from VideoNote import Ui_Form
 
 class yes(QWidget, Ui_Form):
     cap = None
-    signal3 = Signal()
-    pic_num = 0
-    note_num = 0
+    keyboardSignal = Signal()
+    pic_num = 0  # 图片数量
+    note_num = 0  # 笔记数量
+    stayOnTopFlag = False
 
     def __init__(self):
         super(yes, self).__init__()
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+        self.keyboardSignal.connect(self.startScreen)
 
         # QPushButton按钮事件
         self.ui.pushButton.clicked.connect(self.copyAll)
@@ -40,54 +42,38 @@ class yes(QWidget, Ui_Form):
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+
         # 拖拽移动
         self.m_flag = False
         self.m_Position = 0
-        # 连接信号与槽
-        self.signal3.connect(self.startScreen)
 
-        # 初始化一个热键
+        # 设置截图快捷键
         self.hk_start = SystemHotkey()
-        # 绑定快捷键和对应的信号发送函数
         self.hk_start.register(('f4',), callback=lambda x: self.send_key_event())
 
-        # 截图的默认最大宽度
-        self.maxWidth = 1300
-        # 配置文件
-        self.setting = QSettings("configuration.ini", QSettings.IniFormat)
+        self.maxWidth = 1300  # 截图的默认最大宽度
+        self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
         self.loadConfigurationFile()
-        # QComboBox切换事件
-        self.ui.comboBox.currentTextChanged.connect(self.changeSize)
-        # 窗口置顶
-        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
-        self.topFlag = False
-
-    '''
-    加载配置文件
-    '''
+        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)  # 窗口置顶
 
     def loadConfigurationFile(self):
+        """
+        加载配置文件
+        """
         # 界面背景
         bg = self.setting.value("UI/background_color")
         self.ui.label_BG.setStyleSheet(f"background-color:{bg}")
-
         # 初始化comboBox
         sizeList = self.setting.value("OPTION/allSize")
         self.ui.comboBox.addItems(sizeList)
-        # 设置上一次使用的尺寸
+        self.ui.comboBox.currentTextChanged.connect(self.changeSize)
         self.ui.comboBox.setCurrentIndex(int(self.setting.value("OPTION/lastSelectedSize")))
-        self.changeSize(self.ui.comboBox.currentText())
-
-    '''
-    设置了快捷键f4,调用截图
-    '''
 
     def send_key_event(self):
-        self.signal3.emit()
-
-    '''
-    鼠标点击事件
-    '''
+        """
+        设置了快捷键f4,调用截图
+        """
+        self.keyboardSignal.emit()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -96,30 +82,21 @@ class yes(QWidget, Ui_Form):
             event.accept()
             self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
 
-    '''
-    鼠标移动事件
-    '''
-
     def mouseMoveEvent(self, QMouseEvent):
         if self.m_flag:
             self.move(QMouseEvent.globalPosition().toPoint() - self.m_Position)  # 更改窗口位置
             QMouseEvent.accept()
 
-    '''
-    鼠标释放事件
-    '''
-
     def mouseReleaseEvent(self, QMouseEvent):
         self.m_flag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
 
-    '''
-    开始截图
-    '''
-
     def startScreen(self):
-        # cap必须是类属性,否则方法结束后会结束生命周期
-        self.cap = CaptureScreen(self.maxWidth)
+        """
+        开始截图
+        """
+        self.hideMe()
+        self.cap = CaptureScreen(self.maxWidth)  # cap必须是类属性,否则方法结束后会结束生命周期
         self.cap.show()
         self.cap.signal_size.connect(self.lastImageSize)
         self.cap.signal_picAndNote.connect(self.appendImageAndNote)
@@ -130,6 +107,13 @@ class yes(QWidget, Ui_Form):
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+c")
         keyboard.press_and_release("right")
+
+    def cutAll(self):
+        self.ui.label.setText("")
+        self.ui.textEdit1.setFocus()
+        self.ui.textEdit1.selectAll()
+        keyboard.press_and_release("ctrl+x")
+        self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def clearAll(self):
         self.ui.label.setText("")
@@ -144,21 +128,6 @@ class yes(QWidget, Ui_Form):
             self.ui.textEdit1.clear()
             self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
-    '''
-    复制到剪切板
-    '''
-
-    def cutAll(self):
-        self.ui.label.setText("")
-        self.ui.textEdit1.setFocus()
-        self.ui.textEdit1.selectAll()
-        keyboard.press_and_release("ctrl+x")
-        self.ui.textEdit1.setToolTip(f"这里什么也没有")
-
-    '''
-    退出程序
-    '''
-
     def exit(self):
         msgBox = QMessageBox()
         msgBox.setWindowTitle("Confirm")
@@ -170,10 +139,6 @@ class yes(QWidget, Ui_Form):
         if ret == QMessageBox.Close:
             self.close()
 
-    '''
-    添加笔记
-    '''
-
     def sendNote(self):
         self.ui.label.setText("")
         if self.ui.textEdit2.toPlainText() != "":
@@ -183,8 +148,11 @@ class yes(QWidget, Ui_Form):
             self.ui.textEdit1.setToolTip(f"{self.pic_num}张图,{self.note_num}条笔记")
 
     def stayTop(self):
+        """
+        置顶按钮调用,切换置顶
+        """
         window = win32gui.FindWindow(None, "Power")
-        if self.topFlag:
+        if self.stayOnTopFlag:
             win32gui.SetWindowPos(window, win32con.HWND_TOPMOST, 0, 0, 0, 0,
                                   win32con.SWP_NOMOVE | win32con.SWP_NOACTIVATE | win32con.SWP_NOOWNERZORDER
                                   | win32con.SWP_SHOWWINDOW | win32con.SWP_NOSIZE)
@@ -195,13 +163,26 @@ class yes(QWidget, Ui_Form):
                                   | win32con.SWP_NOSIZE | win32con.SWP_NOMOVE)
             self.ui.pushButton5.setStyleSheet("background-image:url(:/icons/icons/pin_default.png);")
             self.ui.label.setText("未置顶")
-        self.topFlag = not self.topFlag
+        self.stayOnTopFlag = not self.stayOnTopFlag
 
-    '''
-    控制截图的最大宽度
-    '''
+    def hideMe(self):
+        """
+        截图时隐藏窗口
+        """
+        window = win32gui.FindWindow(None, "Power")
+        win32gui.ShowWindow(window, win32con.SW_SHOWMINIMIZED)
+
+    def showMe(self):
+        """
+        截图完成显示窗口
+        """
+        window = win32gui.FindWindow(None, "Power")
+        win32gui.ShowWindow(window, win32con.SW_SHOWDEFAULT)
 
     def changeSize(self, rbt):
+        """
+        控制截图的最大宽度
+        """
         if rbt == "无限制":
             self.setting.setValue("OPTION/lastSelectedSize", "6")
             self.maxWidth = 9999
@@ -220,12 +201,11 @@ class yes(QWidget, Ui_Form):
             self.setting.setValue("OPTION/lastSelectedSize", "5")
         self.maxWidth = int(rbt[:-2])
 
-    '''
-    槽函数,接受截图数据
-    '''
-
     @Slot(str, str)
     def appendImageAndNote(self, imageBase64, note):
+        """
+        槽函数,接受截图数据和笔记
+        """
         if self.note_num or self.pic_num:
             self.ui.textEdit1.append("")
         self.ui.textEdit1.append(f"<img src=data:image/png;base64,{imageBase64}/>")
@@ -234,13 +214,13 @@ class yes(QWidget, Ui_Form):
             self.ui.textEdit1.append(note)
             self.note_num += 1
         self.ui.textEdit1.setToolTip(f"{self.pic_num}张图,{self.note_num}条笔记")
-
-    '''
-    槽函数,检测图片大小,提醒用户是否截图成功
-    '''
+        self.showMe()
 
     @Slot(int, int)
     def lastImageSize(self, width, height):
+        """
+        槽函数,检测图片大小,提醒用户是否截图成功
+        """
         if width < 50 and height < 50:
             self.ui.label.setStyleSheet("color:red;font-weight:bold")
             self.ui.label.setText("小于50px")
