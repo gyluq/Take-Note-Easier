@@ -1,15 +1,13 @@
-import sys
-
-import keyboard
 from PySide6.QtCore import Qt, QRect, Signal, QSize, QByteArray, QBuffer, QPointF
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon
-from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QPushButton
+from PySide6.QtWidgets import QMainWindow, QTextEdit, QPushButton
 import img_rc
 
 
 class CaptureScreen(QMainWindow):
     signal_picAndNote = Signal(str, str)  # 发送截图和笔记
     signal_size = Signal(int, int)  # 发送截图尺寸
+    signal_close = Signal()  # 发送截图尺寸
 
     clickPosition = None  # 点击位置
     releasePosition = None  # 释放位置
@@ -124,6 +122,7 @@ class CaptureScreen(QMainWindow):
             # 截图操作
             self.TLPosition = event.position()
         elif event.button() == Qt.RightButton:
+            self.signal_close.emit()
             self.close()
 
     def mouseMoveEvent(self, event):
@@ -373,3 +372,4 @@ class CaptureScreen(QMainWindow):
         imageBase64 = str(str1, encoding="utf-8")
         # 发送图片数据到信号signal中
         self.signal_picAndNote.emit(imageBase64, self.textedit.toPlainText())
+        self.signal_close.emit()

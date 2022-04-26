@@ -98,8 +98,10 @@ class yes(QWidget, Ui_Form):
         self.hideMe()
         self.cap = CaptureScreen(self.maxWidth)  # cap必须是类属性,否则方法结束后会结束生命周期
         self.cap.show()
+        self.cap.setFocus()
         self.cap.signal_size.connect(self.lastImageSize)
         self.cap.signal_picAndNote.connect(self.appendImageAndNote)
+        self.cap.signal_close.connect(self.showMe)
 
     def copyAll(self):
         self.ui.label.setText("")
@@ -214,7 +216,6 @@ class yes(QWidget, Ui_Form):
             self.ui.textEdit1.append(note)
             self.note_num += 1
         self.ui.textEdit1.setToolTip(f"{self.pic_num}张图,{self.note_num}条笔记")
-        self.showMe()
 
     @Slot(int, int)
     def lastImageSize(self, width, height):
