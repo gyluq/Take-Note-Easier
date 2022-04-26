@@ -61,7 +61,7 @@ class yes(QWidget, Ui_Form):
         加载配置文件
         """
         # 界面背景
-        bg = self.setting.value("UI/background_color")
+        bg = self.setting.value("UI/mainWindow_bg_color")
         self.ui.label_BG.setStyleSheet(f"background-color:{bg}")
         # 初始化comboBox
         sizeList = self.setting.value("OPTION/allSize")

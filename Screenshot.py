@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QRect, Signal, QSize, QByteArray, QBuffer, QPointF, QPoint
+from PySide6.QtCore import Qt, QRect, Signal, QSize, QByteArray, QBuffer, QPointF, QPoint, QSettings
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon
 from PySide6.QtWidgets import QMainWindow, QTextEdit, QPushButton
 import img_rc
@@ -7,7 +7,7 @@ import img_rc
 class CaptureScreen(QMainWindow):
     signal_picAndNote = Signal(str, str)  # 发送截图和笔记
     signal_size = Signal(int, int)  # 发送截图尺寸
-    signal_close = Signal()  # 发送截图尺寸
+    signal_close = Signal()  # 关闭信号
 
     clickPosition = None  # 点击位置
     releasePosition = None  # 释放位置
@@ -24,7 +24,7 @@ class CaptureScreen(QMainWindow):
     painter = QPainter()  # 刷子
 
     leftMousePressFlag = None
-    drawFlag = False  # 鼠标移动才更新edit和button的位置
+    drawFlag = False  # 鼠标点击后移动才更新edit和button的位置
     totalMoveFlag = False
     borderMoveFlag = {"left": 0, "right": 0, "bottom": 0, "top": 0, "top-left": 0,
                       "top-right": 0, "bottom-left": 0, "bottom-right": 0}
@@ -34,31 +34,15 @@ class CaptureScreen(QMainWindow):
 
     def __init__(self, maxWidth):
         super().__init__()
-        self.initWindow()
-        self.captureFullScreen()
+        self.setMouseTracking(True)
+        self.setCursor(Qt.CrossCursor)
+        self.setWindowFlag(Qt.FramelessWindowHint)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
+        self.setWindowState(Qt.WindowFullScreen)
+        self.fullScreenImage = QGuiApplication.primaryScreen().grabWindow(0)
         self.maxWidth = maxWidth
-
-        # 实时笔记窗口
-        backgroundColor = "60, 129, 150, 160"
-        self.textedit = QTextEdit(self)
-        self.textedit.setPlaceholderText("记些什么...")
-        self.textedit.setStyleSheet(
-            f"background-color:rgba({backgroundColor});border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
-        self.textedit.hide()
-        # 确认按钮
-        self.okButton = QPushButton(QIcon(":/icons/icons/yes3.png"), "", self)
-        self.okButton.setIconSize(QSize(20, 20))
-        self.okButton.setStyleSheet(
-            f"background-repeat:none;background-position:center;background-color:rgba({backgroundColor});"
-            "border:#FFFFFF;border-radius:4px;margin:0;padding:0;")
-        self.okButton.setCursor(Qt.PointingHandCursor)
-        self.okButton.setMaximumWidth(30)
-        self.okButton.setMinimumWidth(30)
-        self.okButton.setMaximumHeight(30)
-        self.okButton.setMinimumHeight(30)
-        self.okButton.hide()
-        self.okButton.clicked.connect(self.saveNote)
+        self.loadConfiguration()
+        self.initialization()
 
         # 保存由点位置转换得到的边位置
         self.left = 0
@@ -66,14 +50,32 @@ class CaptureScreen(QMainWindow):
         self.top = 0
         self.bottom = 0
 
-    def initWindow(self):
-        self.setMouseTracking(True)
-        self.setCursor(Qt.CrossCursor)
-        self.setWindowFlag(Qt.FramelessWindowHint)
-        self.setWindowState(Qt.WindowFullScreen)
+    def loadConfiguration(self):
+        self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
+        self.noteBgColor = self.setting.value('UI/screenNote_bg_color')
+        self.maskColor = self.setting.value("UI/mask_color")
+        self.vertexColor = self.setting.value("UI/vertex_color")
+        self.borderColor = self.setting.value("UI/border_color")
 
-    def captureFullScreen(self):
-        self.fullScreenImage = QGuiApplication.primaryScreen().grabWindow(0)
+    def initialization(self):
+        self.textedit = QTextEdit(self)
+        self.textedit.setPlaceholderText("记些什么...")
+        self.textedit.setStyleSheet(
+            f"background-color:{self.noteBgColor};border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
+        self.textedit.hide()
+
+        self.okButton = QPushButton(QIcon(":/icons/icons/yes3.png"), "", self)
+        self.okButton.setIconSize(QSize(20, 20))
+        self.okButton.setStyleSheet(
+            f"background-repeat:none;background-position:center;background-color:{self.noteBgColor};"
+            f"border:#FFFFFF;border-radius:4px;margin:0;padding:0;")
+        self.okButton.setCursor(Qt.PointingHandCursor)
+        self.okButton.setMaximumWidth(30)
+        self.okButton.setMinimumWidth(30)
+        self.okButton.setMaximumHeight(30)
+        self.okButton.setMinimumHeight(30)
+        self.okButton.clicked.connect(self.saveNote)
+        self.okButton.hide()
 
     def saveNote(self):
         self.sendImageAndNote()
@@ -272,17 +274,17 @@ class CaptureScreen(QMainWindow):
                     self.textedit.setMinimumWidth(300)
                     self.textedit.setMaximumWidth(300)
                 else:
-                    self.textedit.setMinimumWidth(selectWidth - self.okButton.width() - 10)
-                    self.textedit.setMaximumWidth(selectWidth - self.okButton.width() - 10)
+                    self.textedit.setMinimumWidth(selectWidth - self.okButton.width() - 6)
+                    self.textedit.setMaximumWidth(selectWidth - self.okButton.width() - 6)
                 self.textedit.setMinimumHeight(30)
                 self.textedit.setMaximumHeight(30)
 
                 # 移动笔记框和按钮位置
                 if bottomRight_y < 1030:
-                    self.textedit.move(bottomRight_x + 3, bottomRight_y + 5)
+                    self.textedit.move(bottomRight_x + 2, bottomRight_y + 5)
                     self.okButton.move(bottomRight_x + self.textedit.width() + 5, bottomRight_y + 5)
                 else:
-                    self.textedit.move(bottomRight_x + 3, bottomRight_y - 35)
+                    self.textedit.move(bottomRight_x + 2, bottomRight_y - 35)
                     self.okButton.move(bottomRight_x + self.textedit.width() + 5, bottomRight_y - 35)
                 # 笔记框获得焦点
                 self.textedit.setFocus()
@@ -294,6 +296,7 @@ class CaptureScreen(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
+            self.signal_close.emit()
             self.close()
 
     def wheelEvent(self, event):
@@ -326,11 +329,9 @@ class CaptureScreen(QMainWindow):
         """
         绘制全屏截图作为背景
         """
-        shadowColor = QColor(171, 190, 234, 50)
-        # 绘制全屏截图
-        self.painter.drawPixmap(0, 0, self.fullScreenImage)
-        # 绘制遮罩层
-        self.painter.fillRect(self.fullScreenImage.rect(), shadowColor)
+        shadowColor = QColor(self.maskColor)
+        self.painter.drawPixmap(0, 0, self.fullScreenImage)  # 绘制全屏截图
+        self.painter.fillRect(self.fullScreenImage.rect(), shadowColor)  # 绘制遮罩层
 
     def paintEvent(self, event):
         self.painter.begin(self)  # 开始重绘
@@ -343,20 +344,17 @@ class CaptureScreen(QMainWindow):
                 self.scaledFlag = True
                 self.wheelFlag = False
             else:
-                # 获得要截图的矩形框
                 pickRect = self.getRectangle()
-                # 捕获截图矩形框内的图片
-                self.captureImage = self.fullScreenImage.copy(pickRect)
-                # 填充截取的区域
-                self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)
+                self.captureImage = self.fullScreenImage.copy(pickRect)  # 捕获截图矩形框内的图片
+                self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)  # 填充截取的区域
                 # 绘制顶点
-                penColor = QColor(255, 159, 0)  # 画笔颜色
+                penColor = QColor(self.vertexColor)
                 self.painter.fillRect(QRect(self.left - 3, self.top - 3, 6, 6), penColor)
                 self.painter.fillRect(QRect(self.left - 3, self.bottom - 3, 6, 6), penColor)
                 self.painter.fillRect(QRect(self.right - 3, self.top - 3, 6, 6), penColor)
                 self.painter.fillRect(QRect(self.right - 3, self.bottom - 3, 6, 6), penColor)
                 # 画矩形边框
-                self.painter.setPen(QPen(QColor(255, 202, 115), 2, Qt.SolidLine, Qt.RoundCap))
+                self.painter.setPen(QPen(QColor(self.borderColor), 2, Qt.SolidLine, Qt.RoundCap))
                 self.painter.drawRect(pickRect)
         # 结束重绘
         self.painter.end()
