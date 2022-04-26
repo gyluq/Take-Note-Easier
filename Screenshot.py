@@ -36,16 +36,17 @@ class CaptureScreen(QMainWindow):
         self.maxWidth = maxWidth
 
         # 实时笔记窗口
+        backgroundColor = "255, 208, 115, 60"
         self.textedit = QTextEdit(self)
         self.textedit.setPlaceholderText("记些什么...")
         self.textedit.setStyleSheet(
-            "background-color:rgba(255,255,255, 60);border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
+            f"background-color:rgba({backgroundColor});border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
         self.textedit.hide()
         # 确认按钮
         self.okButton = QPushButton(QIcon(":/icons/icons/yes3.png"), "", self)
         self.okButton.setIconSize(QSize(20, 20))
         self.okButton.setStyleSheet(
-            "background-repeat:none;background-position:center;background-color:rgba(255,255,255, 50);"
+            f"background-repeat:none;background-position:center;background-color:rgba({backgroundColor});"
             "border:#FFFFFF;border-radius:4px;margin:0;padding:0;")
         self.okButton.setCursor(Qt.PointingHandCursor)
         self.okButton.setMaximumWidth(30)
@@ -254,11 +255,10 @@ class CaptureScreen(QMainWindow):
         if event.button() == Qt.LeftButton:
             self.leftMousePressFlag = False
             self.releasePosition = event.position()
-            self.totalMoveFlag = False
-            self.refreshFlags()  # 重置边框移动flag
             if self.captureImage is not None and self.drawFlag:
-                # 清空textedit
-                self.textedit.clear()
+                # 重新截图时才清空textedit
+                if not self.totalMoveFlag and 1 not in self.borderMoveFlag.values():
+                    self.textedit.clear()
                 # 左下角的坐标
                 bottomRight_x = min(self.TLPosition.x(), self.BRPosition.x())
                 bottomRight_y = max(self.TLPosition.y(), self.BRPosition.y())
@@ -286,6 +286,8 @@ class CaptureScreen(QMainWindow):
                 self.drawFlag = False
                 self.textedit.show()
                 self.okButton.show()
+            self.totalMoveFlag = False
+            self.refreshFlags()  # 重置边框移动flag
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -295,7 +297,7 @@ class CaptureScreen(QMainWindow):
         """
         绘制全屏截图作为背景
         """
-        shadowColor = QColor(0, 0, 0, 90)
+        shadowColor = QColor(171, 190, 234, 50)
         # 绘制全屏截图
         self.painter.drawPixmap(0, 0, self.fullScreenImage)
         # 绘制遮罩层
