@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QRect, Signal, QSize, QByteArray, QBuffer, QPointF
+from PySide6.QtCore import Qt, QRect, Signal, QSize, QByteArray, QBuffer, QPointF, QPoint
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon
 from PySide6.QtWidgets import QMainWindow, QTextEdit, QPushButton
 import img_rc
@@ -20,6 +20,7 @@ class CaptureScreen(QMainWindow):
 
     fullScreenImage = None  # 全屏截图
     captureImage = None  # 捕捉的截图
+    captureImage_copy = None  # 捕捉的截图
     painter = QPainter()  # 刷子
 
     leftMousePressFlag = None
@@ -27,6 +28,9 @@ class CaptureScreen(QMainWindow):
     totalMoveFlag = False
     borderMoveFlag = {"left": 0, "right": 0, "bottom": 0, "top": 0, "top-left": 0,
                       "top-right": 0, "bottom-left": 0, "bottom-right": 0}
+    wheelFlag = False
+    x = 1  # 缩放比例
+    scaledFlag = False  # 如果缩放过就发送captureImage_copy
 
     def __init__(self, maxWidth):
         super().__init__()
@@ -36,7 +40,7 @@ class CaptureScreen(QMainWindow):
         self.maxWidth = maxWidth
 
         # 实时笔记窗口
-        backgroundColor = "255, 208, 115, 60"
+        backgroundColor = "60, 129, 150, 160"
         self.textedit = QTextEdit(self)
         self.textedit.setPlaceholderText("记些什么...")
         self.textedit.setStyleSheet(
@@ -127,13 +131,12 @@ class CaptureScreen(QMainWindow):
             self.close()
 
     def mouseMoveEvent(self, event):
-        # 按下鼠标开始截图
         if self.leftMousePressFlag is True:
             # 移动时隐藏文本框和按钮
             self.textedit.hide()
             self.okButton.hide()
-            # 防止单纯的点击事件重置截图
-            self.drawFlag = True
+            self.drawFlag = True  # 防止单纯的点击事件重置截图
+            self.scaledFlag = False  # 发送self.captureImage而不是self.captureImage_copy
 
             # 整体移动
             if self.totalMoveFlag:
@@ -293,6 +296,32 @@ class CaptureScreen(QMainWindow):
         if event.key() == Qt.Key_Escape:
             self.close()
 
+    def wheelEvent(self, event):
+        """
+        滚轮缩放图片
+        """
+        self.wheelFlag = True
+        # 原始尺寸
+        origin_height = self.captureImage.height()
+        origin_width = self.captureImage.width()
+
+        if event.angleDelta().y() > 0:
+            self.x += 0.1
+        else:
+            self.x -= 0.1
+        self.captureImage_copy = self.captureImage.scaled(origin_width * self.x,
+                                                          origin_height * self.x,
+                                                          Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        if self.captureImage_copy.width() < 300:
+            self.textedit.setMinimumWidth(300)
+            self.textedit.setMaximumWidth(300)
+        else:
+            self.textedit.setMinimumWidth(self.captureImage_copy.width() - self.okButton.width() - 10)
+            self.textedit.setMaximumWidth(self.captureImage_copy.width() - self.okButton.width() - 10)
+        self.textedit.move(103, 100 + self.captureImage_copy.height() + 5)
+        self.okButton.move(103 + self.textedit.width() + 5, 100 + self.captureImage_copy.height() + 5)
+        self.repaint()
+
     def paintBackgroundImage(self):
         """
         绘制全屏截图作为背景
@@ -309,21 +338,26 @@ class CaptureScreen(QMainWindow):
         # 因未知原因,拖动释放鼠标时会产生update事件,调用paintEvent方法.此时leftMousePressFlag变为False,仅仅绘制了背景,没有绘制矩形框
         # 因此需要添加另一个条件self.captureImage is not None
         if self.leftMousePressFlag is True or self.captureImage is not None:
-            # 获得要截图的矩形框
-            pickRect = self.getRectangle()
-            # 捕获截图矩形框内的图片
-            self.captureImage = self.fullScreenImage.copy(pickRect)
-            # 填充截取的区域
-            self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)
-            # 绘制顶点
-            penColor = QColor(255, 159, 0)  # 画笔颜色
-            self.painter.fillRect(QRect(self.left - 3, self.top - 3, 6, 6), penColor)
-            self.painter.fillRect(QRect(self.left - 3, self.bottom - 3, 6, 6), penColor)
-            self.painter.fillRect(QRect(self.right - 3, self.top - 3, 6, 6), penColor)
-            self.painter.fillRect(QRect(self.right - 3, self.bottom - 3, 6, 6), penColor)
-            # 画矩形边框
-            self.painter.setPen(QPen(QColor(255, 202, 115), 2, Qt.SolidLine, Qt.RoundCap))
-            self.painter.drawRect(pickRect)
+            if self.wheelFlag:
+                self.painter.drawPixmap(100, 100, self.captureImage_copy)
+                self.scaledFlag = True
+                self.wheelFlag = False
+            else:
+                # 获得要截图的矩形框
+                pickRect = self.getRectangle()
+                # 捕获截图矩形框内的图片
+                self.captureImage = self.fullScreenImage.copy(pickRect)
+                # 填充截取的区域
+                self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)
+                # 绘制顶点
+                penColor = QColor(255, 159, 0)  # 画笔颜色
+                self.painter.fillRect(QRect(self.left - 3, self.top - 3, 6, 6), penColor)
+                self.painter.fillRect(QRect(self.left - 3, self.bottom - 3, 6, 6), penColor)
+                self.painter.fillRect(QRect(self.right - 3, self.top - 3, 6, 6), penColor)
+                self.painter.fillRect(QRect(self.right - 3, self.bottom - 3, 6, 6), penColor)
+                # 画矩形边框
+                self.painter.setPen(QPen(QColor(255, 202, 115), 2, Qt.SolidLine, Qt.RoundCap))
+                self.painter.drawRect(pickRect)
         # 结束重绘
         self.painter.end()
 
@@ -369,7 +403,10 @@ class CaptureScreen(QMainWindow):
         # 转为base64
         data = QByteArray()
         buf = QBuffer(data)
-        self.captureImage.save(buf, "PNG")
+        if self.scaledFlag:
+            self.captureImage_copy.save(buf, "PNG")
+        else:
+            self.captureImage.save(buf, "PNG")
         str1 = data.toBase64()
         imageBase64 = str(str1, encoding="utf-8")
         # 发送图片数据到信号signal中
