@@ -62,6 +62,8 @@ class CaptureScreen(QMainWindow):
         self.textedit.setPlaceholderText("记些什么...")
         self.textedit.setStyleSheet(
             f"background-color:{self.noteBgColor};border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
+        self.textedit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.textedit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textedit.hide()
 
         self.okButton = QPushButton(QIcon(":/icons/icons/yes3.png"), "", self)
