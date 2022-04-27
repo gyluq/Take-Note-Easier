@@ -155,12 +155,12 @@ class CaptureScreen(QMainWindow):
                 if self.TLPosition.y() <= 0:
                     self.TLPosition.setY(1)
                     self.BRPosition.setY(abs(self.BRPosition_copy.y() - self.TLPosition_copy.y()))
-                if self.BRPosition.x() >= 1919:
-                    self.BRPosition.setX(1919)
-                    self.TLPosition.setX(1919 - abs(self.BRPosition_copy.x() - self.TLPosition_copy.x()))
-                if self.BRPosition.y() >= 1079:
-                    self.BRPosition.setY(1079)
-                    self.TLPosition.setY(1079 - abs(self.BRPosition_copy.y() - self.TLPosition_copy.y()))
+                if self.BRPosition.x() >= 1920 - 1:
+                    self.BRPosition.setX(1920 - 1)
+                    self.TLPosition.setX(1920 - 1 - abs(self.BRPosition_copy.x() - self.TLPosition_copy.x()))
+                if self.BRPosition.y() >= 1080 - 1:
+                    self.BRPosition.setY(1080 - 1)
+                    self.TLPosition.setY(1080 - 1 - abs(self.BRPosition_copy.y() - self.TLPosition_copy.y()))
                 self.update()
                 return
             else:
@@ -358,6 +358,21 @@ class CaptureScreen(QMainWindow):
                 # 画矩形边框
                 self.painter.setPen(QPen(QColor(self.borderColor), 2, Qt.SolidLine, Qt.RoundCap))
                 self.painter.drawRect(pickRect)
+                # 显示截图尺寸
+                if self.top > 25:
+                    self.painter.fillRect(QRect(self.left + 1, self.top - 19, 75, 17), QColor("#0B4C59"))
+                    self.painter.setPen(QPen(QColor(155, 155, 155), 1, Qt.SolidLine, Qt.RoundCap))
+                    self.painter.drawRect(QRect(self.left + 1, self.top - 19, 75, 17))
+                    self.painter.setPen(QPen(QColor(225, 225, 225), 2, Qt.SolidLine, Qt.RoundCap))
+                    self.painter.drawText(QPoint(self.left + 4, self.top - 5),
+                                          f"{int(self.right - self.left):4} ×{int(self.bottom - self.top):4}")
+                else:
+                    self.painter.fillRect(QRect(self.left + 1, self.top + 1, 75, 17), QColor("#0B4C59"))
+                    self.painter.setPen(QPen(QColor(155, 155, 155), 1, Qt.SolidLine, Qt.RoundCap))
+                    self.painter.drawRect(QRect(self.left + 1, self.top + 1, 75, 17))
+                    self.painter.setPen(QPen(QColor(225, 225, 225), 2, Qt.SolidLine, Qt.RoundCap))
+                    self.painter.drawText(QPoint(self.left + 4, self.top + 14),
+                                          f"{int(self.right - self.left):4} ×{int(self.bottom - self.top):4}")
         # 结束重绘
         self.painter.end()
 
