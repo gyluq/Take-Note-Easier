@@ -4,12 +4,13 @@ import keyboard
 import win32con
 import win32gui
 from PySide6.QtCore import Slot, Qt, Signal, QSettings
-from PySide6.QtGui import QCursor
+from PySide6.QtGui import QCursor, QPixmap
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
 from VideoNote import Ui_Form
+import img_rc
 
 
 class yes(QWidget, Ui_Form):
@@ -104,14 +105,14 @@ class yes(QWidget, Ui_Form):
         self.cap.signal_close.connect(self.showMe)
 
     def copyAll(self):
-        self.ui.label.setText("")
+        self.ui.label.setText(" ")
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+c")
         keyboard.press_and_release("right")
 
     def cutAll(self):
-        self.ui.label.setText("")
+        self.ui.label.setText(" ")
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+x")
@@ -120,7 +121,7 @@ class yes(QWidget, Ui_Form):
         self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def clearAll(self):
-        self.ui.label.setText("")
+        self.ui.label.setText(" ")
         msgBox = QMessageBox()
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("There are already some notes.\nAre you sure you want to clear them?")
@@ -135,6 +136,7 @@ class yes(QWidget, Ui_Form):
             self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def exit(self):
+        self.ui.label.setText(" ")
         msgBox = QMessageBox()
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("Make sure nothing needs to be saved before exiting.")
@@ -146,7 +148,7 @@ class yes(QWidget, Ui_Form):
             self.close()
 
     def sendNote(self):
-        self.ui.label.setText("")
+        self.ui.label.setText(" ")
         if self.ui.textEdit2.toPlainText() != "":
             self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
             self.ui.textEdit2.clear()
@@ -158,6 +160,7 @@ class yes(QWidget, Ui_Form):
         置顶按钮调用,切换置顶
         """
         window = win32gui.FindWindow(None, "Power")
+        self.ui.label.setStyleSheet("color:green;font-weight:bold")
         if self.stayOnTopFlag:
             win32gui.SetWindowPos(window, win32con.HWND_TOPMOST, 0, 0, 0, 0,
                                   win32con.SWP_NOMOVE | win32con.SWP_NOACTIVATE | win32con.SWP_NOOWNERZORDER
@@ -215,11 +218,9 @@ class yes(QWidget, Ui_Form):
         槽函数,检测图片大小,提醒用户是否截图成功
         """
         if width < 50 and height < 50:
-            self.ui.label.setStyleSheet("color:red;font-weight:bold")
-            self.ui.label.setText("小于50px")
+            self.ui.label.setPixmap(QPixmap(":/icons/icons/important.png"))
         else:
-            self.ui.label.setStyleSheet("color:green;font-weight:bold")
-            self.ui.label.setText(f"{width}×{height}")
+            self.ui.label.setPixmap(QPixmap(":/icons/icons/ok.png"))
 
 
 if __name__ == "__main__":

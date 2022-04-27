@@ -133,7 +133,7 @@ class Ui_Form(object):
 "")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(14, 6, 881, 30))
+        self.horizontalLayoutWidget.setGeometry(QRect(14, 6, 851, 30))
         self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout1.setSpacing(2)
         self.horizontalLayout1.setObjectName(u"horizontalLayout1")
@@ -207,8 +207,8 @@ class Ui_Form(object):
 
         self.label = QLabel(self.horizontalLayoutWidget)
         self.label.setObjectName(u"label")
-        self.label.setMinimumSize(QSize(65, 0))
-        self.label.setMaximumSize(QSize(65, 16777215))
+        self.label.setMinimumSize(QSize(40, 0))
+        self.label.setMaximumSize(QSize(40, 16777215))
         font2 = QFont()
         font2.setPointSize(8)
         self.label.setFont(font2)
@@ -223,7 +223,7 @@ class Ui_Form(object):
 
         self.label_BG = QLabel(Form)
         self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(4, 2, 895, 37))
+        self.label_BG.setGeometry(QRect(4, 2, 867, 37))
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(8)
