@@ -67,7 +67,7 @@ class yes(QWidget, Ui_Form):
         sizeList = self.setting.value("OPTION/allSize")
         self.ui.comboBox.addItems(sizeList)
         self.ui.comboBox.currentTextChanged.connect(self.changeSize)
-        self.ui.comboBox.setCurrentIndex(int(self.setting.value("OPTION/lastSelectedSize")))
+        self.ui.comboBox.setCurrentText(self.setting.value("OPTION/lastSelectedSize"))
 
     def send_key_event(self):
         """
@@ -115,6 +115,8 @@ class yes(QWidget, Ui_Form):
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+x")
+        self.pic_num = 0
+        self.note_num = 0
         self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def clearAll(self):
@@ -128,6 +130,8 @@ class yes(QWidget, Ui_Form):
         ret = msgBox.exec()
         if ret == QMessageBox.Yes:
             self.ui.textEdit1.clear()
+            self.pic_num = 0
+            self.note_num = 0
             self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def exit(self):
@@ -185,22 +189,10 @@ class yes(QWidget, Ui_Form):
         """
         控制截图的最大宽度
         """
+        self.setting.setValue("OPTION/lastSelectedSize", rbt)
         if rbt == "无限制":
-            self.setting.setValue("OPTION/lastSelectedSize", "6")
             self.maxWidth = 9999
             return
-        if rbt == "500px":
-            self.setting.setValue("OPTION/lastSelectedSize", "0")
-        elif rbt == "700px":
-            self.setting.setValue("OPTION/lastSelectedSize", "1")
-        elif rbt == "900px":
-            self.setting.setValue("OPTION/lastSelectedSize", "2")
-        elif rbt == "1000px":
-            self.setting.setValue("OPTION/lastSelectedSize", "3")
-        elif rbt == "1100px":
-            self.setting.setValue("OPTION/lastSelectedSize", "4")
-        elif rbt == "1300px":
-            self.setting.setValue("OPTION/lastSelectedSize", "5")
         self.maxWidth = int(rbt[:-2])
 
     @Slot(str, str)
