@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(905, 43)
+        Form.resize(1013, 43)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
@@ -50,6 +50,8 @@ class Ui_Form(object):
 "	background-color:#e1e1e1;\n"
 " }\n"
 "\n"
+"/*----------------------------------------------------------------------------------*/\n"
+"\n"
 "#pushButton{\n"
 "	background-image:url(:/icons/icons/copy.png);\n"
 "}\n"
@@ -67,36 +69,46 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "#pushButton4{\n"
-"	background-image:url(:/icons/icons/send3.png);\n"
+"	background-image:url(:/icons/icons/send.png);\n"
 "}\n"
 "\n"
 "#pushButton5{\n"
 "	background-image:url(:/icons/icons/pin_active.png);\n"
 "}\n"
 "\n"
+"#pushButton6{\n"
+"	background-image:url(:/icons/icons/m"
+                        "onitor.png);\n"
+"}\n"
 "\n"
-"/*\u80cc\u666f\u8272*/\n"
+"#pushButton6::checked{\n"
+"	background-color:#80C698F0;\n"
+"	border:1px solid #808080;\n"
+"	border-radius:4px;\n"
+"}\n"
+"\n"
+"/*----------------------------------------------------------------------------------*/\n"
+"\n"
 "#label_BG{\n"
 "	background-color:#FFFFFF;\n"
 "	border:1px solid #ffffff;\n"
 "	border-radius:10px;\n"
 "}\n"
 "\n"
-"/*\u63d0"
-                        "\u793a\u4fe1\u606f*/\n"
 "#label{\n"
 "	padding:3px 1px 3px 1px;\n"
 "}\n"
 "\n"
 "/*----------------------------------------------------------------------------------*/\n"
+"\n"
 "QTextEdit{\n"
 "	border:1px solid #808080;\n"
 "	border-radius:3px;\n"
 "	background-color:rgb(255,255,255);\n"
 "}\n"
 "\n"
-"\n"
 "/*----------------------------------------------------------------------------------*/\n"
+"\n"
 "QComboBox {\n"
 "	height:23px;\n"
 "    border: 1px solid darkgray;\n"
@@ -108,7 +120,8 @@ class Ui_Form(object):
 "\n"
 "/*\u53f3\u4fa7\u7684\u5c55\u793a\u6309\u94ae*/\n"
 "QComboBox::drop-down {\n"
-"    subcontrol-origin: padding;\n"
+"    subcontrol-origi"
+                        "n: padding;\n"
 "    subcontrol-position: top right;\n"
 "    width: 12px;\n"
 "	border-left:1px solid darkgray;\n"
@@ -123,8 +136,7 @@ class Ui_Form(object):
 "    image: url(:/icons/icons/sort-left.png);\n"
 "}\n"
 "\n"
-"QCo"
-                        "mboBox::down-arrow:on\n"
+"QComboBox::down-arrow:on\n"
 "{\n"
 "    width: 9px;  \n"
 "    height: 9px;   \n"
@@ -133,7 +145,7 @@ class Ui_Form(object):
 "")
         self.horizontalLayoutWidget = QWidget(Form)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(14, 6, 851, 30))
+        self.horizontalLayoutWidget.setGeometry(QRect(14, 6, 874, 30))
         self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout1.setSpacing(2)
         self.horizontalLayout1.setObjectName(u"horizontalLayout1")
@@ -205,6 +217,12 @@ class Ui_Form(object):
 
         self.horizontalLayout1.addWidget(self.pushButton4)
 
+        self.pushButton6 = QPushButton(self.horizontalLayoutWidget)
+        self.pushButton6.setObjectName(u"pushButton6")
+        self.pushButton6.setCheckable(True)
+
+        self.horizontalLayout1.addWidget(self.pushButton6)
+
         self.label = QLabel(self.horizontalLayoutWidget)
         self.label.setObjectName(u"label")
         self.label.setMinimumSize(QSize(40, 0))
@@ -223,7 +241,7 @@ class Ui_Form(object):
 
         self.label_BG = QLabel(Form)
         self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(4, 2, 867, 37))
+        self.label_BG.setGeometry(QRect(6, 2, 887, 37))
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(8)
@@ -243,6 +261,7 @@ class Ui_Form(object):
         self.pushButton1.setText("")
         self.pushButton3.setText("")
         self.pushButton4.setText("")
+        self.pushButton6.setText("")
         self.label.setText("")
         self.pushButton5.setText("")
         self.label_BG.setText("")
