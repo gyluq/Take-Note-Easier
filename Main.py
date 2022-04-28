@@ -205,13 +205,12 @@ class yes(QWidget, Ui_Form):
         """
         如果发现剪切板有新内容则发送到textEdit2
         """
+        self.ui.textEdit1.append("")
         if self.clipboard.mimeData().hasImage():
             pixmap = self.clipboard.pixmap()
             imgStr = self.imgToBase64(pixmap)
-            self.ui.textEdit2.append(imgStr)
-            print("yes i have")
+            self.ui.textEdit1.append(imgStr)
         else:
-            print("text")
             newText = self.clipboard.text().replace("。", ".") \
                 .replace("，", ",") \
                 .replace("‘", "'") \
@@ -226,7 +225,7 @@ class yes(QWidget, Ui_Form):
                 .replace("》", ">") \
                 .replace("《", "<") \
                 .replace("？", "?")
-            self.ui.textEdit2.append(newText)
+            self.ui.textEdit1.append(newText)
 
     def changeMonitorStatus(self):
         """
