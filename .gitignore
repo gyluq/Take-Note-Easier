@@ -10,3 +10,4 @@ icons/
 __pycache__/
 build/
 dist/
+out/

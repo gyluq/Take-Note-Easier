@@ -1,11 +1,11 @@
-from PySide6.QtCore import Qt, QRect, Signal, QSize, QByteArray, QBuffer, QPointF, QPoint, QSettings
-from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon
+from PySide6.QtCore import Qt, QRect, Signal, QSize, QPointF, QPoint, QSettings
+from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon, QPixmap
 from PySide6.QtWidgets import QMainWindow, QTextEdit, QPushButton
 import img_rc
 
 
 class CaptureScreen(QMainWindow):
-    signal_picAndNote = Signal(str, str)  # 发送截图和笔记
+    signal_picAndNote = Signal(QPixmap, str)  # 发送截图和笔记
     signal_size = Signal(int, int)  # 发送截图尺寸
     signal_close = Signal()  # 关闭信号
 
@@ -408,22 +408,17 @@ class CaptureScreen(QMainWindow):
         """
         发送截图的base64数据
         """
-        # 发送截图尺寸到信号signal2中
+        # 发送截图尺寸
         width = self.captureImage.size().width()
         height = self.captureImage.size().height()
         self.signal_size.emit(width, height)
         # 控制截图尺寸
         if width > self.maxWidth:
             self.captureImage = self.captureImage.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
-        # 转为base64
-        data = QByteArray()
-        buf = QBuffer(data)
+        # 发送截图数据
         if self.scaledFlag:
-            self.captureImage_copy.save(buf, "PNG")
+            self.signal_picAndNote.emit(self.captureImage_copy, self.textedit.toPlainText())
         else:
-            self.captureImage.save(buf, "PNG")
-        str1 = data.toBase64()
-        imageBase64 = str(str1, encoding="utf-8")
-        # 发送图片数据到信号signal中
-        self.signal_picAndNote.emit(imageBase64, self.textedit.toPlainText())
+            self.signal_picAndNote.emit(self.captureImage, self.textedit.toPlainText())
+        # 关闭信号
         self.signal_close.emit()

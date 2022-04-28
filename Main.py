@@ -3,8 +3,8 @@ import sys
 import keyboard
 import win32con
 import win32gui
-from PySide6.QtCore import Slot, Qt, Signal, QSettings
-from PySide6.QtGui import QCursor, QPixmap
+from PySide6.QtCore import Slot, Qt, Signal, QSettings, QByteArray, QBuffer
+from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
 
@@ -33,6 +33,7 @@ class yes(QWidget, Ui_Form):
         self.ui.pushButton3.clicked.connect(self.exit)
         self.ui.pushButton4.clicked.connect(self.sendNote)
         self.ui.pushButton5.clicked.connect(self.stayTop)
+        self.ui.pushButton6.clicked.connect(self.changeMonitorStatus)
         self.ui.pushButton.setToolTip("复制")
         self.ui.pushButton1.setToolTip("清空")
         self.ui.pushButton2.setToolTip("剪切")
@@ -56,6 +57,10 @@ class yes(QWidget, Ui_Form):
         self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
         self.loadConfigurationFile()
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)  # 窗口置顶
+
+        self.clipboard = QGuiApplication.clipboard()
+        self.statusFlag = False
+        self.ui.textEdit2.textChanged.connect(lambda: self.ui.textEdit2.setToolTip(self.ui.textEdit2.toPlainText()))
 
     def loadConfigurationFile(self):
         """
@@ -105,14 +110,14 @@ class yes(QWidget, Ui_Form):
         self.cap.signal_close.connect(self.showMe)
 
     def copyAll(self):
-        self.ui.label.setText(" ")
+        self.resetStatus()
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+c")
         keyboard.press_and_release("right")
 
     def cutAll(self):
-        self.ui.label.setText(" ")
+        self.resetStatus()
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+x")
@@ -136,7 +141,7 @@ class yes(QWidget, Ui_Form):
             self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def exit(self):
-        self.ui.label.setText(" ")
+        self.resetStatus()
         msgBox = QMessageBox()
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("Make sure nothing needs to be saved before exiting.")
@@ -145,10 +150,12 @@ class yes(QWidget, Ui_Form):
         msgBox.setIcon(QMessageBox.Question)
         ret = msgBox.exec()
         if ret == QMessageBox.Close:
+            currentSize = self.ui.comboBox.currentText()
+            self.setting.setValue("OPTION/lastSelectedSize", currentSize)
             self.close()
 
     def sendNote(self):
-        self.ui.label.setText(" ")
+        self.resetStatus()
         if self.ui.textEdit2.toPlainText() != "":
             self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
             self.ui.textEdit2.clear()
@@ -188,24 +195,78 @@ class yes(QWidget, Ui_Form):
         window = win32gui.FindWindow(None, "Power")
         win32gui.ShowWindow(window, win32con.SW_SHOWDEFAULT)
 
+    def resetStatus(self):
+        self.ui.label.setText(" ")
+        if self.statusFlag:
+            self.changeMonitorStatus()
+            self.ui.pushButton6.setChecked(False)
+
+    def saveCbData(self):
+        """
+        如果发现剪切板有新内容则发送到textEdit2
+        """
+        if self.clipboard.mimeData().hasImage():
+            pixmap = self.clipboard.pixmap()
+            imgStr = self.imgToBase64(pixmap)
+            self.ui.textEdit2.append(imgStr)
+            print("yes i have")
+        else:
+            print("text")
+            newText = self.clipboard.text().replace("。", ".") \
+                .replace("，", ",") \
+                .replace("‘", "'") \
+                .replace("’", "'") \
+                .replace("”", "\"") \
+                .replace("“", "\"") \
+                .replace("；", ";") \
+                .replace("）", ")") \
+                .replace("（", "(") \
+                .replace("【", "[") \
+                .replace("】", "]") \
+                .replace("》", ">") \
+                .replace("《", "<") \
+                .replace("？", "?")
+            self.ui.textEdit2.append(newText)
+
+    def changeMonitorStatus(self):
+        """
+        打开与关闭检测剪切板功能
+        """
+        if self.statusFlag:
+            self.clipboard.dataChanged.disconnect(self.saveCbData)
+        else:
+            self.clipboard.dataChanged.connect(self.saveCbData)
+        self.statusFlag = ~ self.statusFlag
+
+    def imgToBase64(self, img):
+        """
+        图片转base64
+        :param img: QPixmap or QImage
+        :return: str
+        """
+        data = QByteArray()
+        buf = QBuffer(data)
+        img.save(buf, "PNG")
+        imgData = str(data.toBase64(), encoding="utf-8")
+        return f"<img src=\"data:image/png;base64,{imgData}\" alt=\"**图片**\"/>"
+
     def changeSize(self, rbt):
         """
         控制截图的最大宽度
         """
-        self.setting.setValue("OPTION/lastSelectedSize", rbt)
         if rbt == "无限制":
             self.maxWidth = 9999
             return
         self.maxWidth = int(rbt[:-2])
 
-    @Slot(str, str)
-    def appendImageAndNote(self, imageBase64, note):
+    @Slot(QPixmap, str)
+    def appendImageAndNote(self, img, note=""):
         """
         槽函数,接受截图数据和笔记
         """
         if self.note_num or self.pic_num:
             self.ui.textEdit1.append("")
-        self.ui.textEdit1.append(f"<img src=data:image/png;base64,{imageBase64}/>")
+        self.ui.textEdit1.append(self.imgToBase64(img))
         self.pic_num += 1
         if note != "":
             self.ui.textEdit1.append(note)
