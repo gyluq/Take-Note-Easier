@@ -6,7 +6,6 @@ import img_rc
 
 class CaptureScreen(QMainWindow):
     signal_picAndNote = Signal(QPixmap, str)  # 发送截图和笔记
-    signal_size = Signal(int, int)  # 发送截图尺寸
     signal_close = Signal()  # 关闭信号
 
     clickPosition = None  # 点击位置
@@ -408,13 +407,6 @@ class CaptureScreen(QMainWindow):
         """
         发送截图的base64数据
         """
-        # 发送截图尺寸
-        width = self.captureImage.size().width()
-        height = self.captureImage.size().height()
-        self.signal_size.emit(width, height)
-        # 控制截图尺寸
-        if width > self.maxWidth:
-            self.captureImage = self.captureImage.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
         # 发送截图数据
         if self.scaledFlag:
             self.signal_picAndNote.emit(self.captureImage_copy, self.textedit.toPlainText())

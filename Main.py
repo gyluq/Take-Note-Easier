@@ -16,8 +16,6 @@ import img_rc
 class yes(QWidget, Ui_Form):
     cap = None
     keyboardSignal = Signal()
-    pic_num = 0  # 图片数量
-    note_num = 0  # 笔记数量
     stayOnTopFlag = False
 
     def __init__(self):
@@ -40,6 +38,7 @@ class yes(QWidget, Ui_Form):
         self.ui.pushButton3.setToolTip("退出")
         self.ui.pushButton4.setToolTip("添加笔记")
         self.ui.pushButton5.setToolTip("切换置顶")
+        self.ui.pushButton6.setToolTip("监控剪切板")
 
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
@@ -59,7 +58,8 @@ class yes(QWidget, Ui_Form):
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)  # 窗口置顶
 
         self.clipboard = QGuiApplication.clipboard()
-        self.statusFlag = False
+        self.statusFlag = False  # 开启与关闭检测剪切板功能
+        self.ui.textEdit1.textChanged.connect(lambda: self.ui.textEdit1.setToolTip(self.ui.textEdit1.toPlainText()))
         self.ui.textEdit2.textChanged.connect(lambda: self.ui.textEdit2.setToolTip(self.ui.textEdit2.toPlainText()))
 
     def loadConfigurationFile(self):
@@ -105,8 +105,7 @@ class yes(QWidget, Ui_Form):
         self.cap = CaptureScreen(self.maxWidth)  # cap必须是类属性,否则方法结束后会结束生命周期
         self.cap.show()
         self.cap.setFocus()
-        self.cap.signal_size.connect(self.lastImageSize)
-        self.cap.signal_picAndNote.connect(self.appendImageAndNote)
+        self.cap.signal_picAndNote.connect(self.addImageAndNote)
         self.cap.signal_close.connect(self.showMe)
 
     def copyAll(self):
@@ -121,8 +120,6 @@ class yes(QWidget, Ui_Form):
         self.ui.textEdit1.setFocus()
         self.ui.textEdit1.selectAll()
         keyboard.press_and_release("ctrl+x")
-        self.pic_num = 0
-        self.note_num = 0
         self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def clearAll(self):
@@ -136,8 +133,6 @@ class yes(QWidget, Ui_Form):
         ret = msgBox.exec()
         if ret == QMessageBox.Yes:
             self.ui.textEdit1.clear()
-            self.pic_num = 0
-            self.note_num = 0
             self.ui.textEdit1.setToolTip(f"这里什么也没有")
 
     def exit(self):
@@ -159,8 +154,6 @@ class yes(QWidget, Ui_Form):
         if self.ui.textEdit2.toPlainText() != "":
             self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
             self.ui.textEdit2.clear()
-            self.note_num += 1
-            self.ui.textEdit1.setToolTip(f"{self.pic_num}张图,{self.note_num}条笔记")
 
     def stayTop(self):
         """
@@ -209,6 +202,7 @@ class yes(QWidget, Ui_Form):
         if self.clipboard.mimeData().hasImage():
             pixmap = self.clipboard.pixmap()
             imgStr = self.imgToBase64(pixmap)
+            self.informSize(pixmap)
             self.ui.textEdit1.append(imgStr)
         else:
             newText = self.clipboard.text().replace("。", ".") \
@@ -259,24 +253,25 @@ class yes(QWidget, Ui_Form):
         self.maxWidth = int(rbt[:-2])
 
     @Slot(QPixmap, str)
-    def appendImageAndNote(self, img, note=""):
+    def addImageAndNote(self, img, note=""):
         """
         槽函数,接受截图数据和笔记
         """
-        if self.note_num or self.pic_num:
-            self.ui.textEdit1.append("")
+        self.ui.textEdit1.append("")  # 空行
+        self.informSize(img)
+        # 控制截图尺寸
+        if img.size().width() > self.maxWidth:
+            img = img.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
         self.ui.textEdit1.append(self.imgToBase64(img))
-        self.pic_num += 1
         if note != "":
             self.ui.textEdit1.append(note)
-            self.note_num += 1
-        self.ui.textEdit1.setToolTip(f"{self.pic_num}张图,{self.note_num}条笔记")
 
-    @Slot(int, int)
-    def lastImageSize(self, width, height):
+    def informSize(self, img):
         """
-        槽函数,检测图片大小,提醒用户是否截图成功
+        截图提示信息,如果尺寸太小,则显示感叹号图标
         """
+        width = img.size().width()
+        height = img.size().height()
         if width < 50 and height < 50:
             self.ui.label.setPixmap(QPixmap(":/icons/icons/important.png"))
         else:
