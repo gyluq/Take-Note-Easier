@@ -101,6 +101,7 @@ class yes(QWidget, Ui_Form):
         """
         开始截图
         """
+        self.activeMe()
         self.hideMe()
         self.cap = CaptureScreen(self.maxWidth)  # cap必须是类属性,否则方法结束后会结束生命周期
         self.cap.show()
@@ -124,6 +125,7 @@ class yes(QWidget, Ui_Form):
 
     def clearAll(self):
         self.ui.label.setText(" ")
+        print(self.ui.textEdit1.toHtml())
         msgBox = QMessageBox()
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("There are already some notes.\nAre you sure you want to clear them?")
@@ -188,6 +190,10 @@ class yes(QWidget, Ui_Form):
         window = win32gui.FindWindow(None, "Power")
         win32gui.ShowWindow(window, win32con.SW_SHOWDEFAULT)
 
+    def activeMe(self):
+        window = win32gui.FindWindow(None, "Power")
+        win32gui.SetForegroundWindow(window)
+
     def resetStatus(self):
         self.ui.label.setText(" ")
         if self.statusFlag:
@@ -225,6 +231,7 @@ class yes(QWidget, Ui_Form):
         """
         打开与关闭检测剪切板功能
         """
+        self.ui.label.setText(" ")
         if self.statusFlag:
             self.clipboard.dataChanged.disconnect(self.saveCbData)
         else:

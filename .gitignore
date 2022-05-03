@@ -1,13 +1,11 @@
 *.exe
-*.ini
 *.spec
 *.ui
-*.ico
 *.bak
 *.qrc
-*_rc.py
 icons/
 __pycache__/
 build/
 dist/
 out/
+UI/
