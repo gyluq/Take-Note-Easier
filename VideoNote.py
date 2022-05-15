@@ -15,22 +15,41 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QSpacerItem,
-    QTextEdit, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
+    QPushButton, QSizePolicy, QSpacerItem, QTextEdit,
+    QVBoxLayout, QWidget)
 import img_rc
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(694, 44)
+        Form.resize(283, 257)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
         Form.setFont(font)
         Form.setCursor(QCursor(Qt.ArrowCursor))
-        Form.setStyleSheet(u"/*\u6309\u94ae*/\n"
+        Form.setStyleSheet(u"QTextEdit{\n"
+"	border-left:1px solid #ffffff;\n"
+"	border-bottom:1px solid #ffffff;\n"
+"	border-right:1px solid #ffffff;\n"
+"	border-top:1px solid #E6E6E6;\n"
+"	border-bottom-left-radius:5px;\n"
+"	border-bottom-right-radius:5px;\n"
+"	background-color:rgb(255,255,255);\n"
+"}\n"
+"\n"
+"/*----------------------------------------------------------------------------------*/\n"
+"\n"
+"#frame_2{\n"
+"	background-color:white;\n"
+"	border-top-left-radius:6px;\n"
+"	border-top-right-radius:6px;\n"
+"}\n"
+"\n"
+"/*----------------------------------------------------------------------------------*/\n"
+"\n"
 "QPushButton{\n"
 "	width: 25px;\n"
 "	height:25px;\n"
@@ -39,25 +58,22 @@ class Ui_Form(object):
 "	border:none;\n"
 "}\n"
 "\n"
-"/*\u6309\u94ae\u60ac\u505c*/\n"
 "QPushButton:hover{\n"
 "	border:1px solid #808080;\n"
 "	border-radius:4px;\n"
 "}\n"
 "\n"
-"/*\u6309\u94ae\u6309\u4e0b*/\n"
 "QPushButton:pressed{\n"
 "	background-color:#e1e1e1;\n"
 " }\n"
-"\n"
-"/*----------------------------------------------------------------------------------*/\n"
 "\n"
 "#pushButton{\n"
 "	background-image:url(:/icons/icons/copy.png);\n"
 "}\n"
 "\n"
 "#pushButton1{\n"
-"	background-image:url(:/icons/icons/trash.png);\n"
+"	background-image:url(:/icons"
+                        "/icons/trash.png);\n"
 "}\n"
 "\n"
 "#pushButton2{\n"
@@ -65,7 +81,7 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "#pushButton3{\n"
-"	background-image:url(:/icons/icons/close.png);\n"
+"	background-image:url(:/icons/icons/clos.png);\n"
 "}\n"
 "\n"
 "#pushButton4{\n"
@@ -77,34 +93,13 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "#pushButton6{\n"
-"	background-image:url(:/icons/icons/m"
-                        "onitor.png);\n"
+"	background-image:url(:/icons/icons/monitor.png);\n"
 "}\n"
 "\n"
 "#pushButton6::checked{\n"
 "	background-color:#80C698F0;\n"
 "	border:1px solid #808080;\n"
 "	border-radius:4px;\n"
-"}\n"
-"\n"
-"/*----------------------------------------------------------------------------------*/\n"
-"\n"
-"#label_BG{\n"
-"	background-color:#FFFFFF;\n"
-"	border:1px solid #ffffff;\n"
-"	border-radius:10px;\n"
-"}\n"
-"\n"
-"#label{\n"
-"	padding:3px 1px 3px 1px;\n"
-"}\n"
-"\n"
-"/*----------------------------------------------------------------------------------*/\n"
-"\n"
-"QTextEdit{\n"
-"	border:1px solid #808080;\n"
-"	border-radius:3px;\n"
-"	background-color:rgb(255,255,255);\n"
 "}\n"
 "\n"
 "/*----------------------------------------------------------------------------------*/\n"
@@ -120,10 +115,10 @@ class Ui_Form(object):
 "\n"
 "/*\u53f3\u4fa7\u7684\u5c55\u793a\u6309\u94ae*/\n"
 "QComboBox::drop-down {\n"
-"    subcontrol-origi"
-                        "n: padding;\n"
+"    subcontrol-origin: padding;\n"
 "    subcontrol-position: top right;\n"
-"    width: 12px;\n"
+"    width"
+                        ": 12px;\n"
 "	border-left:1px solid darkgray;\n"
 "	border-top-right-radius: 3px;\n"
 "    border-bottom-right-radius: 3px;\n"
@@ -143,111 +138,91 @@ class Ui_Form(object):
 "    image: url(:/icons/icons/sort-down.png);\n"
 "}\n"
 "")
-        self.horizontalLayoutWidget = QWidget(Form)
-        self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(12, 8, 671, 30))
-        self.horizontalLayout1 = QHBoxLayout(self.horizontalLayoutWidget)
-        self.horizontalLayout1.setSpacing(2)
-        self.horizontalLayout1.setObjectName(u"horizontalLayout1")
-        self.horizontalLayout1.setContentsMargins(0, 0, 0, 0)
-        self.textEdit1 = QTextEdit(self.horizontalLayoutWidget)
-        self.textEdit1.setObjectName(u"textEdit1")
-        self.textEdit1.setMinimumSize(QSize(200, 25))
-        self.textEdit1.setMaximumSize(QSize(200, 25))
-        font1 = QFont()
-        font1.setPointSize(10)
-        self.textEdit1.setFont(font1)
-        self.textEdit1.viewport().setProperty("cursor", QCursor(Qt.ArrowCursor))
-        self.textEdit1.setFocusPolicy(Qt.StrongFocus)
-        self.textEdit1.setStyleSheet(u"")
-        self.textEdit1.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.textEdit1.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        self.horizontalLayout1.addWidget(self.textEdit1)
-
-        self.comboBox = QComboBox(self.horizontalLayoutWidget)
+        self.frame_1 = QFrame(Form)
+        self.frame_1.setObjectName(u"frame_1")
+        self.frame_1.setGeometry(QRect(4, 2, 275, 250))
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_1.sizePolicy().hasHeightForWidth())
+        self.frame_1.setSizePolicy(sizePolicy)
+        self.frame_1.setMinimumSize(QSize(275, 250))
+        self.frame_1.setFrameShape(QFrame.StyledPanel)
+        self.frame_1.setFrameShadow(QFrame.Raised)
+        self.verticalLayout = QVBoxLayout(self.frame_1)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(2, 2, 2, 2)
+        self.frame_2 = QFrame(self.frame_1)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setMinimumSize(QSize(242, 33))
+        self.frame_2.setMaximumSize(QSize(16777215, 33))
+        self.frame_2.setFrameShape(QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_2 = QHBoxLayout(self.frame_2)
+        self.horizontalLayout_2.setSpacing(2)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(6, 2, 2, 2)
+        self.comboBox = QComboBox(self.frame_2)
         self.comboBox.setObjectName(u"comboBox")
         self.comboBox.setMinimumSize(QSize(73, 25))
         self.comboBox.setMaximumSize(QSize(16777215, 25))
 
-        self.horizontalLayout1.addWidget(self.comboBox)
+        self.horizontalLayout_2.addWidget(self.comboBox)
+
+        self.Button_copy = QPushButton(self.frame_2)
+        self.Button_copy.setObjectName(u"Button_copy")
+
+        self.horizontalLayout_2.addWidget(self.Button_copy)
+
+        self.Button_cut = QPushButton(self.frame_2)
+        self.Button_cut.setObjectName(u"Button_cut")
+
+        self.horizontalLayout_2.addWidget(self.Button_cut)
+
+        self.Button_clear = QPushButton(self.frame_2)
+        self.Button_clear.setObjectName(u"Button_clear")
+
+        self.horizontalLayout_2.addWidget(self.Button_clear)
+
+        self.Button_monitor = QPushButton(self.frame_2)
+        self.Button_monitor.setObjectName(u"Button_monitor")
+        self.Button_monitor.setCheckable(True)
+
+        self.horizontalLayout_2.addWidget(self.Button_monitor)
 
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout1.addItem(self.horizontalSpacer)
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
-        self.pushButton = QPushButton(self.horizontalLayoutWidget)
-        self.pushButton.setObjectName(u"pushButton")
+        self.Button_close = QPushButton(self.frame_2)
+        self.Button_close.setObjectName(u"Button_close")
 
-        self.horizontalLayout1.addWidget(self.pushButton)
+        self.horizontalLayout_2.addWidget(self.Button_close)
 
-        self.pushButton2 = QPushButton(self.horizontalLayoutWidget)
-        self.pushButton2.setObjectName(u"pushButton2")
+        self.Button_pin = QPushButton(self.frame_2)
+        self.Button_pin.setObjectName(u"Button_pin")
 
-        self.horizontalLayout1.addWidget(self.pushButton2)
+        self.horizontalLayout_2.addWidget(self.Button_pin)
 
-        self.pushButton1 = QPushButton(self.horizontalLayoutWidget)
-        self.pushButton1.setObjectName(u"pushButton1")
 
-        self.horizontalLayout1.addWidget(self.pushButton1)
+        self.verticalLayout.addWidget(self.frame_2)
 
-        self.pushButton3 = QPushButton(self.horizontalLayoutWidget)
-        self.pushButton3.setObjectName(u"pushButton3")
+        self.textEdit = QTextEdit(self.frame_1)
+        self.textEdit.setObjectName(u"textEdit")
+        self.textEdit.setMinimumSize(QSize(0, 0))
+        self.textEdit.setMaximumSize(QSize(200000, 2500))
+        font1 = QFont()
+        font1.setPointSize(10)
+        self.textEdit.setFont(font1)
+        self.textEdit.viewport().setProperty("cursor", QCursor(Qt.IBeamCursor))
+        self.textEdit.setFocusPolicy(Qt.StrongFocus)
+        self.textEdit.setStyleSheet(u"")
+        self.textEdit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.horizontalLayout1.addWidget(self.pushButton3)
+        self.verticalLayout.addWidget(self.textEdit)
 
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout1.addItem(self.horizontalSpacer_2)
-
-        self.textEdit2 = QTextEdit(self.horizontalLayoutWidget)
-        self.textEdit2.setObjectName(u"textEdit2")
-        self.textEdit2.setMinimumSize(QSize(150, 25))
-        self.textEdit2.setMaximumSize(QSize(150, 25))
-        self.textEdit2.setFont(font1)
-        self.textEdit2.setLineWidth(1)
-        self.textEdit2.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.textEdit2.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.textEdit2.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
-
-        self.horizontalLayout1.addWidget(self.textEdit2)
-
-        self.pushButton4 = QPushButton(self.horizontalLayoutWidget)
-        self.pushButton4.setObjectName(u"pushButton4")
-
-        self.horizontalLayout1.addWidget(self.pushButton4)
-
-        self.pushButton6 = QPushButton(self.horizontalLayoutWidget)
-        self.pushButton6.setObjectName(u"pushButton6")
-        self.pushButton6.setCheckable(True)
-
-        self.horizontalLayout1.addWidget(self.pushButton6)
-
-        self.label = QLabel(self.horizontalLayoutWidget)
-        self.label.setObjectName(u"label")
-        self.label.setMinimumSize(QSize(40, 0))
-        self.label.setMaximumSize(QSize(40, 16777215))
-        font2 = QFont()
-        font2.setPointSize(8)
-        self.label.setFont(font2)
-        self.label.setAlignment(Qt.AlignCenter)
-
-        self.horizontalLayout1.addWidget(self.label)
-
-        self.pushButton5 = QPushButton(self.horizontalLayoutWidget)
-        self.pushButton5.setObjectName(u"pushButton5")
-
-        self.horizontalLayout1.addWidget(self.pushButton5)
-
-        self.label_BG = QLabel(Form)
-        self.label_BG.setObjectName(u"label_BG")
-        self.label_BG.setGeometry(QRect(4, 6, 683, 33))
-        font3 = QFont()
-        font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
-        font3.setPointSize(8)
-        self.label_BG.setFont(font3)
-        self.label_BG.raise_()
-        self.horizontalLayoutWidget.raise_()
 
         self.retranslateUi(Form)
 
@@ -256,14 +231,11 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Power", None))
-        self.pushButton.setText("")
-        self.pushButton2.setText("")
-        self.pushButton1.setText("")
-        self.pushButton3.setText("")
-        self.pushButton4.setText("")
-        self.pushButton6.setText("")
-        self.label.setText("")
-        self.pushButton5.setText("")
-        self.label_BG.setText("")
+        self.Button_copy.setText("")
+        self.Button_cut.setText("")
+        self.Button_clear.setText("")
+        self.Button_monitor.setText("")
+        self.Button_close.setText("")
+        self.Button_pin.setText("")
     # retranslateUi
 

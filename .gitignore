@@ -3,7 +3,7 @@
 *.ui
 *.bak
 *.qrc
-icons/
+UI/icons/
 __pycache__/
 build/
 dist/

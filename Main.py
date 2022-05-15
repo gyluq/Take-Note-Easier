@@ -26,20 +26,18 @@ class yes(QWidget, Ui_Form):
         self.keyboardSignal.connect(self.startScreen)
 
         # QPushButton按钮事件
-        self.ui.pushButton.clicked.connect(self.copyAll)
-        self.ui.pushButton1.clicked.connect(self.clearAll)
-        self.ui.pushButton2.clicked.connect(self.cutAll)
-        self.ui.pushButton3.clicked.connect(self.exit)
-        self.ui.pushButton4.clicked.connect(self.sendNote)
-        self.ui.pushButton5.clicked.connect(self.stayTop)
-        self.ui.pushButton6.clicked.connect(self.changeMonitorStatus)
-        self.ui.pushButton.setToolTip("复制")
-        self.ui.pushButton1.setToolTip("清空")
-        self.ui.pushButton2.setToolTip("剪切")
-        self.ui.pushButton3.setToolTip("退出")
-        self.ui.pushButton4.setToolTip("添加笔记")
-        self.ui.pushButton5.setToolTip("切换置顶")
-        self.ui.pushButton6.setToolTip("监控剪切板")
+        self.ui.Button_copy.clicked.connect(self.copyAll)
+        self.ui.Button_clear.clicked.connect(self.clearAll)
+        self.ui.Button_cut.clicked.connect(self.cutAll)
+        self.ui.Button_close.clicked.connect(self.exit)
+        self.ui.Button_pin.clicked.connect(self.stayTop)
+        self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
+        self.ui.Button_copy.setToolTip("复制")
+        self.ui.Button_clear.setToolTip("清空")
+        self.ui.Button_cut.setToolTip("剪切")
+        self.ui.Button_close.setToolTip("退出")
+        self.ui.Button_pin.setToolTip("切换置顶")
+        self.ui.Button_monitor.setToolTip("监控剪切板")
 
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
@@ -59,14 +57,12 @@ class yes(QWidget, Ui_Form):
 
         self.clipboard = QGuiApplication.clipboard()
         self.statusFlag = False  # 开启与关闭检测剪切板功能
-        self.ui.textEdit1.textChanged.connect(lambda: self.ui.textEdit1.setToolTip(self.ui.textEdit1.toPlainText()))
-        self.ui.textEdit2.textChanged.connect(lambda: self.ui.textEdit2.setToolTip(self.ui.textEdit2.toPlainText()))
+        self.ui.textEdit.textChanged.connect(lambda: self.ui.textEdit.setToolTip(self.ui.textEdit.toPlainText()))
 
     def loadConfigurationFile(self):
         """
         加载配置文件
         """
-        self.ui.label_BG.setStyleSheet(f"background-color:{Settings.MAINWINDOW_BGCOLOR}")
         self.ui.comboBox.addItems(Settings.COMBOBOX_ITEM)
         self.ui.comboBox.currentTextChanged.connect(self.changeSize)
         setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
@@ -108,21 +104,18 @@ class yes(QWidget, Ui_Form):
 
     def copyAll(self):
         self.resetStatus()
-        self.ui.textEdit1.setFocus()
-        self.ui.textEdit1.selectAll()
+        self.ui.textEdit.setFocus()
         keyboard.press_and_release("ctrl+c")
         keyboard.press_and_release("right")
 
     def cutAll(self):
         self.resetStatus()
-        self.ui.textEdit1.setFocus()
-        self.ui.textEdit1.selectAll()
+        self.ui.textEdit.setFocus()
+        self.ui.textEdit.selectAll()
         keyboard.press_and_release("ctrl+x")
-        self.ui.textEdit1.setToolTip(f"这里什么也没有")
+        self.ui.textEdit.setToolTip(f"这里什么也没有")
 
     def clearAll(self):
-        self.ui.label.setText(" ")
-        print(self.ui.textEdit1.toHtml())
         msgBox = QMessageBox()
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("There are already some notes.\nAre you sure you want to clear them?")
@@ -131,8 +124,8 @@ class yes(QWidget, Ui_Form):
         msgBox.setIcon(QMessageBox.Question)
         ret = msgBox.exec()
         if ret == QMessageBox.Yes:
-            self.ui.textEdit1.clear()
-            self.ui.textEdit1.setToolTip(f"这里什么也没有")
+            self.ui.textEdit.clear()
+            self.ui.textEdit.setToolTip(f"这里什么也没有")
 
     def exit(self):
         self.resetStatus()
@@ -149,29 +142,20 @@ class yes(QWidget, Ui_Form):
             setting.setValue("OPTION/lastSelectedSize", currentSize)
             self.close()
 
-    def sendNote(self):
-        self.resetStatus()
-        if self.ui.textEdit2.toPlainText() != "":
-            self.ui.textEdit1.append(self.ui.textEdit2.toPlainText())
-            self.ui.textEdit2.clear()
-
     def stayTop(self):
         """
         置顶按钮调用,切换置顶
         """
         window = win32gui.FindWindow(None, "Power")
-        self.ui.label.setStyleSheet("color:green;font-weight:bold")
         if self.stayOnTopFlag:
             win32gui.SetWindowPos(window, win32con.HWND_TOPMOST, 0, 0, 0, 0,
                                   win32con.SWP_NOMOVE | win32con.SWP_NOACTIVATE | win32con.SWP_NOOWNERZORDER
                                   | win32con.SWP_SHOWWINDOW | win32con.SWP_NOSIZE)
-            self.ui.pushButton5.setStyleSheet("background-image:url(:/icons/icons/pin_active.png);")
-            self.ui.label.setText("已置顶")
+            self.ui.Button_pin.setStyleSheet("background-image:url(:/icons/icons/pin_active.png);")
         else:
             win32gui.SetWindowPos(window, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW
                                   | win32con.SWP_NOSIZE | win32con.SWP_NOMOVE)
-            self.ui.pushButton5.setStyleSheet("background-image:url(:/icons/icons/pin_default.png);")
-            self.ui.label.setText("未置顶")
+            self.ui.Button_pin.setStyleSheet("background-image:url(:/icons/icons/pin_default.png);")
         self.stayOnTopFlag = not self.stayOnTopFlag
 
     def hideMe(self):
@@ -193,21 +177,20 @@ class yes(QWidget, Ui_Form):
         win32gui.SetForegroundWindow(window)
 
     def resetStatus(self):
-        self.ui.label.setText(" ")
         if self.statusFlag:
             self.changeMonitorStatus()
-            self.ui.pushButton6.setChecked(False)
+            self.ui.Button_monitor.setChecked(False)
 
     def saveCbData(self):
         """
-        如果发现剪切板有新内容则发送到textEdit2
+        如果发现剪切板有新内容则发送到textEdit
         """
-        self.ui.textEdit1.append("")
+        self.ui.textEdit.append("")
         if self.clipboard.mimeData().hasImage():
             pixmap = self.clipboard.pixmap()
             imgStr = self.imgToBase64(pixmap)
             self.informSize(pixmap)
-            self.ui.textEdit1.append(imgStr)
+            self.ui.textEdit.append(imgStr)
         else:
             newText = self.clipboard.text().replace("。", ".") \
                 .replace("，", ",") \
@@ -223,13 +206,12 @@ class yes(QWidget, Ui_Form):
                 .replace("》", ">") \
                 .replace("《", "<") \
                 .replace("？", "?")
-            self.ui.textEdit1.append(newText)
+            self.ui.textEdit.append(newText)
 
     def changeMonitorStatus(self):
         """
         打开与关闭检测剪切板功能
         """
-        self.ui.label.setText(" ")
         if self.statusFlag:
             self.clipboard.dataChanged.disconnect(self.saveCbData)
         else:
@@ -262,14 +244,14 @@ class yes(QWidget, Ui_Form):
         """
         槽函数,接受截图数据和笔记
         """
-        self.ui.textEdit1.append("")  # 空行
+        self.ui.textEdit.append("")  # 空行
         self.informSize(img)
         # 控制截图尺寸
         if img.size().width() > self.maxWidth:
             img = img.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
-        self.ui.textEdit1.append(self.imgToBase64(img))
+        self.ui.textEdit.append(self.imgToBase64(img))
         if note != "":
-            self.ui.textEdit1.append(note)
+            self.ui.textEdit.append(note)
 
     def informSize(self, img):
         """
@@ -278,9 +260,9 @@ class yes(QWidget, Ui_Form):
         width = img.size().width()
         height = img.size().height()
         if width < 50 and height < 50:
-            self.ui.label.setPixmap(QPixmap(":/icons/icons/important.png"))
+            pass
         else:
-            self.ui.label.setPixmap(QPixmap(":/icons/icons/ok.png"))
+            pass
 
 
 if __name__ == "__main__":
