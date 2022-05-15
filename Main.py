@@ -3,11 +3,12 @@ import sys
 import keyboard
 import win32con
 import win32gui
+
+from Ui_Settings import Settings
 from PySide6.QtCore import Slot, Qt, Signal, QSettings, QByteArray, QBuffer
 from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
-
 from Screenshot import CaptureScreen
 from VideoNote import Ui_Form
 import img_rc
@@ -53,7 +54,6 @@ class yes(QWidget, Ui_Form):
         self.hk_start.register(('f4',), callback=lambda x: self.send_key_event())
 
         self.maxWidth = 1300  # 截图的默认最大宽度
-        self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
         self.loadConfigurationFile()
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)  # 窗口置顶
 
@@ -66,14 +66,11 @@ class yes(QWidget, Ui_Form):
         """
         加载配置文件
         """
-        # 界面背景
-        bg = self.setting.value("UI/mainWindow_bg_color")
-        self.ui.label_BG.setStyleSheet(f"background-color:{bg}")
-        # 初始化comboBox
-        sizeList = self.setting.value("OPTION/allSize")
-        self.ui.comboBox.addItems(sizeList)
+        self.ui.label_BG.setStyleSheet(f"background-color:{Settings.MAINWINDOW_BGCOLOR}")
+        self.ui.comboBox.addItems(Settings.COMBOBOX_ITEM)
         self.ui.comboBox.currentTextChanged.connect(self.changeSize)
-        self.ui.comboBox.setCurrentText(self.setting.value("OPTION/lastSelectedSize"))
+        setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
+        self.ui.comboBox.setCurrentText(setting.value("OPTION/lastSelectedSize"))
 
     def send_key_event(self):
         """
@@ -148,7 +145,8 @@ class yes(QWidget, Ui_Form):
         ret = msgBox.exec()
         if ret == QMessageBox.Close:
             currentSize = self.ui.comboBox.currentText()
-            self.setting.setValue("OPTION/lastSelectedSize", currentSize)
+            setting = QSettings("configuration.ini", QSettings.IniFormat)
+            setting.setValue("OPTION/lastSelectedSize", currentSize)
             self.close()
 
     def sendNote(self):
