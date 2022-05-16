@@ -7,8 +7,7 @@ from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
 from Screenshot import CaptureScreen
-from VideoNote import Ui_Form
-import img_rc
+from ScreenshotNote.UI.VideoNote import Ui_Form
 
 
 class yes(QWidget, Ui_Form):
@@ -28,6 +27,7 @@ class yes(QWidget, Ui_Form):
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_shrink.clicked.connect(self.shrink)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
+        self.ui.Button_setting.clicked.connect(self.settings)
         self.ui.Button_close.clicked.connect(self.exit)
         self.ui.Button_pin.clicked.connect(self.stayTop)
 
@@ -36,6 +36,7 @@ class yes(QWidget, Ui_Form):
         self.ui.Button_clear.setToolTip("清空")
         self.ui.Button_monitor.setToolTip("监控剪切板")
         self.ui.Button_shrink.setToolTip("收缩/展开")
+        self.ui.Button_setting.setToolTip("设置")
         self.ui.Button_close.setToolTip("退出")
         self.ui.Button_pin.setToolTip("切换置顶")
 
@@ -242,6 +243,9 @@ class yes(QWidget, Ui_Form):
             self.ui.Button_monitor.setStyleSheet(
                 f"background-color:{self.setting.value('UI/MAINWINDOW_MONITOR_BUTTON')}")
         self.statusFlag = ~ self.statusFlag
+
+    def settings(self):
+        pass
 
     def changeSize(self, rbt):
         """

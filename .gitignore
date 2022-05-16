@@ -3,9 +3,10 @@
 *.ui
 *.bak
 *.qrc
+*.ini
 UI/icons/
 __pycache__/
 build/
 dist/
 out/
-UI/
+UI/icons/
