@@ -1,7 +1,4 @@
 import sys
-import time
-
-import keyboard
 import win32con
 import win32gui
 
@@ -113,7 +110,7 @@ class yes(QWidget, Ui_Form):
         self.resetStatus()
 
     def cutAll(self):
-        origin = self.ui.textEdit.toHtml().replace(" width=\"255\"", "")
+        origin = self.ui.textEdit.toHtml().replace(" width=\"280\"", "")
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
@@ -201,6 +198,8 @@ class yes(QWidget, Ui_Form):
         self.ui.textEdit.append("")
         if self.clipboard.mimeData().hasImage():
             pixmap = self.clipboard.image()
+            if pixmap.width() > self.maxWidth:
+                pixmap = pixmap.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
             self.ui.textEdit.insertImage(pixmap)
         else:
             newText = self.clipboard.text().replace("。", ".") \
