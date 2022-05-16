@@ -6,7 +6,7 @@ import win32con
 import win32gui
 
 from Ui_Settings import Settings
-from PySide6.QtCore import Slot, Qt, Signal, QSettings, QByteArray, QBuffer
+from PySide6.QtCore import Slot, Qt, Signal, QSettings
 from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
@@ -190,10 +190,8 @@ class yes(QWidget, Ui_Form):
         """
         self.ui.textEdit.append("")
         if self.clipboard.mimeData().hasImage():
-            pixmap = self.clipboard.pixmap()
-            imgStr = self.imgToBase64(pixmap)
-            self.informSize(pixmap)
-            self.ui.textEdit.append(imgStr)
+            pixmap = self.clipboard.image()
+            self.ui.textEdit.insertImage(pixmap)
         else:
             newText = self.clipboard.text().replace("。", ".") \
                 .replace("，", ",") \
@@ -221,18 +219,6 @@ class yes(QWidget, Ui_Form):
             self.clipboard.dataChanged.connect(self.saveCbData)
         self.statusFlag = ~ self.statusFlag
 
-    def imgToBase64(self, img):
-        """
-        图片转base64
-        :param img: QPixmap or QImage
-        :return: str
-        """
-        data = QByteArray()
-        buf = QBuffer(data)
-        img.save(buf, "PNG")
-        imgData = str(data.toBase64(), encoding="utf-8")
-        return f"<img src=\"data:image/png;base64,{imgData}\" width='255'/>"
-
     def changeSize(self, rbt):
         """
         控制截图的最大宽度
@@ -248,24 +234,12 @@ class yes(QWidget, Ui_Form):
         槽函数,接受截图数据和笔记
         """
         self.ui.textEdit.append("")  # 空行
-        self.informSize(img)
         # 控制截图尺寸
         if img.size().width() > self.maxWidth:
             img = img.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
-        self.ui.textEdit.append(self.imgToBase64(img))
+        self.ui.textEdit.insertImage(img)
         if note != "":
             self.ui.textEdit.append(note)
-
-    def informSize(self, img):
-        """
-        截图提示信息,如果尺寸太小,则显示感叹号图标
-        """
-        width = img.size().width()
-        height = img.size().height()
-        if width < 50 and height < 50:
-            pass
-        else:
-            pass
 
 
 if __name__ == "__main__":
