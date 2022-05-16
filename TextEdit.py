@@ -35,10 +35,11 @@ class TextEdit(QTextEdit):
         image.save(buffer, 'PNG', quality=95)
         imgData = str(ba.toBase64(), encoding="utf-8")
         if width > 280:
-            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\" width='280'/>\n"
+            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\" width='280'/>"
         else:
-            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\"/>\n"
+            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\"/>"
         self.textCursor().insertHtml(HTMLBin)
+        self.textCursor().insertHtml("<br/>")
         self.setTextCursor(self.textCursor())
         return True
 

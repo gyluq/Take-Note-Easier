@@ -118,7 +118,8 @@ class yes(QWidget, Ui_Form):
         self.resetStatus()
 
     def cutAll(self):
-        origin = self.ui.textEdit.toHtml().replace(" width=\"280\"", "")
+        origin = self.ui.textEdit.toHtml().replace(" width=\"280\"", "")\
+            .replace("font-family:'Microsoft YaHei UI'; font-size:10pt;", "font-family:'GUYELUO'; font-size:13pt;")
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
