@@ -1,4 +1,5 @@
 import sys
+import time
 
 import keyboard
 import win32con
@@ -57,7 +58,6 @@ class yes(QWidget, Ui_Form):
 
         self.clipboard = QGuiApplication.clipboard()
         self.statusFlag = False  # 开启与关闭检测剪切板功能
-        self.ui.textEdit.textChanged.connect(lambda: self.ui.textEdit.setToolTip(self.ui.textEdit.toPlainText()))
 
     def loadConfigurationFile(self):
         """
@@ -105,10 +105,13 @@ class yes(QWidget, Ui_Form):
     def copyAll(self):
         self.resetStatus()
         self.ui.textEdit.setFocus()
+        self.ui.textEdit.selectAll()
         keyboard.press_and_release("ctrl+c")
         keyboard.press_and_release("right")
 
     def cutAll(self):
+        origin = self.ui.textEdit.toHtml().replace(" width=\"255\"", "")
+        self.ui.textEdit.setHtml(origin)
         self.resetStatus()
         self.ui.textEdit.setFocus()
         self.ui.textEdit.selectAll()
@@ -151,11 +154,11 @@ class yes(QWidget, Ui_Form):
             win32gui.SetWindowPos(window, win32con.HWND_TOPMOST, 0, 0, 0, 0,
                                   win32con.SWP_NOMOVE | win32con.SWP_NOACTIVATE | win32con.SWP_NOOWNERZORDER
                                   | win32con.SWP_SHOWWINDOW | win32con.SWP_NOSIZE)
-            self.ui.Button_pin.setStyleSheet("background-image:url(:/icons/icons/pin_active.png);")
+            self.ui.Button_pin.setStyleSheet("background-image:url(:/new/icons/pin_default.png);")
         else:
             win32gui.SetWindowPos(window, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW
                                   | win32con.SWP_NOSIZE | win32con.SWP_NOMOVE)
-            self.ui.Button_pin.setStyleSheet("background-image:url(:/icons/icons/pin_default.png);")
+            self.ui.Button_pin.setStyleSheet("background-image:url(:/new/icons/pin_active.png);")
         self.stayOnTopFlag = not self.stayOnTopFlag
 
     def hideMe(self):
@@ -228,7 +231,7 @@ class yes(QWidget, Ui_Form):
         buf = QBuffer(data)
         img.save(buf, "PNG")
         imgData = str(data.toBase64(), encoding="utf-8")
-        return f"<img src=\"data:image/png;base64,{imgData}\" alt=\"**图片**\"/>"
+        return f"<img src=\"data:image/png;base64,{imgData}\" width='255'/>"
 
     def changeSize(self, rbt):
         """

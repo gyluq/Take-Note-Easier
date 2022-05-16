@@ -58,7 +58,7 @@ class CaptureScreen(QMainWindow):
         self.textedit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textedit.hide()
 
-        self.okButton = QPushButton(QIcon(":/icons/icons/yes3.png"), "", self)
+        self.okButton = QPushButton(QIcon(":/new/icons/yes3.png"), "", self)
         self.okButton.setIconSize(QSize(20, 20))
         self.okButton.setStyleSheet(
             f"background-repeat:none;background-position:center;background-color:{Settings.NOTE_BGCOLOR};"
