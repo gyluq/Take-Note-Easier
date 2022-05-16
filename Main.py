@@ -2,7 +2,6 @@ import sys
 import win32con
 import win32gui
 
-from Ui_Settings import Settings
 from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData
 from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
@@ -63,10 +62,19 @@ class yes(QWidget, Ui_Form):
         """
         加载配置文件
         """
-        self.ui.comboBox.addItems(Settings.COMBOBOX_ITEM)
+        self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
+        self.ui.comboBox.addItems(self.setting.value("OPTION/COMBOBOX_ITEM"))
         self.ui.comboBox.currentTextChanged.connect(self.changeSize)
-        setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
-        self.ui.comboBox.setCurrentText(setting.value("OPTION/lastSelectedSize"))
+        self.ui.comboBox.setCurrentText(self.setting.value("LAST_OPTION/LAST_SIZE"))
+        self.ui.frame_2.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
+        self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
+
+        flag = self.setting.value('LAST_OPTION/FOLD_FLAG')
+        if flag == "1":
+            self.ui.Button_shrink.setChecked(True)
+            self.shrink()
+        else:
+            self.ui.Button_shrink.setChecked(False)
 
     def send_key_event(self):
         """
@@ -148,8 +156,11 @@ class yes(QWidget, Ui_Form):
         ret = msgBox.exec()
         if ret == QMessageBox.Close:
             currentSize = self.ui.comboBox.currentText()
-            setting = QSettings("configuration.ini", QSettings.IniFormat)
-            setting.setValue("OPTION/lastSelectedSize", currentSize)
+            self.setting.setValue("LAST_OPTION/LAST_SIZE", currentSize)
+            if self.ui.Button_shrink.isChecked():
+                self.setting.setValue("LAST_OPTION/FOLD_FLAG", 1)
+            else:
+                self.setting.setValue("LAST_OPTION/FOLD_FLAG", 0)
             self.close()
 
     def stayTop(self):
@@ -224,8 +235,11 @@ class yes(QWidget, Ui_Form):
         """
         if self.statusFlag:
             self.clipboard.dataChanged.disconnect(self.saveCbData)
+            self.ui.Button_monitor.setStyleSheet("background-color:#ffffff")
         else:
             self.clipboard.dataChanged.connect(self.saveCbData)
+            self.ui.Button_monitor.setStyleSheet(
+                f"background-color:{self.setting.value('UI/MAINWINDOW_MONITOR_BUTTON')}")
         self.statusFlag = ~ self.statusFlag
 
     def changeSize(self, rbt):

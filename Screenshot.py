@@ -1,7 +1,6 @@
-from PySide6.QtCore import Qt, QRect, Signal, QSize, QPointF, QPoint
+from PySide6.QtCore import Qt, QRect, Signal, QSize, QPointF, QPoint, QSettings
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon, QPixmap
 from PySide6.QtWidgets import QMainWindow, QTextEdit, QPushButton
-from Ui_Settings import Settings
 import img_rc
 
 
@@ -50,10 +49,12 @@ class CaptureScreen(QMainWindow):
         self.bottom = 0
 
     def initialization(self):
+        self.setting = QSettings("configuration.ini", QSettings.IniFormat)
         self.textedit = QTextEdit(self)
         self.textedit.setPlaceholderText("记些什么...")
         self.textedit.setStyleSheet(
-            f"background-color:{Settings.NOTE_BGCOLOR};border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
+            f"background-color:{self.setting.value('UI/SCREEN_NOTE')}"
+            f";border-radius:4px;font-size:13px;margin:0;padding:0;color:white;")
         self.textedit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textedit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.textedit.hide()
@@ -61,7 +62,8 @@ class CaptureScreen(QMainWindow):
         self.okButton = QPushButton(QIcon(":/new/icons/yes3.png"), "", self)
         self.okButton.setIconSize(QSize(20, 20))
         self.okButton.setStyleSheet(
-            f"background-repeat:none;background-position:center;background-color:{Settings.NOTE_BGCOLOR};"
+            f"background-repeat:none;background-position:center;"
+            f"background-color:{self.setting.value('UI/SCREEN_NOTE')};"
             f"border:#FFFFFF;border-radius:4px;margin:0;padding:0;")
         self.okButton.setCursor(Qt.PointingHandCursor)
         self.okButton.setMaximumWidth(30)
@@ -323,7 +325,7 @@ class CaptureScreen(QMainWindow):
         """
         绘制全屏截图作为背景
         """
-        shadowColor = QColor(Settings.MASK_COLOR)
+        shadowColor = QColor(self.setting.value('UI/SCREEN_MASK'))
         self.painter.drawPixmap(0, 0, self.fullScreenImage)  # 绘制全屏截图
         self.painter.fillRect(self.fullScreenImage.rect(), shadowColor)  # 绘制遮罩层
 
@@ -342,13 +344,13 @@ class CaptureScreen(QMainWindow):
                 self.captureImage = self.fullScreenImage.copy(pickRect)  # 捕获截图矩形框内的图片
                 self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)  # 填充截取的区域
                 # 绘制顶点
-                penColor = QColor(Settings.VERTEX_COLOR)
+                penColor = QColor(self.setting.value('UI/SCREEN_VERTEX'))
                 self.painter.fillRect(QRect(self.left - 3, self.top - 3, 6, 6), penColor)
                 self.painter.fillRect(QRect(self.left - 3, self.bottom - 3, 6, 6), penColor)
                 self.painter.fillRect(QRect(self.right - 3, self.top - 3, 6, 6), penColor)
                 self.painter.fillRect(QRect(self.right - 3, self.bottom - 3, 6, 6), penColor)
                 # 画矩形边框
-                self.painter.setPen(QPen(QColor(Settings.BORDER_COLOR), 2, Qt.SolidLine, Qt.RoundCap))
+                self.painter.setPen(QPen(QColor(self.setting.value('UI/SCREEN_BORDER')), 2, Qt.SolidLine, Qt.RoundCap))
                 self.painter.drawRect(pickRect)
                 # 显示截图尺寸
                 if self.top > 25:
