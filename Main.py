@@ -6,7 +6,7 @@ import win32con
 import win32gui
 
 from Ui_Settings import Settings
-from PySide6.QtCore import Slot, Qt, Signal, QSettings
+from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData
 from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
@@ -106,20 +106,19 @@ class yes(QWidget, Ui_Form):
         self.cap.signal_close.connect(self.showMe)
 
     def copyAll(self):
+        origin = self.ui.textEdit.toHtml()
+        data = QMimeData()
+        data.setHtml(origin)
+        self.clipboard.setMimeData(data)
         self.resetStatus()
-        self.ui.textEdit.setFocus()
-        self.ui.textEdit.selectAll()
-        keyboard.press_and_release("ctrl+c")
-        keyboard.press_and_release("right")
 
     def cutAll(self):
         origin = self.ui.textEdit.toHtml().replace(" width=\"255\"", "")
-        self.ui.textEdit.setHtml(origin)
+        data = QMimeData()
+        data.setHtml(origin)
+        self.clipboard.setMimeData(data)
+        self.ui.textEdit.clear()
         self.resetStatus()
-        self.ui.textEdit.setFocus()
-        self.ui.textEdit.selectAll()
-        keyboard.press_and_release("ctrl+x")
-        self.ui.textEdit.setToolTip(f"这里什么也没有")
 
     def clearAll(self):
         msgBox = QMessageBox()
