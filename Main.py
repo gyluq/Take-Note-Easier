@@ -28,17 +28,20 @@ class yes(QWidget, Ui_Form):
 
         # QPushButton按钮事件
         self.ui.Button_copy.clicked.connect(self.copyAll)
-        self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_cut.clicked.connect(self.cutAll)
+        self.ui.Button_clear.clicked.connect(self.clearAll)
+        self.ui.Button_shrink.clicked.connect(self.shrink)
+        self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_close.clicked.connect(self.exit)
         self.ui.Button_pin.clicked.connect(self.stayTop)
-        self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
+
         self.ui.Button_copy.setToolTip("复制")
-        self.ui.Button_clear.setToolTip("清空")
         self.ui.Button_cut.setToolTip("剪切")
+        self.ui.Button_clear.setToolTip("清空")
+        self.ui.Button_monitor.setToolTip("监控剪切板")
+        self.ui.Button_shrink.setToolTip("收缩/展开")
         self.ui.Button_close.setToolTip("退出")
         self.ui.Button_pin.setToolTip("切换置顶")
-        self.ui.Button_monitor.setToolTip("监控剪切板")
 
         # 无边框,背景透明
         self.setWindowFlag(Qt.FramelessWindowHint)
@@ -129,6 +132,14 @@ class yes(QWidget, Ui_Form):
         if ret == QMessageBox.Yes:
             self.ui.textEdit.clear()
             self.ui.textEdit.setToolTip(f"这里什么也没有")
+
+    def shrink(self):
+        if self.ui.Button_shrink.isChecked():
+            self.ui.textEdit.setMaximumHeight(35)
+            self.ui.textEdit.setMinimumHeight(35)
+        else:
+            self.ui.textEdit.setMaximumHeight(200)
+            self.ui.textEdit.setMaximumHeight(200)
 
     def exit(self):
         self.resetStatus()

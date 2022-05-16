@@ -29,11 +29,7 @@ class TextEdit(QTextEdit):
     def insertImage(self, image):
         if image.isNull():
             return False
-
         width = image.width()
-        # doc = self.document()
-        # print(doc.pageSize().width())
-
         ba = QtCore.QByteArray()
         buffer = QtCore.QBuffer(ba)
         image.save(buffer, 'PNG', quality=95)
