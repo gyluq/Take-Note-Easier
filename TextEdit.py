@@ -34,8 +34,8 @@ class TextEdit(QTextEdit):
         buffer = QtCore.QBuffer(ba)
         image.save(buffer, 'PNG', quality=95)
         imgData = str(ba.toBase64(), encoding="utf-8")
-        if width > 280:
-            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\" width='280'/>"
+        if width > 300:
+            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\" width='300'/>"
         else:
             HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\"/>"
         self.textCursor().insertHtml(HTMLBin)

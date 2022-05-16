@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
 from Screenshot import CaptureScreen
 from ScreenshotNote.UI.VideoNote import Ui_Form
+from Setting import Setting
 
 
 class yes(QWidget, Ui_Form):
@@ -27,7 +28,7 @@ class yes(QWidget, Ui_Form):
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_shrink.clicked.connect(self.shrink)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
-        self.ui.Button_setting.clicked.connect(self.settings)
+        self.ui.Button_setting.clicked.connect(self.configuration)
         self.ui.Button_close.clicked.connect(self.exit)
         self.ui.Button_pin.clicked.connect(self.stayTop)
 
@@ -119,7 +120,7 @@ class yes(QWidget, Ui_Form):
         self.resetStatus()
 
     def cutAll(self):
-        origin = self.ui.textEdit.toHtml().replace(" width=\"280\"", "")\
+        origin = self.ui.textEdit.toHtml().replace(" width=\"300\"", "") \
             .replace("font-family:'Microsoft YaHei UI'; font-size:10pt;", "font-family:'GUYELUO'; font-size:13pt;")
         data = QMimeData()
         data.setHtml(origin)
@@ -237,15 +238,21 @@ class yes(QWidget, Ui_Form):
         """
         if self.statusFlag:
             self.clipboard.dataChanged.disconnect(self.saveCbData)
-            self.ui.Button_monitor.setStyleSheet("background-color:#ffffff")
+            self.ui.Button_monitor.setStyleSheet(
+                f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
         else:
             self.clipboard.dataChanged.connect(self.saveCbData)
             self.ui.Button_monitor.setStyleSheet(
                 f"background-color:{self.setting.value('UI/MAINWINDOW_MONITOR_BUTTON')}")
         self.statusFlag = ~ self.statusFlag
 
-    def settings(self):
-        pass
+    def configuration(self):
+        self.ss = Setting()
+        self.ss.signal.connect(self.reColor)
+
+    def reColor(self):
+        self.ui.frame_2.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
+        self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
 
     def changeSize(self, rbt):
         """
