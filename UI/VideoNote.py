@@ -18,14 +18,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QPushButton, QSizePolicy, QSpacerItem,
     QVBoxLayout, QWidget)
-from ScreenshotNote.TextEdit import TextEdit
-import ScreenshotNote.UI.img_rc
+from . NewTextEdit import TextEdit
+from . import img_rc
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(330, 255)
+        Form.resize(323, 255)
         font = QFont()
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
@@ -52,8 +52,8 @@ class Ui_Form(object):
 "/*----------------------------------------------------------------------------------*/\n"
 "\n"
 "QPushButton{\n"
-"	width: 25px;\n"
-"	height:25px;\n"
+"	width: 23px;\n"
+"	height:23px;\n"
 "	background-repeat:none;\n"
 "	background-position:center;\n"
 "	border:none;\n"
@@ -149,13 +149,13 @@ class Ui_Form(object):
 "")
         self.frame_1 = QFrame(Form)
         self.frame_1.setObjectName(u"frame_1")
-        self.frame_1.setGeometry(QRect(4, 2, 321, 250))
+        self.frame_1.setGeometry(QRect(4, 2, 310, 250))
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame_1.sizePolicy().hasHeightForWidth())
         self.frame_1.setSizePolicy(sizePolicy)
-        self.frame_1.setMinimumSize(QSize(300, 250))
+        self.frame_1.setMinimumSize(QSize(310, 250))
         self.frame_1.setFrameShape(QFrame.StyledPanel)
         self.frame_1.setFrameShadow(QFrame.Raised)
         self.verticalLayout = QVBoxLayout(self.frame_1)
@@ -164,14 +164,14 @@ class Ui_Form(object):
         self.verticalLayout.setContentsMargins(2, 2, 2, 2)
         self.frame_2 = QFrame(self.frame_1)
         self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setMinimumSize(QSize(242, 33))
-        self.frame_2.setMaximumSize(QSize(16777215, 33))
+        self.frame_2.setMinimumSize(QSize(242, 32))
+        self.frame_2.setMaximumSize(QSize(16777215, 32))
         self.frame_2.setFrameShape(QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_2 = QHBoxLayout(self.frame_2)
-        self.horizontalLayout_2.setSpacing(2)
+        self.horizontalLayout_2.setSpacing(3)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(6, 2, 2, 2)
+        self.horizontalLayout_2.setContentsMargins(4, 1, 2, 1)
         self.Button_pin = QPushButton(self.frame_2)
         self.Button_pin.setObjectName(u"Button_pin")
 

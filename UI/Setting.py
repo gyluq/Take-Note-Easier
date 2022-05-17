@@ -8,16 +8,11 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QGroupBox, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtCore import (QCoreApplication, QMetaObject)
+from PySide6.QtWidgets import (QGridLayout, QGroupBox, QHBoxLayout,
+                               QLabel, QPushButton, QSizePolicy, QSpacerItem,
+                               QVBoxLayout)
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -25,40 +20,40 @@ class Ui_Form(object):
             Form.setObjectName(u"Form")
         Form.resize(400, 216)
         Form.setStyleSheet(u"QPushButton{\n"
-"	border:1px solid #abadb3;\n"
-"	background-color:#FFFFFF;\n"
-"	padding:3 5 3 5;\n"
-"	width:70px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"	background-color:#EBEBEB;\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"	background-color:#C9C4C4;\n"
-"}\n"
-"\n"
-"QPushButton#Button_apply{\n"
-"	border:1px solid #abadb3;\n"
-"	background-color:#E8E8E8;\n"
-"	padding:3 5 3 5;\n"
-"	width:70px;\n"
-"}\n"
-"\n"
-"QPushButton#Button_apply:hover{\n"
-"	background-color:#F0E3E3;\n"
-"}\n"
-"\n"
-"\n"
-"QPushButton#Button_apply:pressed{\n"
-"	background-color:#D1C1C1;\n"
-"}\n"
-"\n"
-"\n"
-"\n"
-"\n"
-"")
+                           "	border:1px solid #abadb3;\n"
+                           "	background-color:#FFFFFF;\n"
+                           "	padding:3 5 3 5;\n"
+                           "	width:70px;\n"
+                           "}\n"
+                           "\n"
+                           "QPushButton:hover{\n"
+                           "	background-color:#EBEBEB;\n"
+                           "}\n"
+                           "\n"
+                           "QPushButton:pressed{\n"
+                           "	background-color:#C9C4C4;\n"
+                           "}\n"
+                           "\n"
+                           "QPushButton#Button_apply{\n"
+                           "	border:1px solid #abadb3;\n"
+                           "	background-color:#E8E8E8;\n"
+                           "	padding:3 5 3 5;\n"
+                           "	width:70px;\n"
+                           "}\n"
+                           "\n"
+                           "QPushButton#Button_apply:hover{\n"
+                           "	background-color:#F0E3E3;\n"
+                           "}\n"
+                           "\n"
+                           "\n"
+                           "QPushButton#Button_apply:pressed{\n"
+                           "	background-color:#D1C1C1;\n"
+                           "}\n"
+                           "\n"
+                           "\n"
+                           "\n"
+                           "\n"
+                           "")
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.groupBox = QGroupBox(Form)
@@ -129,9 +124,7 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.Color_mask, 2, 3, 1, 1)
 
-
         self.verticalLayout_2.addLayout(self.gridLayout)
-
 
         self.verticalLayout.addWidget(self.groupBox)
 
@@ -146,13 +139,12 @@ class Ui_Form(object):
 
         self.horizontalLayout.addWidget(self.Button_apply)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout)
-
 
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
+
     # setupUi
 
     def retranslateUi(self, Form):
@@ -170,4 +162,3 @@ class Ui_Form(object):
         self.Color_mask.setText("")
         self.Button_apply.setText(QCoreApplication.translate("Form", u"\u5e94\u7528", None))
     # retranslateUi
-

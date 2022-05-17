@@ -1,7 +1,7 @@
 from PySide6.QtCore import Qt, QRect, Signal, QSize, QPointF, QPoint, QSettings
 from PySide6.QtGui import QPen, QPainter, QColor, QGuiApplication, QIcon, QPixmap
 from PySide6.QtWidgets import QMainWindow, QTextEdit, QPushButton
-import ScreenshotNote.UI.img_rc
+import UI.img_rc
 
 
 class CaptureScreen(QMainWindow):

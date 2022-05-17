@@ -7,8 +7,9 @@ from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 from system_hotkey import SystemHotkey
 from Screenshot import CaptureScreen
-from ScreenshotNote.UI.VideoNote import Ui_Form
-from Setting import Setting
+
+from UI.VideoNote import Ui_Form
+from Settings import Setting
 
 
 class yes(QWidget, Ui_Form):
@@ -114,13 +115,14 @@ class yes(QWidget, Ui_Form):
 
     def copyAll(self):
         origin = self.ui.textEdit.toHtml()
+        print(origin)
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
         self.resetStatus()
 
     def cutAll(self):
-        origin = self.ui.textEdit.toHtml().replace(" width=\"300\"", "") \
+        origin = self.ui.textEdit.toHtml().replace(" width=\"287\"", "") \
             .replace("font-family:'Microsoft YaHei UI'; font-size:10pt;", "font-family:'GUYELUO'; font-size:13pt;")
         data = QMimeData()
         data.setHtml(origin)

@@ -1,7 +1,7 @@
 from PySide6.QtCore import (QSettings, Signal)
-from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (QWidget, QApplication, QColorDialog)
-from ScreenshotNote.UI.Setting import Ui_Form
+
+from UI.Setting import Ui_Form
 
 
 class Setting(QWidget):

@@ -34,12 +34,16 @@ class TextEdit(QTextEdit):
         buffer = QtCore.QBuffer(ba)
         image.save(buffer, 'PNG', quality=95)
         imgData = str(ba.toBase64(), encoding="utf-8")
-        if width > 300:
-            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\" width='300'/>"
+        if width > 287:
+            HTMLBin = f"<p style=\" margin-top:3px; margin-bottom:0px; margin-left:0px; margin-right:0px;" \
+                      f" -qt-block-indent:0; text-indent:0px;\">" \
+                      f"<img src=\"data:image/png;base64,{imgData}\" width='287'/></p>"
         else:
-            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\"/>"
+            HTMLBin = f"<p style=\" margin-top:3px; margin-bottom:0px; margin-left:0px; margin-right:0px;" \
+                      f" -qt-block-indent:0; text-indent:0px;\">" \
+                      f"<img src=\"data:image/png;base64,{imgData}\"/></p>"
         self.textCursor().insertHtml(HTMLBin)
-        self.textCursor().insertHtml("<br/>")
+        # self.textCursor().insertHtml("<p><span style=\" font-size:6pt;\">.</span></p>")
         self.setTextCursor(self.textCursor())
         return True
 
