@@ -1,38 +1,41 @@
 import sys
+
 import win32con
 import win32gui
-
-from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData
+from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData, QSize
 from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
-from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
+from PySide6.QtWidgets import QApplication, QMessageBox, QMainWindow
 from system_hotkey import SystemHotkey
+
 from Screenshot import CaptureScreen
-
-from UI.VideoNote import Ui_Form
 from Settings import Setting
+from UI.VideoNote import Ui_MainWindow
 
 
-class yes(QWidget, Ui_Form):
+class NoteWindow(QMainWindow):
     cap = None
     keyboardSignal = Signal()
     stayOnTopFlag = False
 
     def __init__(self):
-        super(yes, self).__init__()
-        self.ui = Ui_Form()
+        super(NoteWindow, self).__init__()
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.keyboardSignal.connect(self.startScreen)
 
         # QPushButton按钮事件
+        self.ui.Button_pin.clicked.connect(self.stayTop)
         self.ui.Button_copy.clicked.connect(self.copyAll)
         self.ui.Button_cut.clicked.connect(self.cutAll)
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_shrink.clicked.connect(self.shrink)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.configuration)
+        self.ui.Button_minimize.clicked.connect(lambda: self.showMinimized())
+        self.ui.Button_enlarge.clicked.connect(self.Maximized)
         self.ui.Button_close.clicked.connect(self.exit)
-        self.ui.Button_pin.clicked.connect(self.stayTop)
 
+        self.ui.Button_pin.setToolTip("切换置顶")
         self.ui.Button_copy.setToolTip("复制")
         self.ui.Button_cut.setToolTip("剪切")
         self.ui.Button_clear.setToolTip("清空")
@@ -40,9 +43,9 @@ class yes(QWidget, Ui_Form):
         self.ui.Button_shrink.setToolTip("收缩/展开")
         self.ui.Button_setting.setToolTip("设置")
         self.ui.Button_close.setToolTip("退出")
-        self.ui.Button_pin.setToolTip("切换置顶")
 
         # 无边框,背景透明
+        self.setWindowTitle("Power")
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
@@ -66,9 +69,6 @@ class yes(QWidget, Ui_Form):
         加载配置文件
         """
         self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
-        self.ui.comboBox.addItems(self.setting.value("OPTION/COMBOBOX_ITEM"))
-        self.ui.comboBox.currentTextChanged.connect(self.changeSize)
-        self.ui.comboBox.setCurrentText(self.setting.value("LAST_OPTION/LAST_SIZE"))
         self.ui.frame_2.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
         self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
 
@@ -115,11 +115,10 @@ class yes(QWidget, Ui_Form):
 
     def copyAll(self):
         origin = self.ui.textEdit.toHtml()
-        print(origin)
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
-        self.resetStatus()
+        self.stopMonitor()
 
     def cutAll(self):
         origin = self.ui.textEdit.toHtml().replace(" width=\"287\"", "") \
@@ -128,10 +127,10 @@ class yes(QWidget, Ui_Form):
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
         self.ui.textEdit.clear()
-        self.resetStatus()
+        self.stopMonitor()
 
     def clearAll(self):
-        msgBox = QMessageBox()
+        msgBox = QMessageBox(self)
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("There are already some notes.\nAre you sure you want to clear them?")
         msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
@@ -144,15 +143,13 @@ class yes(QWidget, Ui_Form):
 
     def shrink(self):
         if self.ui.Button_shrink.isChecked():
-            self.ui.textEdit.setMaximumHeight(35)
-            self.ui.textEdit.setMinimumHeight(35)
+            self.ui.textEdit.resize(self.ui.textEdit.width(), 0)
         else:
-            self.ui.textEdit.setMaximumHeight(200)
-            self.ui.textEdit.setMaximumHeight(200)
+            self.ui.textEdit.resize(self.ui.textEdit.width(), 200)
 
     def exit(self):
-        self.resetStatus()
-        msgBox = QMessageBox()
+        self.stopMonitor()
+        msgBox = QMessageBox(self)
         msgBox.setWindowTitle("Confirm")
         msgBox.setText("Make sure nothing needs to be saved before exiting.")
         msgBox.setStandardButtons(QMessageBox.Close | QMessageBox.Cancel)
@@ -160,8 +157,6 @@ class yes(QWidget, Ui_Form):
         msgBox.setIcon(QMessageBox.Question)
         ret = msgBox.exec()
         if ret == QMessageBox.Close:
-            currentSize = self.ui.comboBox.currentText()
-            self.setting.setValue("LAST_OPTION/LAST_SIZE", currentSize)
             if self.ui.Button_shrink.isChecked():
                 self.setting.setValue("LAST_OPTION/FOLD_FLAG", 1)
             else:
@@ -177,11 +172,9 @@ class yes(QWidget, Ui_Form):
             win32gui.SetWindowPos(window, win32con.HWND_TOPMOST, 0, 0, 0, 0,
                                   win32con.SWP_NOMOVE | win32con.SWP_NOACTIVATE | win32con.SWP_NOOWNERZORDER
                                   | win32con.SWP_SHOWWINDOW | win32con.SWP_NOSIZE)
-            self.ui.Button_pin.setStyleSheet("background-image:url(:/new/icons/pin_default.png);")
         else:
             win32gui.SetWindowPos(window, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_SHOWWINDOW
                                   | win32con.SWP_NOSIZE | win32con.SWP_NOMOVE)
-            self.ui.Button_pin.setStyleSheet("background-image:url(:/new/icons/pin_active.png);")
         self.stayOnTopFlag = not self.stayOnTopFlag
 
     def hideMe(self):
@@ -202,10 +195,10 @@ class yes(QWidget, Ui_Form):
         window = win32gui.FindWindow(None, "Power")
         win32gui.SetForegroundWindow(window)
 
-    def resetStatus(self):
-        if self.statusFlag:
-            self.changeMonitorStatus()
+    def stopMonitor(self):
+        if self.ui.Button_monitor.isChecked():
             self.ui.Button_monitor.setChecked(False)
+            self.clipboard.dataChanged.disconnect(self.saveCbData)
 
     def saveCbData(self):
         """
@@ -238,19 +231,20 @@ class yes(QWidget, Ui_Form):
         """
         打开与关闭检测剪切板功能
         """
-        if self.statusFlag:
-            self.clipboard.dataChanged.disconnect(self.saveCbData)
-            self.ui.Button_monitor.setStyleSheet(
-                f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
-        else:
+        if self.ui.Button_monitor.isChecked():
             self.clipboard.dataChanged.connect(self.saveCbData)
-            self.ui.Button_monitor.setStyleSheet(
-                f"background-color:{self.setting.value('UI/MAINWINDOW_MONITOR_BUTTON')}")
-        self.statusFlag = ~ self.statusFlag
+        else:
+            self.clipboard.dataChanged.disconnect(self.saveCbData)
 
     def configuration(self):
         self.ss = Setting()
         self.ss.signal.connect(self.reColor)
+
+    def Maximized(self):
+        if self.ui.Button_enlarge.isChecked():
+            self.setGeometry(self.x() + self.width() - 500, self.y(), 500, 840)
+        else:
+            self.setGeometry(self.x() - 358 + 500, self.y(), 358, 252)
 
     def reColor(self):
         self.ui.frame_2.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
@@ -281,7 +275,7 @@ class yes(QWidget, Ui_Form):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    mainWin = yes()
+    mainWin = NoteWindow()
     mainWin.move(500, 27)
     mainWin.show()
     sys.exit(app.exec())

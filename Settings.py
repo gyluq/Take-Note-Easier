@@ -15,6 +15,11 @@ class Setting(QWidget):
         self.show()
 
     def initialization(self):
+        self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
+        self.ui.comboBox.addItems(self.setting.value("OPTION/COMBOBOX_ITEM"))
+        self.ui.comboBox.currentTextChanged.connect(self.changeSize)
+        self.ui.comboBox.setCurrentText(self.setting.value("LAST_OPTION/LAST_SIZE"))
+
         self.setting = QSettings('configuration.ini', QSettings.IniFormat)
         mainwindow_bar = self.setting.value("UI/MAINWINDOW_BAR")
         mainwindow_note = self.setting.value("UI/MAINWINDOW_NOTE")
@@ -36,6 +41,9 @@ class Setting(QWidget):
 
         self.ui.Button_apply.clicked.connect(self.apply)
 
+    def changeSize(self):
+        pass
+
     def changeColor(self, widget):
         col = QColorDialog(self)
         color = col.getColor()
@@ -49,6 +57,9 @@ class Setting(QWidget):
         self.setting.setValue("UI/SCREEN_MASK", self.ui.Color_mask.text())
         self.setting.setValue("UI/SCREEN_BORDER", self.ui.Color_border.text())
         self.setting.setValue("UI/SCREEN_VERTEX", self.ui.Color_dot.text())
+
+        currentSize = self.ui.comboBox.currentText()
+        self.setting.setValue("LAST_OPTION/LAST_SIZE", currentSize)
         self.signal.emit()
 
 
