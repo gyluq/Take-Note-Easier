@@ -32,7 +32,7 @@ class NoteWindow(QMainWindow):
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.configuration)
         self.ui.Button_minimize.clicked.connect(lambda: self.showMinimized())
-        self.ui.Button_enlarge.clicked.connect(self.Maximized)
+        self.ui.Button_enlarge.clicked.connect(self.switchWidth)
         self.ui.Button_close.clicked.connect(self.exit)
 
         self.ui.Button_pin.setToolTip("切换置顶")
@@ -42,12 +42,15 @@ class NoteWindow(QMainWindow):
         self.ui.Button_monitor.setToolTip("监控剪切板")
         self.ui.Button_shrink.setToolTip("收缩/展开")
         self.ui.Button_setting.setToolTip("设置")
+        self.ui.Button_minimize.setToolTip("最小化")
+        self.ui.Button_enlarge.setToolTip("切换")
         self.ui.Button_close.setToolTip("退出")
 
         # 无边框,背景透明
         self.setWindowTitle("Power")
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.resize(self.width(), 700)
 
         # 拖拽移动
         self.m_flag = False
@@ -121,7 +124,7 @@ class NoteWindow(QMainWindow):
         self.stopMonitor()
 
     def cutAll(self):
-        origin = self.ui.textEdit.toHtml().replace(" width=\"287\"", "") \
+        origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "") \
             .replace("font-family:'Microsoft YaHei UI'; font-size:10pt;", "font-family:'GUYELUO'; font-size:13pt;")
         data = QMimeData()
         data.setHtml(origin)
@@ -143,9 +146,9 @@ class NoteWindow(QMainWindow):
 
     def shrink(self):
         if self.ui.Button_shrink.isChecked():
-            self.ui.textEdit.resize(self.ui.textEdit.width(), 0)
+            self.resize(self.width(), 46)
         else:
-            self.ui.textEdit.resize(self.ui.textEdit.width(), 200)
+            self.resize(self.width(), 700)
 
     def exit(self):
         self.stopMonitor()
@@ -240,34 +243,35 @@ class NoteWindow(QMainWindow):
         self.ss = Setting()
         self.ss.signal.connect(self.reColor)
 
-    def Maximized(self):
+    def switchWidth(self):
+        """
+        切换宽度
+        """
+        oldWidth = f" width=\"{self.ui.textEdit.width() - 10}\""
         if self.ui.Button_enlarge.isChecked():
-            self.setGeometry(self.x() + self.width() - 500, self.y(), 500, 840)
+            if not self.ui.Button_shrink.isChecked():
+                # 宽屏模式
+                self.setGeometry(self.x() + self.width() - 500, self.y(), 500, 700)
+            else:
+                self.setGeometry(self.x() + self.width() - 500, self.y(), 500, 46)
         else:
-            self.setGeometry(self.x() - 358 + 500, self.y(), 358, 252)
+            if not self.ui.Button_shrink.isChecked():
+                # 窄屏模式
+                self.setGeometry(self.x() - 358 + 500, self.y(), 358, 700)
+            else:
+                self.setGeometry(self.x() - 358 + 500, self.y(), 358, 46)
+        newWidth = f" width=\"{self.ui.textEdit.width() - 10}\""
+        self.ui.textEdit.setHtml(self.ui.textEdit.toHtml().replace(oldWidth, newWidth))
 
     def reColor(self):
         self.ui.frame_2.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
         self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
-
-    def changeSize(self, rbt):
-        """
-        控制截图的最大宽度
-        """
-        if rbt == "无限制":
-            self.maxWidth = 9999
-            return
-        self.maxWidth = int(rbt[:-2])
 
     @Slot(QPixmap, str)
     def addImageAndNote(self, img, note=""):
         """
         槽函数,接受截图数据和笔记
         """
-        self.ui.textEdit.append("")  # 空行
-        # 控制截图尺寸
-        if img.size().width() > self.maxWidth:
-            img = img.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
         self.ui.textEdit.insertImage(img)
         if note != "":
             self.ui.textEdit.append(note)
@@ -276,6 +280,6 @@ class NoteWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = NoteWindow()
-    mainWin.move(500, 27)
+    mainWin.move(1535, 128)
     mainWin.show()
     sys.exit(app.exec())
