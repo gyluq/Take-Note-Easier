@@ -29,8 +29,6 @@ class TextEdit(QTextEdit):
     def insertImage(self, image):
         if image.isNull():
             return False
-        # if isinstance(image, QtGui.QPixmap):
-        #     image = image.toImage()
         width = image.width()
         ba = QtCore.QByteArray()
         buffer = QtCore.QBuffer(ba)
@@ -38,15 +36,11 @@ class TextEdit(QTextEdit):
         imgData = str(ba.toBase64(), encoding="utf-8")
         picWidth = self.width() - 10
         if width > picWidth:
-            HTMLBin = f"<p style=\" margin-top:3px; margin-bottom:0px; margin-left:0px; margin-right:0px;" \
-                      f" -qt-block-indent:0; text-indent:0px;\">" \
-                      f"<img src=\"data:image/png;base64,{imgData}\" width='{picWidth}'/></p>"
+            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\" width='{picWidth}'/>"
         else:
-            HTMLBin = f"<p style=\" margin-top:3px; margin-bottom:0px; margin-left:0px; margin-right:0px;" \
-                      f" -qt-block-indent:0; text-indent:0px;\">" \
-                      f"<img src=\"data:image/png;base64,{imgData}\"/></p>"
-        print(HTMLBin)
+            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\"/>"
         self.textCursor().insertHtml(HTMLBin)
+        self.textCursor().insertHtml("<br/>")
         self.setTextCursor(self.textCursor())
         return True
 

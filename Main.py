@@ -117,7 +117,7 @@ class NoteWindow(QMainWindow):
         self.cap.signal_close.connect(self.showMe)
 
     def copyAll(self):
-        origin = self.ui.textEdit.toHtml()
+        origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "")
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
@@ -125,7 +125,7 @@ class NoteWindow(QMainWindow):
 
     def cutAll(self):
         origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "") \
-            .replace("font-family:'Microsoft YaHei UI'; font-size:10pt;", "font-family:'GUYELUO'; font-size:13pt;")
+            .replace("font-family:'Microsoft YaHei UI Light'; font-size:10pt", "font-family:'GUYELUO'; font-size:13pt")
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
@@ -272,6 +272,7 @@ class NoteWindow(QMainWindow):
         """
         槽函数,接受截图数据和笔记
         """
+        self.ui.textEdit.append("")
         self.ui.textEdit.insertImage(img)
         if note != "":
             self.ui.textEdit.append(note)
