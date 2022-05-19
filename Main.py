@@ -3,7 +3,7 @@ import sys
 import win32con
 import win32gui
 from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData, QSize
-from PySide6.QtGui import QCursor, QPixmap, QGuiApplication
+from PySide6.QtGui import QCursor, QPixmap, QGuiApplication, QTextCursor
 from PySide6.QtWidgets import QApplication, QMessageBox, QMainWindow
 from system_hotkey import SystemHotkey
 
@@ -125,7 +125,8 @@ class NoteWindow(QMainWindow):
 
     def cutAll(self):
         origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "") \
-            .replace("font-family:'Microsoft YaHei UI Light'; font-size:10pt", "font-family:'GUYELUO'; font-size:13pt")
+            .replace(f"font-family:'{self.ui.textEdit.font().family()}'; font-size:10pt",
+                     "font-family:'GUYELUO'; font-size:13pt")
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
@@ -212,7 +213,7 @@ class NoteWindow(QMainWindow):
             pixmap = self.clipboard.image()
             if pixmap.width() > self.maxWidth:
                 pixmap = pixmap.scaledToWidth(self.maxWidth, Qt.SmoothTransformation)
-            self.ui.textEdit.insertImage(pixmap)
+            self.ui.textEdit.insertImage(pixmap, True)
         else:
             newText = self.clipboard.text().replace("。", ".") \
                 .replace("，", ",") \
@@ -229,6 +230,9 @@ class NoteWindow(QMainWindow):
                 .replace("《", "<") \
                 .replace("？", "?")
             self.ui.textEdit.append(newText)
+            cursor = self.ui.textEdit.textCursor()
+            cursor.movePosition(QTextCursor.End)
+            self.ui.textEdit.setTextCursor(cursor)
 
     def changeMonitorStatus(self):
         """
@@ -273,9 +277,12 @@ class NoteWindow(QMainWindow):
         槽函数,接受截图数据和笔记
         """
         self.ui.textEdit.append("")
-        self.ui.textEdit.insertImage(img)
+        self.ui.textEdit.insertImage(img, True)
         if note != "":
             self.ui.textEdit.append(note)
+            cursor = self.ui.textEdit.textCursor()
+            cursor.movePosition(QTextCursor.End)
+            self.ui.textEdit.setTextCursor(cursor)
 
 
 if __name__ == "__main__":

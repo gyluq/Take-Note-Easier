@@ -1,4 +1,5 @@
 from PySide6 import QtCore, QtGui
+from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import QTextEdit
 
 
@@ -26,9 +27,16 @@ class TextEdit(QTextEdit):
                 return mime
         return super().createMimeDataFromSelection()
 
-    def insertImage(self, image):
+    def insertImage(self, image, flag=False):
         if image.isNull():
             return False
+
+        # 检测剪切板得到的图片插入末尾
+        if flag:
+            cursor = self.textCursor()
+            cursor.movePosition(QTextCursor.End)
+            self.setTextCursor(cursor)
+
         width = image.width()
         ba = QtCore.QByteArray()
         buffer = QtCore.QBuffer(ba)
@@ -41,7 +49,9 @@ class TextEdit(QTextEdit):
             HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\"/>"
         self.textCursor().insertHtml(HTMLBin)
         self.textCursor().insertHtml("<br/>")
-        self.setTextCursor(self.textCursor())
+        cursor = self.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        self.setTextCursor(cursor)
         return True
 
     def insertFromMimeData(self, source):
@@ -58,4 +68,3 @@ class TextEdit(QTextEdit):
                 elif self.insertImage(QtGui.QImage(path)):
                     return
         super().insertFromMimeData(source)
-

@@ -124,9 +124,6 @@ class CaptureScreen(QMainWindow):
                         return
             # 截图操作
             self.TLPosition = event.position()
-        elif event.button() == Qt.RightButton:
-            self.signal_close.emit()
-            self.close()
 
     def mouseMoveEvent(self, event):
         if self.leftMousePressFlag is True:
@@ -289,6 +286,9 @@ class CaptureScreen(QMainWindow):
                 self.okButton.show()
             self.totalMoveFlag = False
             self.refreshFlags()  # 重置边框移动flag
+        elif event.button() == Qt.RightButton:
+            self.signal_close.emit()
+            self.close()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
