@@ -343,14 +343,8 @@ class CaptureScreen(QMainWindow):
                 pickRect = self.getRectangle()
                 self.captureImage = self.fullScreenImage.copy(pickRect)  # 捕获截图矩形框内的图片
                 self.painter.drawPixmap(pickRect.topLeft(), self.captureImage)  # 填充截取的区域
-                # 绘制顶点
-                penColor = QColor(self.setting.value('UI/SCREEN_VERTEX'))
-                self.painter.fillRect(QRect(self.left - 3, self.top - 3, 6, 6), penColor)
-                self.painter.fillRect(QRect(self.left - 3, self.bottom - 3, 6, 6), penColor)
-                self.painter.fillRect(QRect(self.right - 3, self.top - 3, 6, 6), penColor)
-                self.painter.fillRect(QRect(self.right - 3, self.bottom - 3, 6, 6), penColor)
                 # 画矩形边框
-                self.painter.setPen(QPen(QColor(self.setting.value('UI/SCREEN_BORDER')), 2, Qt.SolidLine, Qt.RoundCap))
+                self.painter.setPen(QPen(QColor(self.setting.value('UI/SCREEN_BORDER')), 1, Qt.SolidLine, Qt.RoundCap))
                 self.painter.drawRect(pickRect)
                 # 显示截图尺寸
                 if self.top > 25:
