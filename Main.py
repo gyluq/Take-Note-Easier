@@ -1,3 +1,4 @@
+import os
 import sys
 
 import win32con
@@ -118,6 +119,7 @@ class NoteWindow(QMainWindow):
 
     def copyAll(self):
         origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "")
+        print(origin)
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
@@ -161,10 +163,16 @@ class NoteWindow(QMainWindow):
         msgBox.setIcon(QMessageBox.Question)
         ret = msgBox.exec()
         if ret == QMessageBox.Close:
+            # 退出时保存配置
             if self.ui.Button_shrink.isChecked():
                 self.setting.setValue("LAST_OPTION/FOLD_FLAG", 1)
             else:
                 self.setting.setValue("LAST_OPTION/FOLD_FLAG", 0)
+            # 删除临时文件夹
+            if os.path.exists("TempImg"):
+                fileList = os.listdir("TempImg")
+                for i in fileList:
+                    os.remove(f"TempImg/{i}")
             self.close()
 
     def stayTop(self):

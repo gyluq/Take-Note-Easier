@@ -1,3 +1,6 @@
+import base64
+import os
+import time
 from PySide6 import QtCore, QtGui
 from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import QTextEdit
@@ -31,28 +34,34 @@ class TextEdit(QTextEdit):
         if image.isNull():
             return False
 
+        # 图片保存到TempImg文件夹
+        if not os.path.exists("TempImg"):
+            os.mkdir("TempImg")
+        fileName = f"{int(time.time()*1000 // 1)}.png"
+        success = image.save(f"TempImg/{fileName}")
+
         # 检测剪切板得到的图片插入末尾
+        cursor = self.textCursor()
         if flag:
-            cursor = self.textCursor()
             cursor.movePosition(QTextCursor.End)
             self.setTextCursor(cursor)
 
-        width = image.width()
-        ba = QtCore.QByteArray()
-        buffer = QtCore.QBuffer(ba)
-        image.save(buffer, 'PNG', quality=95)
-        imgData = str(ba.toBase64(), encoding="utf-8")
         picWidth = self.width() - 10
-        if width > picWidth:
-            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\" width='{picWidth}'/>"
-        else:
-            HTMLBin = f"<img src=\"data:image/png;base64,{imgData}\"/>"
-        self.textCursor().insertHtml(HTMLBin)
-        self.textCursor().insertHtml("<br/>")
-        cursor = self.textCursor()
-        cursor.movePosition(QTextCursor.End)
-        self.setTextCursor(cursor)
-        return True
+        width = image.width()
+        if success:
+            filePath = os.path.join(os.getcwd(), 'TempImg', fileName)
+            with open(filePath, 'rb') as file:
+                imageData = str(base64.b64encode(file.read()), encoding="utf-8")
+            if width > picWidth:
+                HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\" width='{picWidth}'/>"
+            else:
+                HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\"/>"
+            self.textCursor().insertHtml(HTMLBin)
+            self.textCursor().insertHtml("<br/>")
+            cursor.movePosition(QTextCursor.End)
+            self.setTextCursor(cursor)
+            return True
+        return False
 
     def insertFromMimeData(self, source):
         if source.hasImage() and self.insertImage(source.imageData()):
