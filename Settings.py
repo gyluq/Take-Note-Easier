@@ -12,7 +12,6 @@ class Setting(QWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.initialization()
-        self.show()
 
     def initialization(self):
         self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件

@@ -3,38 +3,34 @@ import sys
 
 import win32con
 import win32gui
-from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData, QSize
+from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData
 from PySide6.QtGui import QCursor, QPixmap, QGuiApplication, QTextCursor
-from PySide6.QtWidgets import QApplication, QMessageBox, QMainWindow
+from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
+from ScreenshotNote.UI.VideoNote import Ui_Form
 from Settings import Setting
-from UI.VideoNote import Ui_MainWindow
 
 
-class NoteWindow(QMainWindow):
+class NoteWindow(QWidget):
     cap = None
-    keyboardSignal = Signal()
+    screenSignal = Signal()
     stayOnTopFlag = False
 
     def __init__(self):
         super(NoteWindow, self).__init__()
-        self.ui = Ui_MainWindow()
+        self.ui = Ui_Form()
         self.ui.setupUi(self)
-        self.keyboardSignal.connect(self.startScreen)
+        self.screenSignal.connect(self.startScreen)
 
         # QPushButton按钮事件
         self.ui.Button_pin.clicked.connect(self.stayTop)
         self.ui.Button_copy.clicked.connect(self.copyAll)
         self.ui.Button_cut.clicked.connect(self.cutAll)
         self.ui.Button_clear.clicked.connect(self.clearAll)
-        self.ui.Button_shrink.clicked.connect(self.shrink)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.configuration)
-        self.ui.Button_minimize.clicked.connect(lambda: self.showMinimized())
-        self.ui.Button_enlarge.clicked.connect(self.switchWidth)
-        self.ui.Button_close.clicked.connect(self.exit)
 
         self.ui.Button_pin.setToolTip("切换置顶")
         self.ui.Button_copy.setToolTip("复制")
@@ -43,15 +39,9 @@ class NoteWindow(QMainWindow):
         self.ui.Button_monitor.setToolTip("监控剪切板")
         self.ui.Button_shrink.setToolTip("收缩/展开")
         self.ui.Button_setting.setToolTip("设置")
-        self.ui.Button_minimize.setToolTip("最小化")
         self.ui.Button_enlarge.setToolTip("切换")
-        self.ui.Button_close.setToolTip("退出")
 
-        # 无边框,背景透明
         self.setWindowTitle("Power")
-        self.setWindowFlag(Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.resize(self.width(), 700)
 
         # 拖拽移动
         self.m_flag = False
@@ -68,26 +58,19 @@ class NoteWindow(QMainWindow):
         self.clipboard = QGuiApplication.clipboard()
         self.statusFlag = False  # 开启与关闭检测剪切板功能
 
+        self.settingWindow = None
+
     def loadConfigurationFile(self):
         """
         加载配置文件
         """
         self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
-        self.ui.frame_2.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
-        self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
-
-        flag = self.setting.value('LAST_OPTION/FOLD_FLAG')
-        if flag == "1":
-            self.ui.Button_shrink.setChecked(True)
-            self.shrink()
-        else:
-            self.ui.Button_shrink.setChecked(False)
 
     def send_key_event(self):
         """
         设置了快捷键f4,调用截图
         """
-        self.keyboardSignal.emit()
+        self.screenSignal.emit()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -119,7 +102,6 @@ class NoteWindow(QMainWindow):
 
     def copyAll(self):
         origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "")
-        print(origin)
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
@@ -147,12 +129,6 @@ class NoteWindow(QMainWindow):
             self.ui.textEdit.clear()
             self.ui.textEdit.setToolTip(f"这里什么也没有")
 
-    def shrink(self):
-        if self.ui.Button_shrink.isChecked():
-            self.resize(self.width(), 46)
-        else:
-            self.resize(self.width(), 700)
-
     def exit(self):
         self.stopMonitor()
         msgBox = QMessageBox(self)
@@ -163,11 +139,6 @@ class NoteWindow(QMainWindow):
         msgBox.setIcon(QMessageBox.Question)
         ret = msgBox.exec()
         if ret == QMessageBox.Close:
-            # 退出时保存配置
-            if self.ui.Button_shrink.isChecked():
-                self.setting.setValue("LAST_OPTION/FOLD_FLAG", 1)
-            else:
-                self.setting.setValue("LAST_OPTION/FOLD_FLAG", 0)
             # 删除临时文件夹
             if os.path.exists("TempImg"):
                 fileList = os.listdir("TempImg")
@@ -252,31 +223,15 @@ class NoteWindow(QMainWindow):
             self.clipboard.dataChanged.disconnect(self.saveCbData)
 
     def configuration(self):
-        self.ss = Setting()
-        self.ss.signal.connect(self.reColor)
-
-    def switchWidth(self):
         """
-        切换宽度
+        设置子窗口
         """
-        oldWidth = f" width=\"{self.ui.textEdit.width() - 10}\""
-        if self.ui.Button_enlarge.isChecked():
-            if not self.ui.Button_shrink.isChecked():
-                # 宽屏模式
-                self.setGeometry(self.x() + self.width() - 500, self.y(), 500, 700)
-            else:
-                self.setGeometry(self.x() + self.width() - 500, self.y(), 500, 46)
-        else:
-            if not self.ui.Button_shrink.isChecked():
-                # 窄屏模式
-                self.setGeometry(self.x() - 358 + 500, self.y(), 358, 700)
-            else:
-                self.setGeometry(self.x() - 358 + 500, self.y(), 358, 46)
-        newWidth = f" width=\"{self.ui.textEdit.width() - 10}\""
-        self.ui.textEdit.setHtml(self.ui.textEdit.toHtml().replace(oldWidth, newWidth))
+        if self.settingWindow is None:
+            self.settingWindow = Setting()
+            self.settingWindow.signal.connect(self.reColor)
+        self.settingWindow.show()
 
     def reColor(self):
-        self.ui.frame_2.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_BAR')}")
         self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
 
     @Slot(QPixmap, str)
@@ -296,6 +251,8 @@ class NoteWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = NoteWindow()
-    mainWin.move(1535, 128)
+    width = 900
+    height = 700
+    mainWin.setGeometry(850, -height+2, width, height)
     mainWin.show()
     sys.exit(app.exec())
