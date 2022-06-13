@@ -37,7 +37,7 @@ class TextEdit(QTextEdit):
         # 图片保存到TempImg文件夹
         if not os.path.exists("TempImg"):
             os.mkdir("TempImg")
-        fileName = f"{int(time.time()*1000 // 1)}.png"
+        fileName = f"{int(time.time() * 1000 // 1)}.png"
         success = image.save(f"TempImg/{fileName}")
 
         # 检测剪切板得到的图片插入末尾
@@ -46,7 +46,7 @@ class TextEdit(QTextEdit):
             cursor.movePosition(QTextCursor.End)
             self.setTextCursor(cursor)
 
-        picWidth = self.width() - 10
+        picWidth = self.width() - 20
         width = image.width()
         if success:
             filePath = os.path.join(os.getcwd(), 'TempImg', fileName)
@@ -56,6 +56,7 @@ class TextEdit(QTextEdit):
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\" width='{picWidth}'/>"
             else:
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\"/>"
+            print("TWO==", picWidth)
             self.textCursor().insertHtml(HTMLBin)
             self.textCursor().insertHtml("<br/>")
             cursor.movePosition(QTextCursor.End)

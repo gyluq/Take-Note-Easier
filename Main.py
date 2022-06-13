@@ -4,7 +4,7 @@ import sys
 import win32con
 import win32gui
 from PySide6.QtCore import Slot, Qt, Signal, QSettings, QMimeData
-from PySide6.QtGui import QCursor, QPixmap, QGuiApplication, QTextCursor
+from PySide6.QtGui import QPixmap, QGuiApplication, QTextCursor
 from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
@@ -30,7 +30,7 @@ class NoteWindow(QWidget):
         self.ui.Button_cut.clicked.connect(self.cutAll)
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
-        self.ui.Button_setting.clicked.connect(self.configuration)
+        self.ui.Button_setting.clicked.connect(self.startSetting)
 
         self.ui.Button_pin.setToolTip("切换置顶")
         self.ui.Button_copy.setToolTip("复制")
@@ -52,19 +52,26 @@ class NoteWindow(QWidget):
         self.hk_start.register(('f4',), callback=lambda x: self.send_key_event())
 
         self.maxWidth = 1300  # 截图的默认最大宽度
-        self.loadConfigurationFile()
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)  # 窗口置顶
 
         self.clipboard = QGuiApplication.clipboard()
-        self.statusFlag = False  # 开启与关闭检测剪切板功能
-
+        # 开启与关闭检测剪切板功能
+        self.statusFlag = False
+        # 只能有一个settingWindow
         self.settingWindow = None
+        self.initialization()
 
-    def loadConfigurationFile(self):
-        """
-        加载配置文件
-        """
+    def initialization(self):
+        width = 1000
+        height = 800
+        self.setGeometry(870, -height + 2, width, height)
+        # 窗口宽高
+        self.h = self.height()
+        self.w = self.width()
+        # 图片宽度
+        self.pictureWidth = None
         self.setting = QSettings("configuration.ini", QSettings.IniFormat)  # 配置文件
+        self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
 
     def send_key_event(self):
         """
@@ -73,20 +80,27 @@ class NoteWindow(QWidget):
         self.screenSignal.emit()
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.m_flag = True
-            self.m_Position = event.globalPosition().toPoint() - self.pos()  # 获取鼠标相对窗口的位置
-            event.accept()
-            self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
+        if event.button() == Qt.LeftButton or event.button() == Qt.RightButton:
+            currentX = self.x()
+            x = event.globalPosition().toPoint().x()
+            y = event.globalPosition().toPoint().y()
+            if currentX < x < currentX + self.w and 0 <= y <= 5:
+                self.move(currentX, 0)
+            else:
+                self.move(currentX, -self.h - 30)
 
-    def mouseMoveEvent(self, QMouseEvent):
-        if self.m_flag:
-            self.move(QMouseEvent.globalPosition().toPoint() - self.m_Position)  # 更改窗口位置
-            QMouseEvent.accept()
-
-    def mouseReleaseEvent(self, QMouseEvent):
-        self.m_flag = False
-        self.setCursor(QCursor(Qt.ArrowCursor))
+    def resizeEvent(self, event):
+        if self.pictureWidth is None:
+            # textEdit的宽度比窗口小24px
+            self.pictureWidth = self.width() - 24
+        # 因为某些原因,第一次获取的文本框宽度为80
+        if self.ui.textEdit.width() > 100:
+            newWidth = self.ui.textEdit.width() - 20
+            html = self.ui.textEdit.toHtml()
+            self.ui.textEdit.setHtml(html.replace(f"width=\"{self.pictureWidth}\"", f"width=\"{newWidth}\""))
+            self.pictureWidth = newWidth
+        self.h = self.height()
+        self.w = self.width()
 
     def startScreen(self):
         """
@@ -101,14 +115,14 @@ class NoteWindow(QWidget):
         self.cap.signal_close.connect(self.showMe)
 
     def copyAll(self):
-        origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "")
+        origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 20}\"", "")
         data = QMimeData()
         data.setHtml(origin)
         self.clipboard.setMimeData(data)
         self.stopMonitor()
 
     def cutAll(self):
-        origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 10}\"", "") \
+        origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 20}\"", "") \
             .replace(f"font-family:'{self.ui.textEdit.font().family()}'; font-size:10pt",
                      "font-family:'GUYELUO'; font-size:13pt")
         data = QMimeData()
@@ -222,17 +236,18 @@ class NoteWindow(QWidget):
         else:
             self.clipboard.dataChanged.disconnect(self.saveCbData)
 
-    def configuration(self):
+    def startSetting(self):
         """
         设置子窗口
         """
         if self.settingWindow is None:
             self.settingWindow = Setting()
-            self.settingWindow.signal.connect(self.reColor)
+            self.settingWindow.signal.connect(self.reSetting)
         self.settingWindow.show()
 
-    def reColor(self):
+    def reSetting(self):
         self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
+        self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
 
     @Slot(QPixmap, str)
     def addImageAndNote(self, img, note=""):
@@ -251,8 +266,5 @@ class NoteWindow(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = NoteWindow()
-    width = 900
-    height = 700
-    mainWin.setGeometry(850, -height+2, width, height)
     mainWin.show()
     sys.exit(app.exec())
