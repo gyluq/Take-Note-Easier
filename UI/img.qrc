@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="new">
+    <file>icons/passion.ico</file>
     <file>icons/monitor_ac.png</file>
     <file>icons/minify.png</file>
     <file>icons/minimize.png</file>

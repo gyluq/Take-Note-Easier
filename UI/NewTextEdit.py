@@ -51,6 +51,7 @@ class TextEdit(QTextEdit):
         picWidth = self.width() - 20
         width = image.width()
         if success:
+            print("实际:", self.width())
             filePath = os.path.join(os.getcwd(), 'TempImg', fileName)
             with open(filePath, 'rb') as file:
                 imageData = str(base64.b64encode(file.read()), encoding="utf-8")
