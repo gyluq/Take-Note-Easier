@@ -1,0 +1,22 @@
+<RCC>
+  <qresource prefix="new">
+    <file>icons/monitor_ac.png</file>
+    <file>icons/minify.png</file>
+    <file>icons/minimize.png</file>
+    <file>icons/close.png</file>
+    <file>icons/enlarge.png</file>
+    <file>icons/setting.png</file>
+    <file>icons/expand.png</file>
+    <file>icons/shrink.png</file>
+    <file>icons/close.png</file>
+    <file>icons/copy.png</file>
+    <file>icons/cut.png</file>
+    <file>icons/monitor.png</file>
+    <file>icons/pin_active.png</file>
+    <file>icons/pin_default.png</file>
+    <file>icons/sort-down.png</file>
+    <file>icons/sort-left.png</file>
+    <file>icons/trash.png</file>
+    <file>icons/yes3.png</file>
+  </qresource>
+</RCC>

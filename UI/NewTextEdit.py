@@ -5,6 +5,8 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import QTextEdit
 
+from .POP import PopLabel
+
 
 class TextEdit(QTextEdit):
     def __init__(self, parent=None):
@@ -56,7 +58,7 @@ class TextEdit(QTextEdit):
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\" width='{picWidth}'/>"
             else:
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\"/>"
-            print("TWO==", picWidth)
+            self.pop = PopLabel(f"截图成功")
             self.textCursor().insertHtml(HTMLBin)
             self.textCursor().insertHtml("<br/>")
             cursor.movePosition(QTextCursor.End)

@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
-from ScreenshotNote.UI.VideoNote import Ui_Form
+from UI.VideoNote import Ui_Form
 from Settings import Setting
 
 
@@ -37,9 +37,7 @@ class NoteWindow(QWidget):
         self.ui.Button_cut.setToolTip("剪切")
         self.ui.Button_clear.setToolTip("清空")
         self.ui.Button_monitor.setToolTip("监控剪切板")
-        self.ui.Button_shrink.setToolTip("收缩/展开")
         self.ui.Button_setting.setToolTip("设置")
-        self.ui.Button_enlarge.setToolTip("切换")
 
         self.setWindowTitle("Power")
 

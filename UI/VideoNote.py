@@ -8,18 +8,14 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QPushButton,
-    QSizePolicy, QSpacerItem, QVBoxLayout,
-    QWidget)
-from ScreenshotNote.UI.NewTextEdit import TextEdit
+from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
+from PySide6.QtGui import (QFont)
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QPushButton,
+                               QSizePolicy, QSpacerItem, QVBoxLayout)
+
+from .NewTextEdit import TextEdit
 from . import img_rc
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -33,78 +29,62 @@ class Ui_Form(object):
         self.MainFrame = QFrame(Form)
         self.MainFrame.setObjectName(u"MainFrame")
         self.MainFrame.setStyleSheet(u"QPushButton{\n"
-"	border-left:1px solid #808080;\n"
-"	border-bottom:1px solid #808080;\n"
-"	border-top:1px solid #808080;\n"
-"	text-align:left;\n"
-"	padding:2 0 4 19;\n"
-"	margin:0;\n"
-"	background-repeat:none;\n"
-"	background-position:left;\n"
-"	background-color:#E6E6E6;\n"
-"	min-width:50px;\n"
-"}\n"
-"\n"
-"QPushButton:pressed{\n"
-"	background-color:#C8C8C8;\n"
-" }\n"
-"\n"
-"#Button_enlarge{\n"
-"	border-right:1px solid #808080;\n"
-"	border-top-right-radius:3px;\n"
-"	border-bottom-right-radius:3px;\n"
-"	background-image:url(:/new/icons/enlarge.png);\n"
-"}\n"
-"\n"
-"#Button_setting{\n"
-"	background-image:url(:/new/icons/setting.png);\n"
-"}\n"
-"\n"
-"#Button_copy{\n"
-"	background-image:url(:/new/icons/copy.png);\n"
-"}\n"
-"\n"
-"#Button_cut{\n"
-"	background-image:url(:/new/icons/cut.png);\n"
-"}\n"
-"\n"
-"#Button_clear{\n"
-"	background-image:url(:/new/icons/trash.png);\n"
-"}\n"
-"\n"
-"#Button_shrink{\n"
-"	background-image:url(:/new/icons/shrink.png);\n"
-"}\n"
-"\n"
-"#Button_monitor{\n"
-"	background-image:url(:/new/icons/m"
-                        "onitor.png);\n"
-"}\n"
-"\n"
-"#Button_pin{\n"
-"	border-top-left-radius:3px;\n"
-"	border-bottom-left-radius:3px;\n"
-"	background-image:url(:/new/icons/pin_default.png);\n"
-"}\n"
-"\n"
-"#Button_pin::checked{\n"
-"	background-image:url(:/new/icons/pin_active.png);\n"
-"}\n"
-"\n"
-"#Button_shrink::checked{\n"
-"	background-image:url(:/new/icons/expand.png);\n"
-"}\n"
-"\n"
-"#Button_enlarge::checked{\n"
-"	background-image:url(:/new/icons/minify.png);\n"
-"}\n"
-"\n"
-"#Button_monitor::checked{\n"
-"	background-image:url(:/new/icons/monitor_ac.png);\n"
-"}\n"
-"\n"
-"\n"
-"")
+                                     "	border-left:1px solid #808080;\n"
+                                     "	border-bottom:1px solid #808080;\n"
+                                     "	border-top:1px solid #808080;\n"
+                                     "	text-align:left;\n"
+                                     "	padding:2 0 4 19;\n"
+                                     "	margin:0;\n"
+                                     "	background-repeat:none;\n"
+                                     "	background-position:left;\n"
+                                     "	background-color:#E6E6E6;\n"
+                                     "	min-width:50px;\n"
+                                     "}\n"
+                                     "\n"
+                                     "QPushButton:pressed{\n"
+                                     "	background-color:#C8C8C8;\n"
+                                     " }\n"
+                                     "\n"
+                                     "#Button_setting{\n"
+                                     "	border-right:1px solid #808080;\n"
+                                     "	border-top-right-radius:3px;\n"
+                                     "	border-bottom-right-radius:3px;\n"
+                                     "	background-image:url(:/new/icons/setting.png);\n"
+                                     "}\n"
+                                     "\n"
+                                     "#Button_copy{\n"
+                                     "	background-image:url(:/new/icons/copy.png);\n"
+                                     "}\n"
+                                     "\n"
+                                     "#Button_cut{\n"
+                                     "	background-image:url(:/new/icons/cut.png);\n"
+                                     "}\n"
+                                     "\n"
+                                     "#Button_clear{\n"
+                                     "	background-image:url(:/new/icons/trash.png);\n"
+                                     "}\n"
+                                     "\n"
+                                     "#Button_monitor{\n"
+                                     "	background-image:url(:/new/icons/monitor.png);\n"
+                                     "}\n"
+                                     "\n"
+                                     "#Button_pin{\n"
+                                     "	border-top-left-radius:3px;\n"
+                                     "	border-bottom-left-radius:3px;\n"
+                                     "	background-image:url(:/new/icons/pin_default.png);\n"
+                                     ""
+                                     "}\n"
+                                     "\n"
+                                     "#Button_pin::checked{\n"
+                                     "	background-image:url(:/new/icons/pin_active.png);\n"
+                                     "}\n"
+                                     "\n"
+                                     "#Button_monitor::checked{\n"
+                                     "	background-image:url(:/new/icons/monitor_ac.png);\n"
+                                     "}\n"
+                                     "\n"
+                                     "\n"
+                                     "")
         self.MainFrame.setFrameShape(QFrame.StyledPanel)
         self.MainFrame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_2 = QVBoxLayout(self.MainFrame)
@@ -136,42 +116,41 @@ class Ui_Form(object):
         font.setPointSize(10)
         self.textEdit.setFont(font)
         self.textEdit.setStyleSheet(u"QTextEdit{\n"
-"	border:none;\n"
-"	background-color:#F6F6F6 ;\n"
-"}\n"
-"\n"
-"QScrollBar:vertical {\n"
-"    border:none;\n"
-"    background-color:#C7C7C7;\n"
-"    width:10px;\n"
-"    margin: 0px 0px 0px 0px;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
-"    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130), stop:1 rgb(32, 47, 130));\n"
-"    min-height: 0px;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:vertical {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
-"    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));\n"
-"    height: 0px;\n"
-"    subcontrol-position: bottom;\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:vertical {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
-"    stop: 0  rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));\n"
-"    height: 0 px;\n"
-"    subcontrol-position: top;\n"
-"    subcontrol-origin: margin;\n"
-"}")
+                                    "	border:none;\n"
+                                    "	background-color:#F6F6F6 ;\n"
+                                    "}\n"
+                                    "\n"
+                                    "QScrollBar:vertical {\n"
+                                    "    border:none;\n"
+                                    "    background-color:#C7C7C7;\n"
+                                    "    width:10px;\n"
+                                    "    margin: 0px 0px 0px 0px;\n"
+                                    "}\n"
+                                    "\n"
+                                    "QScrollBar::handle:vertical {\n"
+                                    "    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
+                                    "    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130), stop:1 rgb(32, 47, 130));\n"
+                                    "    min-height: 0px;\n"
+                                    "}\n"
+                                    "\n"
+                                    "QScrollBar::add-line:vertical {\n"
+                                    "    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
+                                    "    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));\n"
+                                    "    height: 0px;\n"
+                                    "    subcontrol-position: bottom;\n"
+                                    "    subcontrol-origin: margin;\n"
+                                    "}\n"
+                                    "\n"
+                                    "QScrollBar::sub-line:vertical {\n"
+                                    "    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
+                                    "    stop: 0  rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));\n"
+                                    "    height: 0 px;\n"
+                                    "    subcontrol-position: top;\n"
+                                    "    subcontrol-origin: margin;\n"
+                                    "}")
         self.textEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.verticalLayout_3.addWidget(self.textEdit)
-
 
         self.verticalLayout_2.addWidget(self.TextFrame)
 
@@ -209,12 +188,6 @@ class Ui_Form(object):
 
         self.horizontalLayout.addWidget(self.Button_clear)
 
-        self.Button_shrink = QPushButton(self.ButtonFrame)
-        self.Button_shrink.setObjectName(u"Button_shrink")
-        self.Button_shrink.setCheckable(True)
-
-        self.horizontalLayout.addWidget(self.Button_shrink)
-
         self.Button_monitor = QPushButton(self.ButtonFrame)
         self.Button_monitor.setObjectName(u"Button_monitor")
         self.Button_monitor.setCheckable(True)
@@ -226,30 +199,18 @@ class Ui_Form(object):
 
         self.horizontalLayout.addWidget(self.Button_setting)
 
-        self.Button_enlarge = QPushButton(self.ButtonFrame)
-        self.Button_enlarge.setObjectName(u"Button_enlarge")
-        self.Button_enlarge.setAutoDefault(False)
-        self.Button_enlarge.setFlat(False)
-
-        self.horizontalLayout.addWidget(self.Button_enlarge)
-
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer_2)
 
-
         self.verticalLayout_2.addWidget(self.ButtonFrame)
-
 
         self.verticalLayout.addWidget(self.MainFrame)
 
-
         self.retranslateUi(Form)
 
-        self.Button_enlarge.setDefault(False)
-
-
         QMetaObject.connectSlotsByName(Form)
+
     # setupUi
 
     def retranslateUi(self, Form):
@@ -258,9 +219,6 @@ class Ui_Form(object):
         self.Button_copy.setText(QCoreApplication.translate("Form", u"Copy", None))
         self.Button_cut.setText(QCoreApplication.translate("Form", u"Cut", None))
         self.Button_clear.setText(QCoreApplication.translate("Form", u"Clear", None))
-        self.Button_shrink.setText(QCoreApplication.translate("Form", u"Shrink", None))
         self.Button_monitor.setText(QCoreApplication.translate("Form", u"Monitor", None))
         self.Button_setting.setText(QCoreApplication.translate("Form", u"Setting", None))
-        self.Button_enlarge.setText(QCoreApplication.translate("Form", u"Enlarge", None))
     # retranslateUi
-
