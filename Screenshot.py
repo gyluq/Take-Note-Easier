@@ -394,7 +394,7 @@ class CaptureScreen(QMainWindow):
 
     def sendImageAndNote(self):
         """
-        发送截图的base64数据
+        发送截图
         """
         # 发送截图数据
         if self.scaledFlag:

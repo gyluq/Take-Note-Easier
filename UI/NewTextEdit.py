@@ -11,6 +11,7 @@ from .POP import PopLabel
 class TextEdit(QTextEdit):
     def __init__(self, parent=None):
         super(TextEdit, self).__init__(parent)
+        self.pop = None
 
     def canInsertFromMimeData(self, source):
         if source.hasImage():
@@ -59,7 +60,10 @@ class TextEdit(QTextEdit):
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\" width='{picWidth}'/>"
             else:
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\"/>"
-            self.pop = PopLabel(f"截图成功")
+            if self.pop is None:
+                self.pop = PopLabel(f"截图成功")
+            else:
+                self.pop.show()
             self.textCursor().insertHtml(HTMLBin)
             self.textCursor().insertHtml("<br/>")
             cursor.movePosition(QTextCursor.End)

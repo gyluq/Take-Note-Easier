@@ -1,10 +1,13 @@
 <RCC>
   <qresource prefix="new">
-    <file>icons/passion.ico</file>
+    <file>icons/box.png</file>
+    <file>icons/enlarge_ac.png</file>
+    <file>icons/passion.png</file>
     <file>icons/monitor_ac.png</file>
     <file>icons/minify.png</file>
     <file>icons/minimize.png</file>
     <file>icons/close.png</file>
+    <file>icons/close_ac.png</file>
     <file>icons/enlarge.png</file>
     <file>icons/setting.png</file>
     <file>icons/expand.png</file>

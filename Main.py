@@ -19,38 +19,35 @@ class NoteWindow(QWidget):
     stayOnTopFlag = False
 
     def __init__(self):
-        super(NoteWindow, self).__init__()
+        super(NoteWindow, self).__init__(None, Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.initialization()
 
     def initialization(self):
-        # QPushButton按钮事件
         self.ui.Button_pin.clicked.connect(self.stayTop)
         self.ui.Button_copy.clicked.connect(self.copyAll)
         self.ui.Button_cut.clicked.connect(self.cutAll)
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.startSetting)
+        # self.ui.Button_pt.clicked.connect(self.selectPt)
+        self.ui.Button_close.clicked.connect(self.closeWindow)
+        self.ui.Button_large.clicked.connect(self.largeIt)
+        self.ui.Button_small.clicked.connect(self.showMinimized)
         self.ui.Button_pin.setToolTip("切换置顶")
         self.ui.Button_copy.setToolTip("复制")
         self.ui.Button_cut.setToolTip("剪切")
         self.ui.Button_clear.setToolTip("清空")
         self.ui.Button_monitor.setToolTip("监控剪切板")
         self.ui.Button_setting.setToolTip("设置")
-        # 标题
         self.setWindowTitle("Power")
-        # 拖拽移动
-        self.m_flag = False
-        self.m_Position = 0
         # 设置截图快捷键
         self.hk_start = SystemHotkey()
         self.hk_start.register(('f4',), callback=lambda x: self.send_key_event())
         self.screenSignal.connect(self.startScreen)
         # 截图的默认最大宽度
         self.maxWidth = 1300
-        # 窗口置顶
-        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
         self.clipboard = QGuiApplication.clipboard()
         # 开启与关闭检测剪切板功能
         self.statusFlag = False
@@ -61,8 +58,8 @@ class NoteWindow(QWidget):
         self.timer.timeout.connect(self.blink)
         self.blinkFlag = False
         width = 1000
-        height = 800
-        self.setGeometry(870, -height + 2, width, height)
+        height = 1000
+        self.setGeometry(870, -height + 3, width, height)
         # 窗口宽高
         self.h = self.height()
         self.w = self.width()
@@ -71,6 +68,23 @@ class NoteWindow(QWidget):
         # 读取配置文件
         self.setting = QSettings("configuration.ini", QSettings.IniFormat)
         self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
+        # 整体移动
+        self.leftMouseClickFlag = False
+        self.ui.TitleFrame.mousePressEvent = lambda e: self.titleFramePress(e)
+        self.ui.TitleFrame.mouseMoveEvent = lambda e: self.titleFrameMove(e)
+        self.ui.TitleFrame.mouseReleaseEvent = lambda e: self.titleFrameRelease()
+
+    def titleFramePress(self, event):
+        if event.button() == Qt.LeftButton:
+            self.leftMouseClickFlag = True
+            self.clickPosition = event.position().toPoint()
+
+    def titleFrameMove(self, event):
+        if self.leftMouseClickFlag:
+            self.move(event.globalPosition().toPoint() - self.clickPosition)
+
+    def titleFrameRelease(self):
+        self.leftMouseClickFlag = False
 
     def send_key_event(self):
         """
@@ -84,6 +98,7 @@ class NoteWindow(QWidget):
         """
         self.activeMe()
         self.hideMe()
+        # print(self.maxWidth)
         self.cap = CaptureScreen(self.maxWidth)  # cap必须是类属性,否则方法结束后会结束生命周期
         self.cap.show()
         self.cap.setFocus()
@@ -98,14 +113,14 @@ class NoteWindow(QWidget):
             if currentX < x < currentX + self.w and 0 <= y <= 5:
                 self.move(currentX, 0)
             else:
-                self.move(currentX, -self.h - 30)
+                self.move(currentX, -self.h + 3)
 
     def resizeEvent(self, event):
         if self.pictureWidth is None:
             # textEdit的宽度比窗口小24px
             self.pictureWidth = self.width() - 22
         # 因为某些原因,第一次获取的文本框宽度为80
-        print("测试", self.pictureWidth)
+        # print("测试", self.pictureWidth)
         if self.ui.textEdit.width() > 100:
             newWidth = self.ui.textEdit.width() - 20
             html = self.ui.textEdit.toHtml()
@@ -203,8 +218,9 @@ class NoteWindow(QWidget):
         停止检测,供其他方法调用
         """
         if self.ui.Button_monitor.isChecked():
-            self.timer.stop()
             self.ui.Button_monitor.setChecked(False)
+            self.timer.stop()
+            self.ui.Button_monitor.setStyleSheet("background-image:url(:/new/icons/monitor.png)")
             self.clipboard.dataChanged.disconnect(self.saveCbData)
 
     @Slot()
@@ -224,11 +240,20 @@ class NoteWindow(QWidget):
         self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
         self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
 
-    def closeEvent(self, e):
+    @Slot()
+    def closeWindow(self):
         if os.path.exists("TempImg"):
             fileList = os.listdir("TempImg")
             for i in fileList:
                 os.remove(f"TempImg/{i}")
+        self.close()
+
+    @Slot()
+    def largeIt(self):
+        if self.ui.Button_large.isChecked():
+            self.showMaximized()
+        else:
+            self.showNormal()
 
     def stayTop(self):
         """
@@ -265,10 +290,11 @@ class NoteWindow(QWidget):
     @Slot(QPixmap, str)
     def addImageAndNote(self, img, note=""):
         """
-        槽函数,接受截图数据和笔记
+        槽函数,接受截图和笔记
         """
         self.ui.textEdit.append("")
-        self.ui.textEdit.insertImage(img, True)
+        self.ui.textEdit.insertImage(img,
+                                     )
         if note != "":
             self.ui.textEdit.append(note)
             cursor = self.ui.textEdit.textCursor()
