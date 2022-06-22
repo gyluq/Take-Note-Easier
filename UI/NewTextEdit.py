@@ -60,14 +60,11 @@ class TextEdit(QTextEdit):
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\" width='{picWidth}'/>"
             else:
                 HTMLBin = f"<img src=\"data:image/png;base64,{imageData}\"/>"
-            if self.pop is None:
-                self.pop = PopLabel(f"截图成功")
-            else:
-                self.pop.show()
             self.textCursor().insertHtml(HTMLBin)
             self.textCursor().insertHtml("<br/>")
             cursor.movePosition(QTextCursor.End)
             self.setTextCursor(cursor)
+            self.pop = PopLabel(f"截图成功")
             return True
         return False
 

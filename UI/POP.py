@@ -8,17 +8,17 @@ from .popLabel import Ui_Form
 class PopLabel(QWidget):
     flag = None
 
-    def __init__(self, text):
-        super(PopLabel, self).__init__()
+    def __init__(self, text, color=None):
+        super(PopLabel, self).__init__(None, Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.ui.label.setWordWrap(True)
         self.ui.label.setText(text)
 
-        self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.setFocusPolicy(Qt.ClickFocus)
+        if color is not None:
+            self.ui.label.setStyleSheet(f"background-color:{color}")
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.close)

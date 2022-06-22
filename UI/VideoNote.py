@@ -183,7 +183,9 @@ class Ui_Form(object):
         sizePolicy3.setHeightForWidth(self.textEdit.sizePolicy().hasHeightForWidth())
         self.textEdit.setSizePolicy(sizePolicy3)
         self.textEdit.setMinimumSize(QSize(0, 0))
-        self.textEdit.setFont(font)
+        font1 = QFont()
+        font1.setPointSize(11)
+        self.textEdit.setFont(font1)
         self.textEdit.setFocusPolicy(Qt.ClickFocus)
         self.textEdit.setStyleSheet(u"QTextEdit{\n"
 "	border:none;\n"
@@ -346,9 +348,9 @@ class Ui_Form(object):
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy4)
-        font1 = QFont()
-        font1.setPointSize(8)
-        self.label.setFont(font1)
+        font2 = QFont()
+        font2.setPointSize(8)
+        self.label.setFont(font2)
         self.label.setStyleSheet(u"color:#969696;")
         self.label.setAlignment(Qt.AlignCenter)
 

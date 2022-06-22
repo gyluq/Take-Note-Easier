@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
+from UI.POP import PopLabel
 from UI.VideoNote import Ui_Form
 from Settings import Setting
 
@@ -42,6 +43,7 @@ class NoteWindow(QWidget):
         self.ui.Button_monitor.setToolTip("监控剪切板")
         self.ui.Button_setting.setToolTip("设置")
         self.setWindowTitle("Power")
+        self.ui.textEdit.setTabStopDistance(40)
         # 设置截图快捷键
         self.hk_start = SystemHotkey()
         self.hk_start.register(('f4',), callback=lambda x: self.send_key_event())
@@ -58,8 +60,8 @@ class NoteWindow(QWidget):
         self.timer.timeout.connect(self.blink)
         self.blinkFlag = False
         width = 1000
-        height = 1000
-        self.setGeometry(870, -height + 3, width, height)
+        height = 900
+        self.setGeometry(870, -height + 2, width, height)
         # 窗口宽高
         self.h = self.height()
         self.w = self.width()
@@ -113,7 +115,7 @@ class NoteWindow(QWidget):
             if currentX < x < currentX + self.w and 0 <= y <= 5:
                 self.move(currentX, 0)
             else:
-                self.move(currentX, -self.h + 3)
+                self.move(currentX, -self.h + 2)
 
     def resizeEvent(self, event):
         if self.pictureWidth is None:
@@ -212,6 +214,7 @@ class NoteWindow(QWidget):
             cursor = self.ui.textEdit.textCursor()
             cursor.movePosition(QTextCursor.End)
             self.ui.textEdit.setTextCursor(cursor)
+            self.pop = PopLabel(f"检测到{len(newText)}字", "#333338")
 
     def stopMonitor(self):
         """
@@ -230,7 +233,10 @@ class NoteWindow(QWidget):
         """
         if self.settingWindow is None:
             self.settingWindow = Setting()
+            self.settingWindow.setWindowModality(Qt.ApplicationModal)
             self.settingWindow.signal.connect(self.reSetting)
+        self.settingWindow.move(self.x() + int(self.width() / 2 - self.settingWindow.width() / 2),
+                                self.y() + int(self.height() / 2 - self.settingWindow.height() / 2),)
         self.settingWindow.show()
 
     def reSetting(self):
