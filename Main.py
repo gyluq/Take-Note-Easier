@@ -45,8 +45,8 @@ class NoteWindow(QWidget):
         self.setWindowTitle("Power")
         self.ui.textEdit.setTabStopDistance(40)
         # 设置截图快捷键
-        self.hk_start = SystemHotkey()
-        self.hk_start.register(('f4',), callback=lambda x: self.send_key_event())
+        self.hotkeyScreenshot = SystemHotkey()
+        self.hotkeyScreenshot.register(('f3',), callback=lambda x: self.send_key_event())
         self.screenSignal.connect(self.startScreen)
         # 截图的默认最大宽度
         self.maxWidth = 1300
@@ -90,7 +90,7 @@ class NoteWindow(QWidget):
 
     def send_key_event(self):
         """
-        设置了快捷键f4,调用截图
+        快捷键f3,开始截图
         """
         self.screenSignal.emit()
 
@@ -142,7 +142,7 @@ class NoteWindow(QWidget):
     @Slot()
     def cutAll(self):
         origin = self.ui.textEdit.toHtml().replace(f" width=\"{self.ui.textEdit.width() - 20}\"", "") \
-            .replace(f"font-family:'{self.ui.textEdit.font().family()}'; font-size:10pt",
+            .replace(f"font-family:'{self.ui.textEdit.font().family()}'; font-size:11pt",
                      "font-family:'GUYELUO'; font-size:13pt")
         data = QMimeData()
         data.setHtml(origin)
@@ -299,8 +299,7 @@ class NoteWindow(QWidget):
         槽函数,接受截图和笔记
         """
         self.ui.textEdit.append("")
-        self.ui.textEdit.insertImage(img,
-                                     )
+        self.ui.textEdit.insertImage(img, True)
         if note != "":
             self.ui.textEdit.append(note)
             cursor = self.ui.textEdit.textCursor()
