@@ -5,7 +5,7 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import QTextEdit
 
-from .POP import PopLabel
+from Pop import PopLabel
 
 
 class TextEdit(QTextEdit):

@@ -9,9 +9,9 @@ from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
-from UI.POP import PopLabel
-from UI.VideoNote import Ui_Form
-from Settings import Setting
+from Pop import PopLabel
+from UI.ui_videoNote import Ui_Form
+from SettingWinow import Setting
 
 
 class NoteWindow(QWidget):

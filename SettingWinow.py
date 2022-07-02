@@ -1,7 +1,7 @@
 from PySide6.QtCore import (QSettings, Signal, Qt)
 from PySide6.QtWidgets import (QWidget, QApplication, QColorDialog)
 
-from UI.Setting import Ui_Form
+from UI.ui_setting import Ui_Form
 
 
 class Setting(QWidget):

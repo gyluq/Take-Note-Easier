@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'popLabel.ui'
+## Form generated from reading UI file 'ui_popLabel.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.3.0
 ##
@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QLabel, QSizePolicy, QVBoxLayout,
     QWidget)
 
-class Ui_Form(object):
+class Ui_Form2(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
