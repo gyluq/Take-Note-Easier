@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
-from Pop import PopLabel, PopNote
+from Pop import PopLabel
 from Utils.DragToMove import DragToMove
 from UI.ui_videoNote import Ui_Form
 from SettingWinow import Setting
@@ -18,6 +18,7 @@ from SettingWinow import Setting
 class NoteWindow(QWidget):
     cap = None
     screenSignal = Signal()
+    monitorSignal = Signal()
     stayOnTopFlag = False
 
     def __init__(self):
@@ -27,16 +28,17 @@ class NoteWindow(QWidget):
         self.initialization()
 
     def initialization(self):
+        # 按钮事件
         self.ui.Button_pin.clicked.connect(self.stayTop)
         self.ui.Button_copy.clicked.connect(self.copyAll)
         self.ui.Button_cut.clicked.connect(self.cutAll)
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.startSetting)
-        self.ui.Button_pt.clicked.connect(self.showMiniNote)
         self.ui.Button_close.clicked.connect(self.closeWindow)
         self.ui.Button_large.clicked.connect(self.largeIt)
         self.ui.Button_small.clicked.connect(self.showMinimized)
+        # 提示信息
         self.ui.Button_pin.setToolTip("切换置顶")
         self.ui.Button_copy.setToolTip("复制")
         self.ui.Button_cut.setToolTip("剪切")
@@ -46,21 +48,27 @@ class NoteWindow(QWidget):
         self.setWindowTitle("Power")
         self.ui.textEdit.setTabStopDistance(40)
         self.ui.textEdit.insertImgSuccessSignel.connect(self.showPopLable)
-        # 设置截图快捷键
+        # 截图的全局快捷键
         self.hotkeyScreenshot = SystemHotkey()
-        self.hotkeyScreenshot.register(('f3',), callback=lambda x: self.send_key_event())
+        self.hotkeyScreenshot.register(('f3',), callback=lambda x: self.sendKeyEvent())
         self.screenSignal.connect(self.startScreen)
+        # 检测按钮的全局快捷键
+        self.hotkeyScreenshot = SystemHotkey()
+        self.hotkeyScreenshot.register(('alt', 'w'), callback=lambda x: self.sendKeyEvent2())
+        self.monitorSignal.connect(self.changeMonitorStatus)
         # 截图的默认最大宽度
         self.maxWidth = 1300
-        self.clipboard = QGuiApplication.clipboard()
         # 开启与关闭检测剪切板功能
-        self.statusFlag = False
+        self.clipboard = QGuiApplication.clipboard()
+        self.monitorFlag = False
         # 只能有一个settingWindow
         self.settingWindow = None
         # 计时器,检测开启后图标闪烁
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.blink)
         self.blinkFlag = False
+
+        # 窗口位置
         width = 1000
         height = 900
         self.setGeometry(870, -height + 2, width, height)
@@ -79,15 +87,20 @@ class NoteWindow(QWidget):
     def showPopLable(self):
         """
         用于截图成功提示
-        :return:
         """
         self.pop = PopLabel(f"截图成功")
 
-    def send_key_event(self):
+    def sendKeyEvent(self):
         """
-        快捷键f3,开始截图
+        快捷键f3调用,发送信号开始截图
         """
         self.screenSignal.emit()
+
+    def sendKeyEvent2(self):
+        """
+        快捷键alt+w调用,发送信号开始检测剪切板
+        """
+        self.monitorSignal.emit()
 
     def startScreen(self):
         """
@@ -162,13 +175,17 @@ class NoteWindow(QWidget):
         """
         打开与关闭检测剪切板功能
         """
-        if self.ui.Button_monitor.isChecked():
+        if not self.monitorFlag:
+            self.pop = PopLabel("开始检测", "#883FC2")
             self.timer.start(500)
             self.clipboard.dataChanged.connect(self.saveCbData)
+            self.monitorFlag = True
         else:
+            self.pop = PopLabel("停止检测", "#883FC2")
             self.timer.stop()
             self.ui.Button_monitor.setStyleSheet("background-image:url(:/new/icons/monitor.png)")
             self.clipboard.dataChanged.disconnect(self.saveCbData)
+            self.monitorFlag = False
 
     def blink(self):
         """
@@ -215,11 +232,12 @@ class NoteWindow(QWidget):
         """
         停止检测,供其他方法调用
         """
-        if self.ui.Button_monitor.isChecked():
+        if self.monitorFlag:
             self.ui.Button_monitor.setChecked(False)
             self.timer.stop()
             self.ui.Button_monitor.setStyleSheet("background-image:url(:/new/icons/monitor.png)")
             self.clipboard.dataChanged.disconnect(self.saveCbData)
+            self.monitorFlag = False
 
     @Slot()
     def startSetting(self):
@@ -241,13 +259,6 @@ class NoteWindow(QWidget):
         self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
         self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
 
-    @Slot()
-    def showMiniNote(self):
-        self.miniNote = PopNote()
-        self.miniNote.move(50, 800)
-        self.miniNote.show()
-        self.miniNote.signal.connect(self.getNoteFromMiniNote)
-
     @Slot(str, tuple)
     def getNoteFromMiniNote(self, note, num):
         self.ui.textEdit.append(note)
@@ -259,9 +270,6 @@ class NoteWindow(QWidget):
             fileList = os.listdir("TempImg")
             for i in fileList:
                 os.remove(f"TempImg/{i}")
-        # 关闭子窗口miniNote
-        if hasattr(self, "miniNote") and self.miniNote is not None:
-            self.miniNote.close()
         self.close()
 
     @Slot()
