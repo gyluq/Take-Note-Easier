@@ -2,6 +2,8 @@ import win32gui
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QWidget, QApplication
+
+from Utils.DragToMove import DragToMove
 from UI.ui_popNote import Ui_Form1
 from UI.ui_popLabel import Ui_Form2
 
@@ -16,26 +18,13 @@ class PopNote(QWidget):
     def initialization(self):
         self.setAttribute(Qt.WA_TranslucentBackground)
         # 拖拽移动
-        self.ui.frame.mousePressEvent = lambda e: self.framePress(e)
-        self.ui.frame.mouseMoveEvent = lambda e: self.frameMove(e)
-        self.ui.frame.mouseReleaseEvent = lambda e: self.frameRelease()
+        self.dragToMove = DragToMove()
+        self.dragToMove.setUp(self.ui.frame, self)
         # 检测剪切板
         self.clip = QGuiApplication.clipboard()
         self.clip.dataChanged.connect(self.getTextFromClipboard)
         # 绑定事件
         self.ui.BtExit.clicked.connect(self.close)
-
-    def framePress(self, event):
-        if event.button() == Qt.LeftButton:
-            self.leftMouseClickFlag = True
-            self.clickPosition = event.position().toPoint()
-
-    def frameMove(self, event):
-        if self.leftMouseClickFlag:
-            self.move(event.globalPosition().toPoint() - self.clickPosition)
-
-    def frameRelease(self):
-        self.leftMouseClickFlag = False
 
     def getTextFromClipboard(self):
         text = self.clip.text().replace("。", ".") \

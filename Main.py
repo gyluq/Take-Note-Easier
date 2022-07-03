@@ -10,6 +10,7 @@ from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
 from Pop import PopLabel
+from Utils.DragToMove import DragToMove
 from UI.ui_videoNote import Ui_Form
 from SettingWinow import Setting
 
@@ -71,22 +72,8 @@ class NoteWindow(QWidget):
         self.setting = QSettings("configuration.ini", QSettings.IniFormat)
         self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
         # 整体移动
-        self.leftMouseClickFlag = False
-        self.ui.TitleFrame.mousePressEvent = lambda e: self.titleFramePress(e)
-        self.ui.TitleFrame.mouseMoveEvent = lambda e: self.titleFrameMove(e)
-        self.ui.TitleFrame.mouseReleaseEvent = lambda e: self.titleFrameRelease()
-
-    def titleFramePress(self, event):
-        if event.button() == Qt.LeftButton:
-            self.leftMouseClickFlag = True
-            self.clickPosition = event.position().toPoint()
-
-    def titleFrameMove(self, event):
-        if self.leftMouseClickFlag:
-            self.move(event.globalPosition().toPoint() - self.clickPosition)
-
-    def titleFrameRelease(self):
-        self.leftMouseClickFlag = False
+        self.dragToMove = DragToMove()
+        self.dragToMove.setUp(self.ui.TitleFrame, self)
 
     def send_key_event(self):
         """
