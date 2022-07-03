@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
-from Pop import PopLabel
+from Pop import PopLabel, PopNote
 from Utils.DragToMove import DragToMove
 from UI.ui_videoNote import Ui_Form
 from SettingWinow import Setting
@@ -33,7 +33,7 @@ class NoteWindow(QWidget):
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.startSetting)
-        # self.ui.Button_pt.clicked.connect(self.selectPt)
+        self.ui.Button_pt.clicked.connect(self.showMiniNote)
         self.ui.Button_close.clicked.connect(self.closeWindow)
         self.ui.Button_large.clicked.connect(self.largeIt)
         self.ui.Button_small.clicked.connect(self.showMinimized)
@@ -45,6 +45,7 @@ class NoteWindow(QWidget):
         self.ui.Button_setting.setToolTip("设置")
         self.setWindowTitle("Power")
         self.ui.textEdit.setTabStopDistance(40)
+        self.ui.textEdit.insertImgSuccessSignel.connect(self.showPopLable)
         # 设置截图快捷键
         self.hotkeyScreenshot = SystemHotkey()
         self.hotkeyScreenshot.register(('f3',), callback=lambda x: self.send_key_event())
@@ -74,6 +75,13 @@ class NoteWindow(QWidget):
         # 整体移动
         self.dragToMove = DragToMove()
         self.dragToMove.setUp(self.ui.TitleFrame, self)
+
+    def showPopLable(self):
+        """
+        用于截图成功提示
+        :return:
+        """
+        self.pop = PopLabel(f"截图成功")
 
     def send_key_event(self):
         """
@@ -223,7 +231,7 @@ class NoteWindow(QWidget):
             self.settingWindow.setWindowModality(Qt.ApplicationModal)
             self.settingWindow.signal.connect(self.reSetting)
         self.settingWindow.move(self.x() + int(self.width() / 2 - self.settingWindow.width() / 2),
-                                self.y() + int(self.height() / 2 - self.settingWindow.height() / 2),)
+                                self.y() + int(self.height() / 2 - self.settingWindow.height() / 2), )
         self.settingWindow.show()
 
     def reSetting(self):
@@ -234,11 +242,26 @@ class NoteWindow(QWidget):
         self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
 
     @Slot()
+    def showMiniNote(self):
+        self.miniNote = PopNote()
+        self.miniNote.move(50, 800)
+        self.miniNote.show()
+        self.miniNote.signal.connect(self.getNoteFromMiniNote)
+
+    @Slot(str, tuple)
+    def getNoteFromMiniNote(self, note, num):
+        self.ui.textEdit.append(note)
+        self.pop = PopLabel(f"插入{num[0]}字\n图片{num[1]}张", "#333338")
+
+    @Slot()
     def closeWindow(self):
         if os.path.exists("TempImg"):
             fileList = os.listdir("TempImg")
             for i in fileList:
                 os.remove(f"TempImg/{i}")
+        # 关闭子窗口miniNote
+        if hasattr(self, "miniNote") and self.miniNote is not None:
+            self.miniNote.close()
         self.close()
 
     @Slot()

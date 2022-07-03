@@ -2,13 +2,14 @@ import base64
 import os
 import time
 from PySide6 import QtCore, QtGui
+from PySide6.QtCore import Signal
 from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import QTextEdit
 
-from Pop import PopLabel
-
 
 class TextEdit(QTextEdit):
+    insertImgSuccessSignel = Signal()
+
     def __init__(self, parent=None):
         super(TextEdit, self).__init__(parent)
         self.pop = None
@@ -33,7 +34,7 @@ class TextEdit(QTextEdit):
                 return mime
         return super().createMimeDataFromSelection()
 
-    def insertImage(self, image, flag=False):
+    def insertImage(self, image, flag=False, picWidth=None):
         if image.isNull():
             return False
 
@@ -49,7 +50,8 @@ class TextEdit(QTextEdit):
             cursor.movePosition(QTextCursor.End)
             self.setTextCursor(cursor)
 
-        picWidth = self.width() - 20
+        if picWidth is None:
+            picWidth = self.width() - 20
         width = image.width()
         if success:
             print("实际:", self.width())
@@ -64,7 +66,7 @@ class TextEdit(QTextEdit):
             self.textCursor().insertHtml("<br/>")
             cursor.movePosition(QTextCursor.End)
             self.setTextCursor(cursor)
-            self.pop = PopLabel(f"截图成功")
+            self.insertImgSuccessSignel.emit()
             return True
         return False
 
