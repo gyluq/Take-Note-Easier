@@ -8,13 +8,18 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from NewTextEdit import TextEdit
-from PySide6.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
-from PySide6.QtGui import (QFont, QIcon)
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel,
-                               QPushButton, QSizePolicy, QSpacerItem,
-                               QVBoxLayout)
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem,
+    QVBoxLayout, QWidget)
 from .import img_rc
+from NewTextEdit import TextEdit
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -263,18 +268,14 @@ class Ui_Form(object):
 "	background-image:url(:/new/icons/monitor.png);\n"
 "}\n"
 "\n"
-"#Button_pt{\n"
-"	background-image:url(:/new/icons/box.png);\n"
-"}\n"
-"\n"
 "#Button_pin{\n"
 "	/*border-top-left-radius:3px;\n"
 "	border-bottom-left-radius:3px;*/\n"
-""
-                        "	background-image:url(:/new/icons/pin_default.png);\n"
+"	background-image:url(:/new/icons/pin_default.png);\n"
 "}\n"
 "\n"
-"#Button_pin::checked{\n"
+"#Butto"
+                        "n_pin::checked{\n"
 "	background-image:url(:/new/icons/pin_active.png);\n"
 "}\n"
 "\n"
@@ -329,6 +330,16 @@ class Ui_Form(object):
 
         self.Button_pt = QPushButton(self.ButtonFrame)
         self.Button_pt.setObjectName(u"Button_pt")
+        self.Button_pt.setStyleSheet(u"#Button_pt{\n"
+"	padding:2 10 4 10;\n"
+"}\n"
+"\n"
+"#Button_pt::checked{\n"
+"	color:white;\n"
+"	font-weight:bold;\n"
+"	background-color:#1E89BA;\n"
+"}")
+        self.Button_pt.setCheckable(True)
 
         self.horizontalLayout.addWidget(self.Button_pt)
 
@@ -376,7 +387,7 @@ class Ui_Form(object):
         self.Button_clear.setText(QCoreApplication.translate("Form", u"Clear", None))
         self.Button_monitor.setText(QCoreApplication.translate("Form", u"Monitor", None))
         self.Button_setting.setText(QCoreApplication.translate("Form", u"Setting", None))
-        self.Button_pt.setText(QCoreApplication.translate("Form", u"pt", None))
+        self.Button_pt.setText(QCoreApplication.translate("Form", u"\u53bb\u6362\u884c\u7b26", None))
         self.label.setText(QCoreApplication.translate("Form", u"Note: A Powerful Tool written by MuSen at 2022", None))
     # retranslateUi
 

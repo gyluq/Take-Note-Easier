@@ -35,6 +35,7 @@ class NoteWindow(QWidget):
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.startSetting)
+        self.ui.Button_pt.clicked.connect(self.replaceN)
         self.ui.Button_close.clicked.connect(self.closeWindow)
         self.ui.Button_large.clicked.connect(self.largeIt)
         self.ui.Button_small.clicked.connect(self.showMinimized)
@@ -67,7 +68,6 @@ class NoteWindow(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.blink)
         self.blinkFlag = False
-
         # 窗口位置
         width = 1000
         height = 900
@@ -83,6 +83,8 @@ class NoteWindow(QWidget):
         # 整体移动
         self.dragToMove = DragToMove()
         self.dragToMove.setUp(self.ui.TitleFrame, self)
+        # 替换换行符
+        self.replaceNFlag = False
 
     def showPopLable(self):
         """
@@ -222,6 +224,8 @@ class NoteWindow(QWidget):
                 .replace("》", ">") \
                 .replace("《", "<") \
                 .replace("？", "?")
+            if self.replaceNFlag:
+                newText = newText.replace("\n", " ").replace("  ", " ")
             self.ui.textEdit.append(newText)
             cursor = self.ui.textEdit.textCursor()
             cursor.movePosition(QTextCursor.End)
@@ -251,6 +255,12 @@ class NoteWindow(QWidget):
         self.settingWindow.move(self.x() + int(self.width() / 2 - self.settingWindow.width() / 2),
                                 self.y() + int(self.height() / 2 - self.settingWindow.height() / 2), )
         self.settingWindow.show()
+
+    def replaceN(self):
+        if self.replaceNFlag:
+            self.replaceNFlag = False
+        else:
+            self.replaceNFlag = True
 
     def reSetting(self):
         """
