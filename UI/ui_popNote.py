@@ -25,10 +25,16 @@ class Ui_Form1(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(434, 163)
-        Form.setStyleSheet(u"#frame{\n"
-"	border-radius:5px;\n"
-"}")
+        Form.resize(406, 155)
+        Form.setStyleSheet(u"QFrame{\n"
+"	background-color:#FFFFFF;\n"
+"}\n"
+"\n"
+"#frame{\n"
+"	border-radius:8px;\n"
+"	border:4px solid #D7D7D7;\n"
+"}\n"
+"")
         self.verticalLayout_2 = QVBoxLayout(Form)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
@@ -37,10 +43,7 @@ class Ui_Form1(object):
         self.frame.setObjectName(u"frame")
         self.frame.setMinimumSize(QSize(0, 0))
         self.frame.setMaximumSize(QSize(1950, 161))
-        self.frame.setStyleSheet(u"QFrame{\n"
-"	background-color:#FFFFFF;\n"
-"}\n"
-"")
+        self.frame.setStyleSheet(u"")
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_2 = QHBoxLayout(self.frame)
@@ -89,6 +92,8 @@ class Ui_Form1(object):
 
         self.BtFrame = QFrame(self.frame)
         self.BtFrame.setObjectName(u"BtFrame")
+        self.BtFrame.setMinimumSize(QSize(60, 0))
+        self.BtFrame.setMaximumSize(QSize(60, 16777215))
         self.BtFrame.setStyleSheet(u"QPushButton{\n"
 "	padding:1 2 1 2;\n"
 "	margin:0;\n"
@@ -109,6 +114,18 @@ class Ui_Form1(object):
 "	font-weight:bold;\n"
 "	border:1px solid #295BBB;\n"
 "	background-color:#295BB8;\n"
+" }\n"
+"\n"
+"#BtWinExit{\n"
+"	color:white;\n"
+"	font-weight:bold;\n"
+"	border:1px solid #AB4F4F;\n"
+"	background-color:#AB4F4F;\n"
+"}\n"
+"\n"
+"#BtWinExit:hover{\n"
+"	border:1px solid #913C3C;\n"
+"	background-color:#913C3C;\n"
 " }")
         self.BtFrame.setFrameShape(QFrame.StyledPanel)
         self.BtFrame.setFrameShadow(QFrame.Raised)
@@ -130,15 +147,10 @@ class Ui_Form1(object):
 
         self.verticalLayout.addWidget(self.BtTextFormate)
 
-        self.BtFontEnlarge = QPushButton(self.BtFrame)
-        self.BtFontEnlarge.setObjectName(u"BtFontEnlarge")
+        self.BtTextClear = QPushButton(self.BtFrame)
+        self.BtTextClear.setObjectName(u"BtTextClear")
 
-        self.verticalLayout.addWidget(self.BtFontEnlarge)
-
-        self.BtFontShrink = QPushButton(self.BtFrame)
-        self.BtFontShrink.setObjectName(u"BtFontShrink")
-
-        self.verticalLayout.addWidget(self.BtFontShrink)
+        self.verticalLayout.addWidget(self.BtTextClear)
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -164,9 +176,8 @@ class Ui_Form1(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.BtTextSend.setText(QCoreApplication.translate("Form", u"SEND", None))
-        self.BtTextFormate.setText(QCoreApplication.translate("Form", u"FORM", None))
-        self.BtFontEnlarge.setText(QCoreApplication.translate("Form", u"LAG", None))
-        self.BtFontShrink.setText(QCoreApplication.translate("Form", u"SHR", None))
+        self.BtTextFormate.setText(QCoreApplication.translate("Form", u"FORMAT", None))
+        self.BtTextClear.setText(QCoreApplication.translate("Form", u"CLEAR", None))
         self.BtWinExit.setText(QCoreApplication.translate("Form", u"EXIT", None))
     # retranslateUi
 

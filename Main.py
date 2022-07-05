@@ -291,6 +291,8 @@ class NoteWindow(QWidget):
             fileList = os.listdir("TempImg")
             for i in fileList:
                 os.remove(f"TempImg/{i}")
+        if hasattr(self, "miniBox"):
+            self.miniBox.close()
         self.close()
 
     @Slot()

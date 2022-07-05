@@ -83,7 +83,7 @@ class TextEdit(QTextEdit):
                     continue
                 elif self.insertImage(QtGui.QImage(path)):
                     return
-        # 自写
-        elif source.hasText():
-            self.append(source.text())
-        # super().insertFromMimeData(source)
+        # 自写,使复制的文本不带格式
+        mime = QtCore.QMimeData()
+        mime.setText(source.text())
+        super().insertFromMimeData(mime)

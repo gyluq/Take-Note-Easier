@@ -26,10 +26,9 @@ class PopNote(QWidget):
         self.dragToMove.setUp(self.ui.frame, self)
         # 绑定事件
         self.ui.BtWinExit.clicked.connect(self.close)
-        self.ui.BtTextFormate.clicked.connect(self.formateText)
         self.ui.BtTextSend.clicked.connect(self.sendTextNote)
-        self.ui.BtFontEnlarge.clicked.connect(self.enlargeFontSize)
-        self.ui.BtFontShrink.clicked.connect(self.shirnkFontSize)
+        self.ui.BtTextFormate.clicked.connect(self.formateText)
+        self.ui.BtTextClear.clicked.connect(lambda x: self.ui.textEdit.clear())
 
         self.currentFontSize = 9
         self.pop = None
@@ -56,7 +55,7 @@ class PopNote(QWidget):
 
     @Slot(str)
     def sendTextNote(self):
-        html = self.ui.textEdit.toHtml().replace(f"font-size:{self.currentFontSize}pt;", "font-size:11pt;")\
+        html = self.ui.textEdit.toHtml().replace(f"font-size:{self.currentFontSize}pt;", "font-size:11pt;") \
             .replace(f"width=\"{self.ui.textEdit.width() - 20}\"", "")
         try:
             self.signal.emit(html)
@@ -65,20 +64,6 @@ class PopNote(QWidget):
             return
         self.pop = PopLabel("发送成功", "#379942")
         self.ui.textEdit.clear()
-
-    @Slot()
-    def shirnkFontSize(self):
-        html = self.ui.textEdit.toHtml().replace(f"font-size:{self.currentFontSize}pt;",
-                                                 f"font-size:{self.currentFontSize - 1}pt;")
-        self.currentFontSize -= 1
-        self.ui.textEdit.setHtml(html)
-
-    @Slot()
-    def enlargeFontSize(self):
-        html = self.ui.textEdit.toHtml().replace(f" font-size:{self.currentFontSize}pt;",
-                                                 f" font-size:{self.currentFontSize + 1}pt;")
-        self.currentFontSize += 1
-        self.ui.textEdit.setHtml(html)
 
 
 class PopLabel(QWidget):
