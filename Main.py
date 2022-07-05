@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 from system_hotkey import SystemHotkey
 
 from Screenshot import CaptureScreen
-from Pop import PopLabel
+from Pop import PopLabel, PopNote
 from Utils.DragToMove import DragToMove
 from UI.ui_videoNote import Ui_Form
 from SettingWinow import Setting
@@ -35,6 +35,7 @@ class NoteWindow(QWidget):
         self.ui.Button_clear.clicked.connect(self.clearAll)
         self.ui.Button_monitor.clicked.connect(self.changeMonitorStatus)
         self.ui.Button_setting.clicked.connect(self.startSetting)
+        self.ui.Button_minibox.clicked.connect(self.showMiniBox)
         self.ui.Button_pt.clicked.connect(self.replaceN)
         self.ui.Button_close.clicked.connect(self.closeWindow)
         self.ui.Button_large.clicked.connect(self.largeIt)
@@ -256,6 +257,21 @@ class NoteWindow(QWidget):
                                 self.y() + int(self.height() / 2 - self.settingWindow.height() / 2), )
         self.settingWindow.show()
 
+    @Slot()
+    def showMiniBox(self):
+        """
+        迷你笔记框
+        """
+        self.miniBox = PopNote()
+        self.miniBox.signal.connect(self.getNoteFromMiniNote)
+        self.miniBox.move(700, 900)
+        self.miniBox.show()
+
+    @Slot(str)
+    def getNoteFromMiniNote(self, note):
+        self.ui.textEdit.append(note)
+
+    @Slot()
     def replaceN(self):
         if self.replaceNFlag:
             self.replaceNFlag = False
@@ -268,11 +284,6 @@ class NoteWindow(QWidget):
         """
         self.ui.textEdit.setStyleSheet(f"background-color:{self.setting.value('UI/MAINWINDOW_NOTE')}")
         self.maxWidth = int(self.setting.value("LAST_OPTION/LAST_SIZE")[:-2])
-
-    @Slot(str, tuple)
-    def getNoteFromMiniNote(self, note, num):
-        self.ui.textEdit.append(note)
-        self.pop = PopLabel(f"插入{num[0]}字\n图片{num[1]}张", "#333338")
 
     @Slot()
     def closeWindow(self):

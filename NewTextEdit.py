@@ -83,4 +83,7 @@ class TextEdit(QTextEdit):
                     continue
                 elif self.insertImage(QtGui.QImage(path)):
                     return
-        super().insertFromMimeData(source)
+        # 自写
+        elif source.hasText():
+            self.append(source.text())
+        # super().insertFromMimeData(source)

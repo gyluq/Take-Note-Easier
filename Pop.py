@@ -1,15 +1,14 @@
 import win32gui
 from PySide6.QtCore import Qt, QTimer, Slot, Signal
-from PySide6.QtGui import QGuiApplication, QTextCursor
-from PySide6.QtWidgets import QWidget, QApplication, QTextEdit
+from PySide6.QtWidgets import QWidget, QApplication
 
-from Utils.DragToMove import DragToMove
-from UI.ui_popNote import Ui_Form1
 from UI.ui_popLabel import Ui_Form2
+from UI.ui_popNote import Ui_Form1
+from Utils.DragToMove import DragToMove
 
 
 class PopNote(QWidget):
-    signal = Signal(str, tuple)
+    signal = Signal(str)
 
     def __init__(self):
         super(PopNote, self).__init__(None, Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
@@ -22,60 +21,64 @@ class PopNote(QWidget):
         self.imgNum = 0
         self.detectFlag = True
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.ui.BtStop.setChecked(True)
         # 拖拽移动
         self.dragToMove = DragToMove()
         self.dragToMove.setUp(self.ui.frame, self)
-        # 检测剪切板
-        self.clip = QGuiApplication.clipboard()
-        self.clip.dataChanged.connect(self.getDataFromClipboard)
         # 绑定事件
-        self.ui.BtExit.clicked.connect(self.close)
-        self.ui.BtSend.clicked.connect(self.sendTextNote)
-        self.ui.BtStop.clicked.connect(self.stopMonitor)
+        self.ui.BtWinExit.clicked.connect(self.close)
+        self.ui.BtTextFormate.clicked.connect(self.formateText)
+        self.ui.BtTextSend.clicked.connect(self.sendTextNote)
+        self.ui.BtFontEnlarge.clicked.connect(self.enlargeFontSize)
+        self.ui.BtFontShrink.clicked.connect(self.shirnkFontSize)
 
-    def getDataFromClipboard(self):
-        self.ui.textEdit.append("")
-        if self.clip.mimeData().hasImage():
-            pixmap = self.clip.image()
-            self.ui.textEdit.insertImage(pixmap, True, 165)
-            self.imgNum += 1
-        else:
-            newText = self.clip.text().replace("。", ".") \
-                .replace("，", ",") \
-                .replace("‘", "'") \
-                .replace("’", "'") \
-                .replace("”", "\"") \
-                .replace("“", "\"") \
-                .replace("；", ";") \
-                .replace("）", ")") \
-                .replace("（", "(") \
-                .replace("【", "[") \
-                .replace("】", "]") \
-                .replace("》", ">") \
-                .replace("《", "<") \
-                .replace("？", "?")
-            self.ui.textEdit.append(newText)
-            cursor = self.ui.textEdit.textCursor()
-            cursor.movePosition(QTextCursor.End)
-            self.ui.textEdit.setTextCursor(cursor)
-            self.textLenth += len(newText)
+        self.currentFontSize = 9
+        self.pop = None
 
-    @Slot(str, tuple)
+    def formateText(self):
+        text = self.ui.textEdit.toHtml()
+        newText = text.replace("。", ".") \
+            .replace("，", ",") \
+            .replace("‘", "'") \
+            .replace("’", "'") \
+            .replace("”", "\"") \
+            .replace("“", "\"") \
+            .replace("；", ";") \
+            .replace("）", ")") \
+            .replace("（", "(") \
+            .replace("【", "[") \
+            .replace("】", "]") \
+            .replace("》", ">") \
+            .replace("《", "<") \
+            .replace("？", "?")
+        # self.fff = QTextEdit
+        # self.fff.setHtml
+        self.ui.textEdit.setHtml(newText)
+
+    @Slot(str)
     def sendTextNote(self):
-        text = self.ui.textEdit.toHtml().replace(" width=\"165\"", "") \
-            .replace(f"; font-size:9pt", "; font-size:11pt")
-        self.signal.emit(text, (self.textLenth, self.imgNum))
+        html = self.ui.textEdit.toHtml().replace(f"font-size:{self.currentFontSize}pt;", "font-size:11pt;")\
+            .replace(f"width=\"{self.ui.textEdit.width() - 20}\"", "")
+        try:
+            self.signal.emit(html)
+        except Exception:
+            self.pop = PopLabel("发送失败", "#CC4040")
+            return
+        self.pop = PopLabel("发送成功", "#379942")
         self.ui.textEdit.clear()
 
     @Slot()
-    def stopMonitor(self):
-        if self.detectFlag:
-            self.clip.dataChanged.disconnect(self.getDataFromClipboard)
-            self.detectFlag = False
-        else:
-            self.clip.dataChanged.connect(self.getDataFromClipboard)
-            self.detectFlag = True
+    def shirnkFontSize(self):
+        html = self.ui.textEdit.toHtml().replace(f"font-size:{self.currentFontSize}pt;",
+                                                 f"font-size:{self.currentFontSize - 1}pt;")
+        self.currentFontSize -= 1
+        self.ui.textEdit.setHtml(html)
+
+    @Slot()
+    def enlargeFontSize(self):
+        html = self.ui.textEdit.toHtml().replace(f" font-size:{self.currentFontSize}pt;",
+                                                 f" font-size:{self.currentFontSize + 1}pt;")
+        self.currentFontSize += 1
+        self.ui.textEdit.setHtml(html)
 
 
 class PopLabel(QWidget):

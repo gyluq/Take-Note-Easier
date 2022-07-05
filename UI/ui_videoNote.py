@@ -260,6 +260,10 @@ class Ui_Form(object):
 "	background-image:url(:/new/icons/cut.png);\n"
 "}\n"
 "\n"
+"#Button_minibox{\n"
+"	background-image:url(:/new/icons/box.png);\n"
+"}\n"
+"\n"
 "#Button_clear{\n"
 "	background-image:url(:/new/icons/trash.png);\n"
 "}\n"
@@ -270,12 +274,12 @@ class Ui_Form(object):
 "\n"
 "#Button_pin{\n"
 "	/*border-top-left-radius:3px;\n"
-"	border-bottom-left-radius:3px;*/\n"
+"	border-bottom-left-radius:3px;"
+                        "*/\n"
 "	background-image:url(:/new/icons/pin_default.png);\n"
 "}\n"
 "\n"
-"#Butto"
-                        "n_pin::checked{\n"
+"#Button_pin::checked{\n"
 "	background-image:url(:/new/icons/pin_active.png);\n"
 "}\n"
 "\n"
@@ -327,6 +331,11 @@ class Ui_Form(object):
         self.Button_setting.setFocusPolicy(Qt.ClickFocus)
 
         self.horizontalLayout.addWidget(self.Button_setting)
+
+        self.Button_minibox = QPushButton(self.ButtonFrame)
+        self.Button_minibox.setObjectName(u"Button_minibox")
+
+        self.horizontalLayout.addWidget(self.Button_minibox)
 
         self.Button_pt = QPushButton(self.ButtonFrame)
         self.Button_pt.setObjectName(u"Button_pt")
@@ -387,6 +396,7 @@ class Ui_Form(object):
         self.Button_clear.setText(QCoreApplication.translate("Form", u"Clear", None))
         self.Button_monitor.setText(QCoreApplication.translate("Form", u"Monitor", None))
         self.Button_setting.setText(QCoreApplication.translate("Form", u"Setting", None))
+        self.Button_minibox.setText(QCoreApplication.translate("Form", u"Mini", None))
         self.Button_pt.setText(QCoreApplication.translate("Form", u"\u53bb\u6362\u884c\u7b26", None))
         self.label.setText(QCoreApplication.translate("Form", u"Note: A Powerful Tool written by MuSen at 2022", None))
     # retranslateUi
