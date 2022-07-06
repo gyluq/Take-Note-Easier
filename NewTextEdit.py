@@ -114,7 +114,7 @@ class TextEdit(QTextEdit):
         增强换行和删除键的功能
         :param event: 按钮事件
         """
-        # 保留前一行开头空格
+        # 保留前一行开头空格数
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             # 获取当前行文本
             cursors = self.textCursor()
@@ -122,14 +122,16 @@ class TextEdit(QTextEdit):
             s = cursors.selectedText()
             # 匹配开头空字符
             re_space = re.compile(r'^\s+')
-            additionSpace = ""
-            # 出现异常表示开头不是空字符,直接换行
-            try:
-                additionSpace = re_space.match(s).group(0)
-            except AttributeError:
-                pass
-            cursors.movePosition(QTextCursor.EndOfLine)
-            cursors.insertText("\n" + additionSpace)
+            match = re_space.search(s)
+            # 有匹配项
+            if match:
+                additionSpace = match.group(0)
+                cursors.movePosition(QTextCursor.EndOfLine)
+                super(TextEdit, self).keyPressEvent(event)
+                cursors.insertText(additionSpace)
+            else:
+                # 出现异常表示开头不是空字符,直接换行
+                super(TextEdit, self).keyPressEvent(event)
             return
         # 整行都是空字符则删除整行
         elif event.key() == Qt.Key_Backspace:
@@ -138,16 +140,13 @@ class TextEdit(QTextEdit):
             s = cursors.selectedText()
             # 匹配全空字符
             re_space = re.compile(r'^\s+$')
-            aa = None
-            try:
-                aa = re_space.match(s).group(0)
-            except AttributeError:
-                super(TextEdit, self).keyPressEvent(event)
-                return
-            if aa is not None:
+            match = re_space.search(s)
+            if match:
                 cursors.select(QTextCursor.LineUnderCursor)
                 cursors.removeSelectedText()
-                return
+            else:
+                super(TextEdit, self).keyPressEvent(event)
+            return
         else:
             super(TextEdit, self).keyPressEvent(event)
 

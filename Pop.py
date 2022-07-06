@@ -21,6 +21,7 @@ class PopNote(QWidget):
         self.imgNum = 0
         self.detectFlag = True
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.ui.textEdit.setTabStopDistance(40)
         # 拖拽移动
         self.dragToMove = DragToMove()
         self.dragToMove.setUp(self.ui.frame, self)
