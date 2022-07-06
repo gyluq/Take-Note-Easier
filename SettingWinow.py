@@ -39,8 +39,7 @@ class Setting(QWidget):
         self.ui.Button_apply.clicked.connect(self.apply)
 
     def changeColor(self, widget):
-        col = QColorDialog(self)
-        color = col.getColor()
+        color = QColorDialog.getColor(f"{widget.text()}", self)
         if color.isValid():
             widget.setStyleSheet(f'background-color:{color.name()}')
             widget.setText(color.name())
