@@ -21,7 +21,7 @@ class PopNote(QWidget):
         self.imgNum = 0
         self.detectFlag = True
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.ui.textEdit.setTabStopDistance(40)
+        self.ui.textEdit.setTabStopDistance(20)
         # 拖拽移动
         self.dragToMove = DragToMove()
         self.dragToMove.setUp(self.ui.frame, self)
@@ -50,8 +50,6 @@ class PopNote(QWidget):
             .replace("》", ">") \
             .replace("《", "<") \
             .replace("？", "?")
-        # self.fff = QTextEdit
-        # self.fff.setHtml
         self.ui.textEdit.setHtml(newText)
 
     @Slot(str)

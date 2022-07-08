@@ -25,12 +25,16 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(783, 653)
+        Form.resize(942, 819)
         icon1 = QIcon()
         icon1.addFile(u":/new/icons/passion.ico", QSize(), QIcon.Normal, QIcon.Off)
         Form.setWindowIcon(icon1)
         Form.setStyleSheet(u"#TitleFrame{\n"
-"	background-color:#f0f0f0;\n"
+"	background-color:#FFFFFF\n"
+"}\n"
+"\n"
+"#ButtonFrame{\n"
+"	background-color:#FFFFFF\n"
 "}\n"
 "\n"
 "")
@@ -171,10 +175,10 @@ class Ui_Form(object):
         self.TextFrame.setFrameShape(QFrame.NoFrame)
         self.TextFrame.setFrameShadow(QFrame.Raised)
         self.TextFrame.setLineWidth(1)
-        self.verticalLayout_3 = QVBoxLayout(self.TextFrame)
-        self.verticalLayout_3.setSpacing(0)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_3 = QHBoxLayout(self.TextFrame)
+        self.horizontalLayout_3.setSpacing(0)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.textEdit = TextEdit(self.TextFrame)
         self.textEdit.setObjectName(u"textEdit")
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Ignored)
@@ -189,40 +193,92 @@ class Ui_Form(object):
         self.textEdit.setFocusPolicy(Qt.ClickFocus)
         self.textEdit.setStyleSheet(u"QTextEdit{\n"
 "	border:none;\n"
-"	background-color:#FFFFFF;\n"
+"	background-color:#1d1d26;\n"
+"	color:white;\n"
+"	selection-color: #F0F0F0;\n"
+"	selection-background-color:#4388DB;\n"
 "}\n"
 "\n"
 "QScrollBar:vertical {\n"
+"    border: none;\n"
+"    background:#1d1d26;\n"
+"    width: 9px;\n"
+"    margin: 3px 0 3px 0;\n"
+"    border-radius: 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical {\n"
+"	border:1px solid rgba(255, 255, 255, 20);\n"
+"    background: rgba(255, 255, 255, 60);\n"
+"    min-height: 25px;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:vertical {\n"
+"    border: none;\n"
+"    background: rgb(55, 63, 77);\n"
+"    height: 0px;\n"
+"    border-bottom-left-radius: 4px;\n"
+"    border-bottom-right-radius: 4px;\n"
+"    subcontrol-position: bottom;\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:vertical {\n"
+"    border: none;\n"
+"    background: rgb(55, 63, 77);\n"
+"    height: 0px;\n"
+"    border-top-left-radius: 4px;\n"
+"    border-top-right-radius: 4px;\n"
+"    subcontrol-position: top;\n"
+"    subcontrol-origin: margin;"
+                        "\n"
+"}\n"
+"\n"
+"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
+"    background: none;\n"
+"}\n"
+"/*\n"
+"QScrollBar:vertical {\n"
 "    border:none;\n"
-"    background-color:#C7C7C7;\n"
+"    background-color:#1d1d26;\n"
 "    width:10px;\n"
 "    margin: 0px 0px 0px 0px;\n"
 "}\n"
 "\n"
 "QScrollBar::handle:vertical {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
-"    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130), stop:1 rgb(32, 47, 130));\n"
+"    background-color:#656569;\n"
 "    min-height: 0px;\n"
 "}\n"
 "\n"
 "QScrollBar::add-line:vertical {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
-"    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));\n"
+"    background-color:white;\n"
 "    height: 0px;\n"
 "    subcontrol-position: bottom;\n"
 "    subcontrol-origin: margin;\n"
 "}\n"
 "\n"
 "QScrollBar::sub-line:vertical {\n"
-"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,\n"
-"    stop: 0  rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));\n"
+"    background-color:white;\n"
 "    height: 0 px;\n"
 "    subcontrol-position: top;\n"
 "    subcontrol-origin: margin;\n"
-"}")
+"}*/")
+        self.textEdit.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.textEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.verticalLayout_3.addWidget(self.textEdit)
+        self.horizontalLayout_3.addWidget(self.textEdit)
+
+        self.rightPadding = QLabel(self.TextFrame)
+        self.rightPadding.setObjectName(u"rightPadding")
+        self.rightPadding.setMinimumSize(QSize(3, 0))
+        self.rightPadding.setMaximumSize(QSize(3, 16777215))
+        self.rightPadding.setStyleSheet(u"background-color: rgb(29, 29, 38);")
+
+        self.horizontalLayout_3.addWidget(self.rightPadding)
 
 
         self.verticalLayout_2.addWidget(self.TextFrame)
@@ -230,10 +286,8 @@ class Ui_Form(object):
         self.ButtonFrame = QFrame(self.MainFrame)
         self.ButtonFrame.setObjectName(u"ButtonFrame")
         self.ButtonFrame.setStyleSheet(u"QPushButton{\n"
-"	/*border-left:1px solid #808080;\n"
-"	border-bottom:1px solid #808080;\n"
-"	border-top:1px solid #808080;*/\n"
 "	border:none;\n"
+"	border-left: 5px solid transparent;\n"
 "	text-align:left;\n"
 "	padding:2 10 4 21;\n"
 "	margin:0;\n"
@@ -241,14 +295,15 @@ class Ui_Form(object):
 "	background-position:left;\n"
 "}\n"
 "\n"
+"QPushButton:hover{\n"
+"	background-color:#DCDCDC;\n"
+" }\n"
+"\n"
 "QPushButton:pressed{\n"
 "	background-color:#C8C8C8;\n"
 " }\n"
 "\n"
 "#Button_setting{\n"
-"	/*border-right:1px solid #808080;\n"
-"	border-top-right-radius:3px;\n"
-"	border-bottom-right-radius:3px;*/\n"
 "	background-image:url(:/new/icons/setting.png);\n"
 "}\n"
 "\n"
@@ -273,9 +328,6 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "#Button_pin{\n"
-"	/*border-top-left-radius:3px;\n"
-"	border-bottom-left-radius:3px;"
-                        "*/\n"
 "	background-image:url(:/new/icons/pin_default.png);\n"
 "}\n"
 "\n"
@@ -283,7 +335,8 @@ class Ui_Form(object):
 "	background-image:url(:/new/icons/pin_active.png);\n"
 "}\n"
 "\n"
-"#Button_monitor::checked{\n"
+"#Button_monitor::checked{"
+                        "\n"
 "	background-image:url(:/new/icons/monitor_ac.png);\n"
 "}\n"
 "")
@@ -390,6 +443,7 @@ class Ui_Form(object):
         self.Button_small.setText("")
         self.Button_large.setText("")
         self.Button_close.setText("")
+        self.rightPadding.setText("")
         self.Button_pin.setText(QCoreApplication.translate("Form", u"Top", None))
         self.Button_copy.setText(QCoreApplication.translate("Form", u"Copy", None))
         self.Button_cut.setText(QCoreApplication.translate("Form", u"Cut", None))

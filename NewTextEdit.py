@@ -2,9 +2,10 @@ import base64
 import os
 import re
 import time
+
 from PySide6 import QtCore, QtGui
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtGui import QTextCursor
+from PySide6.QtCore import Signal, Qt, Slot
+from PySide6.QtGui import QTextCursor, QColor, QTextFormat
 from PySide6.QtWidgets import QTextEdit
 
 
@@ -14,6 +15,20 @@ class TextEdit(QTextEdit):
     def __init__(self, parent=None):
         super(TextEdit, self).__init__(parent)
         self.pop = None
+        self.cursorPositionChanged.connect(self.highlight_current_line)
+
+    @Slot()
+    def highlight_current_line(self):
+        extra_selections = []
+        if not self.isReadOnly():
+            selection = QTextEdit.ExtraSelection()
+            line_color = QColor("#2F2F40")
+            selection.format.setBackground(line_color)
+            selection.format.setProperty(QTextFormat.FullWidthSelection, True)
+            selection.cursor = self.textCursor()
+            selection.cursor.clearSelection()
+            extra_selections.append(selection)
+        self.setExtraSelections(extra_selections)
 
     def canInsertFromMimeData(self, source):
         """
@@ -118,7 +133,7 @@ class TextEdit(QTextEdit):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             # 获取当前行文本
             cursors = self.textCursor()
-            cursors.select(QTextCursor.LineUnderCursor)
+            cursors.select(QTextCursor.BlockUnderCursor)
             s = cursors.selectedText()
             # 匹配开头空字符
             re_space = re.compile(r'^\s+')
@@ -128,25 +143,62 @@ class TextEdit(QTextEdit):
                 additionSpace = match.group(0)
                 cursors.movePosition(QTextCursor.EndOfLine)
                 super(TextEdit, self).keyPressEvent(event)
+                # 8233为段分隔符,另外ord()获取字符的ASCLL码
+                if additionSpace[0] == chr(8233):
+                    additionSpace = additionSpace[1:]
                 cursors.insertText(additionSpace)
             else:
                 # 出现异常表示开头不是空字符,直接换行
                 super(TextEdit, self).keyPressEvent(event)
-            return
         # 整行都是空字符则删除整行
         elif event.key() == Qt.Key_Backspace:
             cursors = self.textCursor()
             cursors.select(QTextCursor.LineUnderCursor)
             s = cursors.selectedText()
             # 匹配全空字符
-            re_space = re.compile(r'^\s+$')
-            match = re_space.search(s)
+            space = re.compile(r'^\s+$')
+            match = space.search(s)
             if match:
                 cursors.select(QTextCursor.LineUnderCursor)
                 cursors.removeSelectedText()
             else:
                 super(TextEdit, self).keyPressEvent(event)
-            return
+        # 增强Home键
+        elif event.key() == Qt.Key_Home:
+            cursors = self.textCursor()
+            cursors.select(QTextCursor.LineUnderCursor)
+            s = cursors.selectedText()
+            # 匹配开头空格字符
+            space = re.compile(r'^\s+')
+            match = space.search(s)
+            if match:
+                cursors.movePosition(QTextCursor.StartOfBlock)
+                cursors.movePosition(QTextCursor.NextCharacter, n=len(match.group(0)))
+                self.setTextCursor(cursors)
+            else:
+                super(TextEdit, self).keyPressEvent(event)
+        # Ctrl+D复制当前行
+        elif event.key() == Qt.Key_D and event.modifiers() == Qt.ControlModifier:
+            cursors = self.textCursor()
+            cursors.select(QTextCursor.BlockUnderCursor)
+            s = cursors.selectedText()
+            if s != "":
+                cursors.movePosition(QTextCursor.EndOfBlock)
+                if s[0] == chr(8233):
+                    s = s[1:]
+                cursors.insertText(f"\n{s}")
+        # Ctrl+Y删除当前行
+        elif event.key() == Qt.Key_Y and event.modifiers() == Qt.ControlModifier:
+            cursors = self.textCursor()
+            cursors.select(QTextCursor.BlockUnderCursor)
+            cursors.removeSelectedText()
+        # Alt+Q格式选择的文本
+        elif event.key() == Qt.Key_Q and event.modifiers() == Qt.AltModifier:
+            cursors = self.textCursor()
+            s = cursors.selectedText()
+            if s != "":
+                cursors.removeSelectedText()
+                s = s.replace("   ", " ").replace("  ", " ").replace("  ", " ")
+                cursors.insertText(s)
         else:
             super(TextEdit, self).keyPressEvent(event)
-
