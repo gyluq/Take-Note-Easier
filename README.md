@@ -10,7 +10,6 @@
 | Python      | 3.9.13       |
 | pywin32   | 306        |
 | system-hotkey   | 1.0.3        |
-| Nuitka   | 1.1        |
 | pyside6   | 6.5       |
 
 
