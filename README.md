@@ -13,12 +13,6 @@
 | Nuitka   | 1.1        |
 | pyside6   | 6.5       |
 
-# 打包
-使用nuitka打包：
-```
-nuitka --windows-disable-console --standalone --show-progress --follow-imports --plugin-enable=pyside6 --output-dir=out --windows-icon-from-ico=passion.ico Main.py
-```
-完成后须将configuration.ini文件放到out/Main.dist目录下
 
 # 工具界面
 ![image](https://user-images.githubusercontent.com/57351717/233840177-1f345111-f306-49aa-880e-f9edf00f50ff.png)
