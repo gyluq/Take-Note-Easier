@@ -11,7 +11,7 @@
 | pywin32   | 306        |
 | system-hotkey   | 1.0.3        |
 | Nuitka   | 1.1        |
-
+| pyside6   | 6.5       |
 
 # 打包
 使用nuitka打包：
